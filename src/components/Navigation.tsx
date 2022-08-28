@@ -2,7 +2,6 @@ import { RoutePaths } from "@constants/routes";
 import { useRouter } from "next/router";
 import s from "@styles/components/Navigation.module.scss";
 import { CSSProperties, useRef } from "react";
-import Image from "next/image";
 import {
     RiBook2Fill,
     RiBook2Line,

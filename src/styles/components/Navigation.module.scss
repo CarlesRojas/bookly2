@@ -51,12 +51,12 @@
 
             svg {
                 position: relative;
-                height: calc(var(--menu-height) * 0.5);
-                width: calc(var(--menu-height) * 0.5);
+                height: calc(var(--menu-height) * 0.45);
+                width: calc(var(--menu-height) * 0.45);
             }
 
             p {
-                margin-top: 0.4rem;
+                margin-top: 0.2rem;
                 font-size: 0.6rem;
                 font-weight: 600;
                 letter-spacing: 0.05rem;
