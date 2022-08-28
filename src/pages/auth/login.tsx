@@ -27,7 +27,7 @@ const Login: NextPage<LoginProps> = (props) => {
     return (
         <div className={s.login}>
             <Head>
-                <title>Bookly | Login</title>
+                <title>Bookly - Login</title>
                 <meta name="description" content="View the books you are currently readning and want to read" />
             </Head>
 

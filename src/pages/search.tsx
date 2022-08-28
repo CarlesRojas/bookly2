@@ -15,7 +15,7 @@ const Search: NextPage = () => {
     return (
         <>
             <Head>
-                <title>Bookly | Search</title>
+                <title>Bookly - Search</title>
                 <meta name="description" content="View all the books you've read" />
             </Head>
 

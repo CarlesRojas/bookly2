@@ -15,7 +15,7 @@ const Settings: NextPage = () => {
     return (
         <>
             <Head>
-                <title>Bookly | Settings</title>
+                <title>Bookly - Settings</title>
                 <meta name="description" content="View all the books you've read" />
             </Head>
 

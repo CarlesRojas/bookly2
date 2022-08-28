@@ -15,7 +15,7 @@ const New: NextPage = () => {
     return (
         <>
             <Head>
-                <title>Bookly | New</title>
+                <title>Bookly - New</title>
                 <meta name="description" content="View all the books you've read" />
             </Head>
 

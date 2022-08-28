@@ -15,7 +15,7 @@ const Author: NextPage = () => {
     return (
         <>
             <Head>
-                <title>Bookly | Author</title>
+                <title>Bookly - Author</title>
                 <meta name="description" content="View all the books you've read" />
             </Head>
 
