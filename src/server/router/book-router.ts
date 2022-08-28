@@ -55,28 +55,6 @@ export const bookRouter = createProtectedRouter()
             });
         },
     })
-    // .query("get-rereads", {
-    //     input: z.object({ bookId: z.string() }),
-    //     async resolve({ ctx, input }) {
-    //         const { bookId } = input;
-
-    //         return await prisma.read.findMany({
-    //             where: { userId: ctx.session.user.id, bookId },
-    //             include: { book: true },
-    //         });
-    //     },
-    // })
-    // .query("get-status", {
-    //     input: z.object({ bookId: z.string() }),
-    //     async resolve({ ctx, input }) {
-    //         const { bookId } = input;
-
-    //         return await prisma.status.findUnique({
-    //             where: { bookId_userId: { bookId, userId: ctx.session.user.id } },
-    //             include: { book: true },
-    //         });
-    //     },
-    // })
     .query("get", {
         input: z.object({ bookId: z.number() }),
         async resolve({ ctx, input }) {

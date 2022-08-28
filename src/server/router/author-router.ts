@@ -4,12 +4,12 @@ import { createProtectedRouter } from "./protected-router";
 
 export const authorRouter = createProtectedRouter()
     .query("get", {
-        input: z.object({ authorId: z.string() }),
+        input: z.object({ authorId: z.number() }),
         async resolve({ input }) {
             const { authorId } = input;
 
             return await prisma.author.findUnique({
-                where: { id: authorId },
+                where: { goodReadsId: authorId },
             });
         },
     })
