@@ -13,9 +13,7 @@ function defineNextConfig(config) {
 export default defineNextConfig({
     reactStrictMode: true,
     swcMinify: true,
-    experimental: {
-        outputStandalone: true,
-    },
+    output: "standalone",
     images: {
         domains: [],
     },
