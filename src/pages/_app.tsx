@@ -9,9 +9,16 @@ import { withTRPC } from "@trpc/next";
 import { SessionProvider } from "next-auth/react";
 import type { AppType } from "next/dist/shared/lib/utils";
 import Head from "next/head";
+import { useEffect } from "react";
 import superjson from "superjson";
 
 const MyApp: AppType = ({ Component, pageProps: { session, ...pageProps } }) => {
+    useEffect(() => {
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", () => navigator.serviceWorker.register("/sw.mjs"));
+        }
+    });
+
     return (
         <>
             <Head>
