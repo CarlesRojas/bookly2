@@ -7,4 +7,5 @@ export enum RoutePaths {
     BOOK = "/book",
     AUTHOR = "/author",
     NEW = "/new",
+    LOGIN = "/auth/login",
 }

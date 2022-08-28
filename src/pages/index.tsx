@@ -1,21 +1,23 @@
-import type { NextPage } from "next";
-import Head from "next/head";
-import { trpc } from "@utils/trpc";
 import Navigation from "@components/Navigation";
+import { RoutePaths } from "@constants/routes";
+import { authOptions } from "@pages/api/auth/[...nextauth]";
+import type { GetServerSideProps, NextPage } from "next";
+import { unstable_getServerSession } from "next-auth";
+import Head from "next/head";
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const session = await unstable_getServerSession(context.req, context.res, authOptions);
+    if (!session) return { redirect: { destination: RoutePaths.LOGIN, permanent: false } };
+    return { props: {} };
+};
 
 const Home: NextPage = () => {
-    const { data, isLoading } = trpc.useQuery(["example.hello", { text: "from tRPC" }]);
-
-    if (isLoading) return <div>Loading...</div>;
-
     return (
         <>
             <Head>
                 <title>Bookly | Home</title>
                 <meta name="description" content="View the books you are currently readning and want to read" />
             </Head>
-
-            {JSON.stringify(data)}
 
             <Navigation />
         </>
