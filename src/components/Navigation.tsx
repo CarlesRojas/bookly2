@@ -1,15 +1,27 @@
 import { RoutePaths } from "@constants/routes";
 import { useRouter } from "next/router";
 import s from "@styles/components/Navigation.module.scss";
-
 import { CSSProperties, useRef } from "react";
 import Image from "next/image";
+import {
+    RiBook2Fill,
+    RiBook2Line,
+    RiCheckboxCircleLine,
+    RiCheckboxCircleFill,
+    RiSearchFill,
+    RiSearchLine,
+    RiBarChart2Line,
+    RiBarChart2Fill,
+    RiSettingsLine,
+    RiSettingsFill,
+} from "react-icons/ri";
 
 interface NavigationItem {
     label: string;
-    icon: string;
     route: RoutePaths;
     current: boolean;
+    icon: JSX.Element;
+    selectedIcon: JSX.Element;
 }
 
 const Navigation = () => {
@@ -17,34 +29,39 @@ const Navigation = () => {
 
     const navigationItems = useRef<NavigationItem[]>([
         {
-            label: "current",
-            icon: "/icons/book.svg",
+            label: "home",
             route: RoutePaths.HOME,
             current: RoutePaths.HOME === router.pathname,
+            icon: <RiBook2Line />,
+            selectedIcon: <RiBook2Fill />,
         },
         {
             label: "finished",
-            icon: "/icons/book.svg",
             route: RoutePaths.FINISHED,
             current: RoutePaths.FINISHED === router.pathname,
+            icon: <RiCheckboxCircleLine />,
+            selectedIcon: <RiCheckboxCircleFill />,
         },
         {
             label: "search",
-            icon: "/icons/search.svg",
             route: RoutePaths.SEARCH,
             current: RoutePaths.SEARCH === router.pathname,
+            icon: <RiSearchLine />,
+            selectedIcon: <RiSearchFill />,
         },
         {
             label: "stats",
-            icon: "/icons/stats.svg",
             route: RoutePaths.STATS,
             current: RoutePaths.STATS === router.pathname,
+            icon: <RiBarChart2Line />,
+            selectedIcon: <RiBarChart2Fill />,
         },
         {
             label: "settings",
-            icon: "/icons/settings.svg",
             route: RoutePaths.SETTINGS,
             current: RoutePaths.SETTINGS === router.pathname,
+            icon: <RiSettingsLine />,
+            selectedIcon: <RiSettingsFill />,
         },
     ]);
 
@@ -55,17 +72,14 @@ const Navigation = () => {
     return (
         <div className={s.navigation}>
             <div className={s.container} style={{ "--num-items": navigationItems.current.length } as CSSProperties}>
-                {navigationItems.current.map(({ label, icon, route, current }) => {
+                {navigationItems.current.map(({ label, route, current, icon, selectedIcon }) => {
                     return (
                         <div
                             key={route}
                             className={`${s.item} ${current ? s.current : ""}`}
                             onClick={() => onNavigationItemClick(route)}
                         >
-                            <div className={s.icon}>
-                                <Image src={icon} alt={label} layout="fill" />
-                            </div>
-
+                            {current ? selectedIcon : icon}
                             <p>{label}</p>
                         </div>
                     );

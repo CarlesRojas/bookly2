@@ -49,19 +49,10 @@
                 opacity: 1;
             }
 
-            .icon {
+            svg {
                 position: relative;
-                height: 40%;
-                width: 40%;
-                filter: invert(1);
-
-                @include light {
-                    filter: unset;
-                }
-
-                @include dark {
-                    filter: invert(1);
-                }
+                height: calc(var(--menu-height) * 0.5);
+                width: calc(var(--menu-height) * 0.5);
             }
 
             p {
@@ -72,6 +63,7 @@
 
                 @include for-desktop {
                     margin-top: 0;
+                    margin-left: 0.5rem;
                     font-size: 0.8rem;
                 }
             }
