@@ -36,12 +36,13 @@ const Login: NextPage<LoginProps> = (props) => {
             </div>
             <p className={s.name}>bookly</p>
 
-            {Object.values(providers).map((provider) => (
-                <div className={s.button} key={provider.name} onClick={() => signIn(provider.id)}>
-                    <RiGoogleFill />
-                    <p>{`Sign in with ${provider.name}`}</p>
-                </div>
-            ))}
+            {providers &&
+                Object.values(providers).map((provider) => (
+                    <div className={s.button} key={provider.name} onClick={() => signIn(provider.id)}>
+                        <RiGoogleFill />
+                        <p>{`Sign in with ${provider.name}`}</p>
+                    </div>
+                ))}
         </div>
     );
 };

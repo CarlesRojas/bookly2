@@ -63,12 +63,22 @@ export default withTRPC<AppRouter>({
                 }),
                 httpBatchLink({ url }),
             ],
-            url,
-            transformer: superjson,
             /**
              * @link https://react-query.tanstack.com/reference/QueryClient
              */
-            // queryClientConfig: { defaultOptions: { queries: { staleTime: 60 } } },
+            queryClientConfig: {
+                defaultOptions: {
+                    queries: {
+                        refetchOnMount: false,
+                        refetchOnWindowFocus: false,
+                        refetchOnReconnect: false,
+                        refetchOnError: false,
+                        //staleTime: 60
+                    },
+                },
+            },
+            url,
+            transformer: superjson,
         };
     },
     /**

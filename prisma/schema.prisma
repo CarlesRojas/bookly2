@@ -19,7 +19,8 @@ enum BookStatus {
 model Book {
     id          String   @id @default(cuid())
     title       String
-    author      String
+    authorId    String
+    author      Author   @relation(fields: [authorId], references: [id], onDelete: Cascade)
     description String
     publishedAt DateTime
     numPages    Int
@@ -28,6 +29,17 @@ model Book {
     updatedAt   DateTime @updatedAt
     reads       Read[]
     statuses    Status[]
+}
+
+model Author {
+    id          String   @id @default(cuid())
+    name        String
+    birth       DateTime
+    description String
+    photoSrc    String
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    books       Book[]
 }
 
 model Read {
@@ -47,7 +59,7 @@ model Status {
     book      Book       @relation(fields: [bookId], references: [id], onDelete: Cascade)
     userId    String
     user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-    rating    Int
+    rating    Int        @default(0)
     status    BookStatus
     createdAt DateTime   @default(now())
     updatedAt DateTime   @updatedAt

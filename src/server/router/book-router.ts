@@ -1,0 +1,142 @@
+import { BookStatus } from "@prisma/client";
+import { prisma } from "@server/db/client";
+import { z } from "zod";
+import { createProtectedRouter } from "./protected-router";
+
+export const bookRouter = createProtectedRouter()
+    .mutation("set-finished", {
+        input: z.object({ bookId: z.string() }),
+        async resolve({ ctx, input }) {
+            const { bookId } = input;
+
+            await Promise.all([
+                prisma.status.upsert({
+                    where: { bookId_userId: { bookId, userId: ctx.session.user.id } },
+                    update: { status: BookStatus.FINISHED },
+                    create: { status: BookStatus.FINISHED, bookId, userId: ctx.session.user.id },
+                }),
+                prisma.read.create({
+                    data: {
+                        bookId,
+                        userId: ctx.session.user.id,
+                        month: new Date().getMonth(),
+                        year: new Date().getFullYear(),
+                    },
+                }),
+            ]);
+        },
+    })
+    .mutation("set-want-to-read", {
+        input: z.object({ bookId: z.string() }),
+        async resolve({ ctx, input }) {
+            const { bookId } = input;
+
+            await prisma.status.upsert({
+                where: { bookId_userId: { bookId, userId: ctx.session.user.id } },
+                update: { status: BookStatus.WANT_TO_READ },
+                create: { status: BookStatus.WANT_TO_READ, bookId, userId: ctx.session.user.id },
+            });
+        },
+    })
+    .mutation("set-reading", {
+        input: z.object({ bookId: z.string() }),
+        async resolve({ ctx, input }) {
+            const { bookId } = input;
+
+            await prisma.status.upsert({
+                where: { bookId_userId: { bookId, userId: ctx.session.user.id } },
+                update: { status: BookStatus.READING },
+                create: { status: BookStatus.READING, bookId, userId: ctx.session.user.id },
+            });
+        },
+    })
+    // .query("get-rereads", {
+    //     input: z.object({ bookId: z.string() }),
+    //     async resolve({ ctx, input }) {
+    //         const { bookId } = input;
+
+    //         return await prisma.read.findMany({
+    //             where: { userId: ctx.session.user.id, bookId },
+    //             include: { book: true },
+    //         });
+    //     },
+    // })
+    // .query("get-status", {
+    //     input: z.object({ bookId: z.string() }),
+    //     async resolve({ ctx, input }) {
+    //         const { bookId } = input;
+
+    //         return await prisma.status.findUnique({
+    //             where: { bookId_userId: { bookId, userId: ctx.session.user.id } },
+    //             include: { book: true },
+    //         });
+    //     },
+    // })
+    .query("get", {
+        input: z.object({ bookId: z.string() }),
+        async resolve({ ctx, input }) {
+            const { bookId } = input;
+
+            return await prisma.book.findUnique({
+                where: { id: bookId },
+                include: {
+                    reads: { where: { userId: ctx.session.user.id } },
+                    statuses: { where: { userId: ctx.session.user.id } },
+                },
+            });
+        },
+    })
+    .query("search", {
+        input: z.object({ query: z.string() }),
+        async resolve({ input }) {
+            const { query } = input;
+
+            return await prisma.book.findMany({
+                where: { title: { contains: query } },
+            });
+        },
+    })
+    .mutation("add", {
+        input: z.object({ goodReadsUrl: z.string() }),
+        async resolve({ input }) {
+            const { goodReadsUrl } = input;
+            console.log(goodReadsUrl);
+            // TODO create book & author after scrapping goodreads
+        },
+    })
+    .mutation("create-reread", {
+        input: z.object({ bookId: z.string(), month: z.number(), year: z.number() }),
+        async resolve({ ctx, input }) {
+            const { bookId, month, year } = input;
+
+            await prisma.read.create({
+                data: {
+                    bookId,
+                    userId: ctx.session.user.id,
+                    month,
+                    year,
+                },
+            });
+        },
+    })
+    .mutation("update-reread", {
+        input: z.object({ readId: z.string(), month: z.number(), year: z.number() }),
+        async resolve({ input }) {
+            const { readId, month, year } = input;
+
+            await prisma.read.update({
+                where: { id: readId },
+                data: { month, year },
+            });
+        },
+    })
+    .mutation("delete-reread", {
+        input: z.object({ readId: z.string() }),
+        async resolve({ input }) {
+            const { readId } = input;
+
+            await prisma.read.delete({
+                where: { id: readId },
+            });
+        },
+    });
