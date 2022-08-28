@@ -1,10 +1,12 @@
-import { createContext, MutableRefObject, useCallback, useContext, useRef } from "react";
+import { createContext, MutableRefObject, useCallback, useContext, useEffect, useRef } from "react";
 
 export enum Theme {
     DARK = "dark",
     LIGHT = "light",
     NONE = "none",
 }
+
+const THEME_COOKIE_NAME = "bookly2-theme";
 
 type State = {
     theme: MutableRefObject<Theme>;
@@ -21,10 +23,17 @@ function ThemeProvider({ children }: ThemeProviderProps) {
     const setTheme = useCallback(
         (newTheme: Theme) => {
             theme.current = newTheme;
+            window?.localStorage?.setItem(THEME_COOKIE_NAME, newTheme);
+
             document?.getElementById("htmlRoot")?.setAttribute("data-theme", theme.current);
         },
         [theme]
     );
+
+    useEffect(() => {
+        const savedTheme = (window?.localStorage?.getItem(THEME_COOKIE_NAME) as Theme) || Theme.NONE;
+        setTheme(savedTheme);
+    }, [setTheme]);
 
     return <ThemeContext.Provider value={{ theme, setTheme }}>{children}</ThemeContext.Provider>;
 }
