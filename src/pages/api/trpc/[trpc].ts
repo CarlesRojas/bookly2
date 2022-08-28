@@ -6,7 +6,7 @@ import { createContext } from "../../../server/router/context";
 
 // export API handler
 export default createNextApiHandler({
-  router: appRouter,
-  createContext,
-  teardown: () => prisma.$disconnect(),
+    router: appRouter,
+    createContext,
+    teardown: () => prisma.$disconnect(),
 });
