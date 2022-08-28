@@ -2,7 +2,8 @@
 
 ## Planetscale
 
-`pscale connect bookly dev --port 3309`
+`pscale connect bookly main --port 3309`
+`pscale connect bookly shadow --port 3310`
 
 ## Prisma
 
