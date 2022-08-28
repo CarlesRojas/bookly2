@@ -17,12 +17,12 @@ enum BookStatus {
 }
 
 model Book {
-    id          String   @id @default(cuid())
+    goodReadsId Int      @id
     title       String
-    authorId    String
-    author      Author   @relation(fields: [authorId], references: [id], onDelete: Cascade)
-    description String
-    publishedAt DateTime
+    authorId    Int
+    author      Author   @relation(fields: [authorId], references: [goodReadsId], onDelete: Cascade)
+    description String   @db.LongText
+    publishedAt String
     numPages    Int
     coverSrc    String
     createdAt   DateTime @default(now())
@@ -32,10 +32,9 @@ model Book {
 }
 
 model Author {
-    id          String   @id @default(cuid())
+    goodReadsId Int      @id
     name        String
-    birth       DateTime
-    description String
+    description String   @db.LongText
     photoSrc    String
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
@@ -44,8 +43,8 @@ model Author {
 
 model Read {
     id        String   @id @default(cuid())
-    bookId    String
-    book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+    bookId    Int
+    book      Book     @relation(fields: [bookId], references: [goodReadsId], onDelete: Cascade)
     userId    String
     user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
     month     Int
@@ -55,8 +54,8 @@ model Read {
 }
 
 model Status {
-    bookId    String
-    book      Book       @relation(fields: [bookId], references: [id], onDelete: Cascade)
+    bookId    Int
+    book      Book       @relation(fields: [bookId], references: [goodReadsId], onDelete: Cascade)
     userId    String
     user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
     rating    Int        @default(0)

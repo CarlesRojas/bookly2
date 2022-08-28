@@ -22,7 +22,7 @@
     .name {
         background: linear-gradient(to right, #c585d8 0%, #9c67fb 100%);
         background-clip: text;
-        color: #ba72d0;
+        color: var(--purple);
         margin: 0.5rem 0 4rem;
         font-size: 1.3rem;
         font-weight: 700;
@@ -34,7 +34,7 @@
         align-items: center;
         justify-content: center;
         width: 90%;
-        max-width: 15rem;
+        max-width: 25rem;
         height: var(--button-height);
         background-color: #4385f4;
         border-radius: 0.2rem;

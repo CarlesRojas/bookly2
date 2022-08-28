@@ -16,6 +16,8 @@
         "@trpc/next": "^9.27.2",
         "@trpc/react": "^9.27.2",
         "@trpc/server": "^9.27.2",
+        "axios": "^0.27.2",
+        "cheerio": "^1.0.0-rc.12",
         "lodash": "^4.17.21",
         "next": "12.2.5",
         "next-auth": "^4.10.3",
