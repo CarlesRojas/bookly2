@@ -17,7 +17,12 @@
         "noUncheckedIndexedAccess": true,
         "baseUrl": ".",
         "paths": {
+            "@components/*": ["src/components/*"],
+            "@constants/*": ["src/constants/*"],
+            "@context/*": ["src/context/*"],
             "@env/*": ["src/env/*"],
+            "@hooks/*": ["src/hooks/*"],
+            "@icons/*": ["src/icons/*"],
             "@pages/*": ["src/pages/*"],
             "@server/*": ["src/server/*"],
             "@styles/*": ["src/styles/*"],

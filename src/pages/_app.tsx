@@ -6,13 +6,30 @@ import { SessionProvider } from "next-auth/react";
 import type { AppType } from "next/dist/shared/lib/utils";
 import superjson from "superjson";
 import type { AppRouter } from "@server/router";
-import "@styles/globals.css";
+import "@styles/globals.scss";
+import Head from "next/head";
+import { EventsProvider } from "@context/events";
+import { ThemeProvider } from "@context/theme";
 
 const MyApp: AppType = ({ Component, pageProps: { session, ...pageProps } }) => {
     return (
-        <SessionProvider session={session}>
-            <Component {...pageProps} />
-        </SessionProvider>
+        <>
+            <Head>
+                <meta
+                    name="viewport"
+                    content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover"
+                />
+                <title>Bookly</title>
+            </Head>
+
+            <SessionProvider session={session}>
+                <EventsProvider>
+                    <ThemeProvider>
+                        <Component {...pageProps} />
+                    </ThemeProvider>
+                </EventsProvider>
+            </SessionProvider>
+        </>
     );
 };
 

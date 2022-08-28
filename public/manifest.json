@@ -1,7 +1,7 @@
 {
     "short_name": "Bookly",
     "name": "Bookly",
-    "description": "Keep track of your books.",
+    "description": "Keep track of your books",
     "categories": ["books", "entertainment", "lifestyle"],
     "lang": "en-US",
     "icons": [

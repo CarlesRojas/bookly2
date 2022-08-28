@@ -1,0 +1,45 @@
+@mixin for-phone {
+    @media (max-width: 768px) {
+        @content;
+    }
+}
+
+@mixin for-tablet {
+    @media (min-width: 768px) {
+        @content;
+    }
+}
+
+@mixin for-desktop {
+    @media (min-width: 1100px) {
+        @content;
+    }
+}
+
+@mixin for-mouse {
+    @media (hover: hover) {
+        @content;
+    }
+}
+
+@mixin light() {
+    @media (prefers-color-scheme: light) {
+        @at-root #{selector-nest(':root:not([data-theme=light]):not([data-theme=dark])', &)} {
+            @content;
+        }
+    }
+    @at-root #{selector-nest(':root[data-theme=light]', &)} {
+        @content;
+    }
+}
+
+@mixin dark() {
+    @media (prefers-color-scheme: dark) {
+        @at-root #{selector-nest(':root:not([data-theme=light]):not([data-theme=dark])', &)} {
+            @content;
+        }
+    }
+    @at-root #{selector-nest(':root[data-theme=dark]', &)} {
+        @content;
+    }
+}
