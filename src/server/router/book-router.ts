@@ -87,9 +87,8 @@ export const bookRouter = createProtectedRouter()
             const { data: bookData } = await axios.get(goodReadsUrl);
             let $ = load(bookData);
 
-            const goodReadsId = parseInt(
-                goodReadsUrl.replaceAll("https://www.goodreads.com/book/show/", "").replace(/[^0-9]/g, "")
-            );
+            const goodReadsId = parseInt($("input#book_id").first().attr("value") || "");
+            if (isNaN(goodReadsId)) throw new trpc.TRPCError({ code: "NOT_FOUND", message: "Book ID not found." });
 
             const title = allTrim($("#bookTitle").contents().first().text());
 
@@ -119,9 +118,11 @@ export const bookRouter = createProtectedRouter()
             const authorUrl = $("#bookAuthors > span[itemprop=author] > div > a").attr("href");
             if (!authorUrl) throw new trpc.TRPCError({ code: "NOT_FOUND", message: "Author not found." });
 
-            const goodReadsAuthorId = parseInt(
-                authorUrl.replaceAll("https://www.goodreads.com/author/show/", "").replace(/[^0-9]/g, "")
-            );
+            const authorId = authorUrl.replace("https://www.goodreads.com/author/show/", "").match(/.+?(?=[^0-9])/g);
+            if (!authorId || !authorId.length || !authorId[0] || isNaN(parseInt(authorId[0])))
+                throw new trpc.TRPCError({ code: "NOT_FOUND", message: "Author ID not found." });
+
+            const goodReadsAuthorId = parseInt(authorId[0]);
 
             const { data: authorData } = await axios.get(authorUrl);
             $ = load(authorData);
