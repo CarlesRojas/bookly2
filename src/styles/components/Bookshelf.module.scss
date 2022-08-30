@@ -2,42 +2,124 @@
 @import "src/styles/shared.scss";
 
 .bookshelf {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    position: relative;
-    flex-direction: column;
     --shelfTitleHeight: 3rem;
+    --gap: 0.7rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+
+    @include for-desktop {
+        --gap: 1.2rem;
+    }
 
     .shelfName {
-        font-size: 1.1rem;
-        font-weight: bold;
-        height: var(--shelfTitleHeight);
         display: flex;
         align-items: flex-end;
-        padding: 0.5rem 1rem;
+        height: var(--shelfTitleHeight);
+        margin: 0 !important;
+        padding: 0.5rem var(--gap) 0;
+        font-size: 1.1rem;
+        font-weight: bold;
+    }
 
-        @include for-desktop {
-            padding: 0.5rem 2rem;
-        }
+    .noBooks {
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        opacity: 0.4;
+        pointer-events: none;
     }
 
     .container {
         position: relative;
-        --margin: 1rem;
-        margin: var(--margin) 0;
+        display: flex;
+        align-items: center;
+        height: calc(100% - calc(var(--shelfTitleHeight)));
         width: 100%;
         max-width: 100%;
-        height: calc(100% - calc(var(--shelfTitleHeight) + calc(var(--margin) * 2)));
-        align-items: center;
-        display: flex;
         overflow-x: auto;
         overflow-y: visible;
+        padding: var(--gap) 0;
         overscroll-behavior: contain;
+        touch-action: auto;
     }
 }
 
 .book {
+    position: relative;
     display: grid;
-    grid-template-columns: 1fr auto auto;
+    grid-template-rows: 1fr auto;
+    height: 100%;
+    max-height: 100%;
+    overflow: visible;
+    margin-left: var(--gap);
+    touch-action: auto;
+
+    @include for-mouse {
+        // transition: transform 0.1s ease-in-out;
+        transform: scale(1);
+        cursor: pointer;
+
+        &:hover {
+            transform: scale(1.03);
+            opacity: 1;
+        }
+    }
+
+    &:last-child {
+        margin-right: var(--gap);
+    }
+
+    .cover {
+        pointer-events: none;
+        position: relative;
+        overflow: visible;
+        box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
+
+        img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+        }
+    }
+
+    .info {
+        pointer-events: none;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        width: 100%;
+
+        .title,
+        .author {
+            width: 100%;
+            overflow: hidden;
+            opacity: 0.4;
+            margin: 0 !important;
+            font-size: 0.7em;
+            font-weight: normal !important;
+            text-align: center;
+            text-overflow: ellipsis;
+            letter-spacing: normal;
+            white-space: nowrap;
+
+            @include for-desktop {
+                font-size: 0.9em;
+            }
+        }
+
+        .title {
+            opacity: 1;
+        }
+    }
 }

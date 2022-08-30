@@ -4,7 +4,7 @@
     background-color: white;
     border-radius: var(--borderRadius);
     padding: 0.5rem 1.5rem;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.1);
 
     &::placeholder {
         opacity: 0.5;
@@ -20,7 +20,7 @@
     background-color: var(--purple);
     border-radius: var(--borderRadius);
     color: var(--textDark);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.1);
     font-weight: 600;
 
     @include for-mouse {

@@ -1,14 +1,17 @@
 import Bookshelf from "@components/Bookshelf";
+import Loading from "@components/Loading";
 import Navigation from "@components/Navigation";
 import { RoutePaths } from "@constants/routes";
 import useAutoResetState from "@hooks/useAutoResetState";
+import useResize from "@hooks/useResize";
 import { authOptions } from "@pages/api/auth/[...nextauth]";
 import s from "@styles/pages/Search.module.scss";
 import { trpc } from "@utils/trpc";
 import type { GetServerSideProps, NextPage } from "next";
 import { unstable_getServerSession } from "next-auth";
 import Head from "next/head";
-import { FormEvent, useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { RiAddLine, RiLoader4Fill, RiSearchLine } from "react-icons/ri";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -18,6 +21,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 const Search: NextPage = () => {
+    const router = useRouter();
     const [query, setQuery] = useState("");
 
     const {
@@ -37,6 +41,9 @@ const Search: NextPage = () => {
 
     const onSubmit = (event: FormEvent) => {
         event.preventDefault();
+
+        if (booksAreLoading || authorsAreLoading) return;
+
         setQuery(inputValue);
     };
 
@@ -47,6 +54,17 @@ const Search: NextPage = () => {
         if (booksError || authorsError) setShowError(true);
     }, [booksError, authorsError, setShowError]);
 
+    const containerRef = useRef<HTMLDivElement>(null);
+    const searchRef = useRef<HTMLDivElement>(null);
+    const [rowHeight, setRowHeight] = useState(0);
+    useResize(() => {
+        if (!containerRef.current || !searchRef.current) return;
+
+        const containerBox = containerRef.current.getBoundingClientRect();
+        const searchBox = searchRef.current.getBoundingClientRect();
+        setRowHeight((containerBox.height - searchBox.height) / 2);
+    }, true);
+
     const isWaiting = booksAreLoading || authorsAreLoading;
 
     return (
@@ -55,13 +73,27 @@ const Search: NextPage = () => {
                 <title>Bookly - Search</title>
                 <meta name="description" content="View all the books you've read" />
             </Head>
-            <div className={s.search}>
-                <div className={s.gridContainer}></div>
 
-                <div className={s.gridContainer}>{booksData && <Bookshelf shelfName="books" books={booksData} />}</div>
+            <div className={s.search} ref={containerRef}>
+                {!query && (
+                    <div className={s.noResults}>
+                        <p>search a book or an author...</p>
+                    </div>
+                )}
+                {isWaiting && <Loading />}
 
-                <div className={s.gridContainer}>
-                    <div className={s.add} onClick={() => console.log("add book")}>
+                {query && !isWaiting && (
+                    <>
+                        <div className={s.rowContainer} style={{ height: `${rowHeight}px` }}></div>
+
+                        <div className={s.rowContainer} style={{ height: `${rowHeight}px` }}>
+                            {booksData && <Bookshelf shelfName="books" books={booksData} rowHeight={rowHeight} />}
+                        </div>
+                    </>
+                )}
+
+                <div className={s.rowContainer} ref={searchRef}>
+                    <div className={s.add} onClick={() => router.push(RoutePaths.NEW)}>
                         <RiAddLine />
                         <p>add book</p>
                     </div>

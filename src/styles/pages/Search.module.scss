@@ -3,10 +3,10 @@
 
 .search {
     position: absolute;
-    display: grid;
-    grid-template-rows: 1fr 1fr auto;
-    grid-template-columns: 100%;
+    display: flex;
+    flex-direction: column;
     height: calc(100% - var(--navigation-height));
+    max-height: calc(100% - var(--navigation-height));
     width: 100%;
     top: 0;
     left: 0;
@@ -16,11 +16,23 @@
         bottom: 0;
     }
 
-    .gridContainer {
+    .noResults {
         position: relative;
         width: 100%;
         max-width: 100%;
-        height: 100%;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        opacity: 0.4;
+        pointer-events: none;
+    }
+
+    .rowContainer {
+        position: relative;
+        width: 100%;
+        max-width: 100%;
         display: flex;
         flex-direction: column;
         align-items: center;

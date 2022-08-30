@@ -73,6 +73,7 @@ export const bookRouter = createProtectedRouter()
         input: z.object({ query: z.string() }),
         async resolve({ input }) {
             const { query } = input;
+            if (!query) return [];
 
             return await prisma.book.findMany({
                 where: { title: { contains: query } },
