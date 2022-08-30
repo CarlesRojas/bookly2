@@ -1,0 +1,102 @@
+@import "src/styles/mixins.scss";
+@import "src/styles/shared.scss";
+
+.search {
+    position: absolute;
+    display: grid;
+    grid-template-rows: 1fr 1fr auto;
+    grid-template-columns: 1fr;
+    height: calc(100% - var(--navigation-height));
+    width: 100%;
+    top: 0;
+    left: 0;
+
+    @include for-desktop {
+        top: unset;
+        bottom: 0;
+    }
+
+    .gridContainer {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    svg {
+        height: 2rem;
+        width: 2rem;
+    }
+
+    p {
+        margin-left: 0.3rem;
+        font-weight: 600;
+    }
+
+    .add {
+        width: fit-content;
+        @include button-text-low;
+    }
+
+    form {
+        width: 90%;
+        max-width: var(--max-form-width);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 0.5rem;
+
+        @include for-desktop {
+            margin-top: 1rem;
+        }
+
+        input {
+            @include input;
+            border-top-right-radius: 0 !important;
+            border-bottom-right-radius: 0 !important;
+        }
+
+        svg {
+            height: 1.5rem;
+            width: 1.5rem;
+        }
+
+        .button {
+            @include button;
+            border-top-left-radius: 0 !important;
+            border-bottom-left-radius: 0 !important;
+            width: fit-content !important;
+            padding: 0 1.1rem 0 0.9rem;
+
+            &.loading {
+                pointer-events: none;
+
+                svg {
+                    height: 1.5rem;
+                    width: 1.5rem;
+                }
+            }
+
+            .load {
+                @include spin;
+            }
+        }
+    }
+
+    .error {
+        transition: opacity 0.2s ease-in-out;
+        color: var(--red);
+        opacity: 0;
+        margin: 0.5rem 0;
+
+        @include for-desktop {
+            margin: 1rem 0;
+        }
+
+        &.visible {
+            opacity: 1;
+        }
+    }
+}

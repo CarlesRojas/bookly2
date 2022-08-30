@@ -1,3 +1,16 @@
+@mixin input {
+    height: var(--button-height);
+    width: 100%;
+    background-color: white;
+    border-radius: var(--borderRadius);
+    padding: 0.5rem 1.5rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+    &::placeholder {
+        opacity: 0.5;
+    }
+}
+
 @mixin button {
     display: flex;
     justify-content: center;
@@ -5,8 +18,10 @@
     height: var(--button-height);
     width: 100%;
     background-color: var(--purple);
-    border-radius: 0.3rem;
+    border-radius: var(--borderRadius);
     color: var(--textDark);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-weight: 600;
 
     @include for-mouse {
         opacity: 0.9;
@@ -53,7 +68,7 @@
     }
 
     @include for-mouse {
-        opacity: 0.9;
+        opacity: 0.7;
         cursor: pointer;
 
         &:hover {

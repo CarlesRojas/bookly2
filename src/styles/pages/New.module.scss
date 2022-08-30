@@ -2,40 +2,43 @@
 @import "src/styles/shared.scss";
 
 .new {
+    position: relative;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
     height: 100%;
     width: 100%;
 
-    .content {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-        width: 100%;
+    svg {
+        height: 2rem;
+        width: 2rem;
+    }
 
-        svg {
-            height: 2rem;
-            width: 2rem;
-        }
+    p {
+        margin-left: 0.3rem;
+        font-weight: 600;
+    }
 
-        p {
-            margin-left: 0.3rem;
-            font-weight: 600;
-        }
+    .buttonText {
+        margin: 1rem 0;
+        @include button-text;
+    }
 
-        .buttonText {
-            margin: 1rem 0;
-            @include button-text;
+    form {
+        width: 90%;
+        max-width: var(--max-form-width);
+
+        input {
+            margin-top: 1rem;
+            @include input;
         }
 
         .button {
             margin: 1rem 0;
             @include button;
 
-            &.disabled {
+            &.loading {
                 pointer-events: none;
 
                 svg {
@@ -48,45 +51,26 @@
                 @include spin;
             }
         }
+    }
 
-        form {
-            width: 90%;
-            max-width: var(--max-form-width);
+    .error {
+        transition: opacity 0.2s ease-in-out;
+        color: var(--red);
+        opacity: 0;
+        margin: 0.5rem 0;
 
-            input {
-                height: var(--button-height);
-                width: 100%;
-                background-color: white;
-                margin-top: 1rem;
-                border-radius: 0.3rem;
-                padding: 0.5rem 1rem;
-
-                &::placeholder {
-                    opacity: 0.5;
-                }
-            }
+        &.visible {
+            opacity: 1;
         }
+    }
 
-        .error {
-            transition: opacity 0.2s ease-in-out;
-            color: var(--red);
-            opacity: 0;
-            margin: 1rem 0;
+    .back {
+        position: absolute;
+        bottom: 0;
+        @include button-text-low;
 
-            &.visible {
-                opacity: 1;
-            }
-        }
-
-        .back {
-            position: absolute;
-            height: var(--navigation-height) !important;
-            bottom: 0;
-            @include button-text-low;
-
-            @include for-desktop {
-                position: relative;
-            }
+        @include for-desktop {
+            position: relative;
         }
     }
 }

@@ -50,61 +50,56 @@ const New: NextPage = () => {
     const isWaiting = isLoading || isSuccess;
 
     return (
-        <div className={s.new}>
+        <>
             <Head>
                 <title>Bookly - New</title>
                 <meta name="description" content="View all the books you've read" />
             </Head>
 
-            <>
-                <div className={s.content}>
-                    <p>to add a book, search it here</p>
+            <div className={s.new}>
+                <p>to add a book, search it here</p>
 
-                    <a
-                        className={s.buttonText}
-                        target="_blank"
-                        href="https://www.goodreads.com/search/"
-                        rel="noopener noreferrer"
-                    >
-                        <RiExternalLinkLine />
-                        <p>goodreads</p>
-                    </a>
+                <a
+                    className={s.buttonText}
+                    target="_blank"
+                    href="https://www.goodreads.com/search/"
+                    rel="noopener noreferrer"
+                >
+                    <RiExternalLinkLine />
+                    <p>goodreads</p>
+                </a>
 
-                    <p>and paste the URL here</p>
+                <p>and paste the URL here</p>
 
-                    <form onSubmit={onSubmit}>
-                        <input
-                            value={inputValue}
-                            onChange={(event) => {
-                                setInputValue(event.target.value);
-                            }}
-                            type="text"
-                            name="goodReadsUrl"
-                            autoComplete="new-password"
-                            placeholder="https://www.goodreads.com/book/show/..."
-                        />
+                <form onSubmit={onSubmit}>
+                    <input
+                        value={inputValue}
+                        onChange={(event) => setInputValue(event.target.value)}
+                        type="text"
+                        autoComplete="new-password"
+                        placeholder="https://www.goodreads.com/book/show/..."
+                    />
 
-                        <button className={`${s.button} ${isWaiting ? s.disabled : ""}`}>
-                            {isWaiting ? (
-                                <RiLoader4Fill className={s.load} />
-                            ) : (
-                                <>
-                                    <RiAddLine />
-                                    <p>add book</p>
-                                </>
-                            )}
-                        </button>
-                    </form>
+                    <button className={`${s.button} ${isWaiting ? s.loading : ""}`}>
+                        {isWaiting && <RiLoader4Fill className={s.load} />}
 
-                    <p className={`${s.error} ${showError ? s.visible : ""}`}>{error}</p>
+                        {!isWaiting && (
+                            <>
+                                <RiAddLine />
+                                <p>add book</p>
+                            </>
+                        )}
+                    </button>
+                </form>
 
-                    <div className={s.back} onClick={() => router.back()}>
-                        <RiArrowLeftLine />
-                        <p>back</p>
-                    </div>
+                <p className={`${s.error} ${showError ? s.visible : ""}`}>{error}</p>
+
+                <div className={s.back} onClick={() => router.back()}>
+                    <RiArrowLeftLine />
+                    <p>back</p>
                 </div>
-            </>
-        </div>
+            </div>
+        </>
     );
 };
 
