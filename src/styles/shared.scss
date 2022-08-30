@@ -1,0 +1,63 @@
+@mixin button($backgroundColor: var(--purple)) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: var(--button-height);
+    width: 100%;
+    background-color: $backgroundColor;
+    border-radius: 0.3rem;
+    color: var(--textDark);
+
+    @include for-mouse {
+        opacity: 0.9;
+        cursor: pointer;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+}
+
+@mixin button-text($color: var(--purple)) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: var(--button-height);
+    width: 100%;
+    color: $color;
+
+    @include for-mouse {
+        opacity: 0.9;
+        cursor: pointer;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+}
+
+@mixin button-text-low() {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: var(--button-height);
+    width: 100%;
+    color: var(--textDark);
+
+    @include light {
+        color: var(--textLight);
+    }
+
+    @include dark {
+        color: var(--textDark);
+    }
+
+    @include for-mouse {
+        opacity: 0.9;
+        cursor: pointer;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+}
