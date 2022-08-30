@@ -1,10 +1,10 @@
-@mixin button($backgroundColor: var(--purple)) {
+@mixin button {
     display: flex;
     justify-content: center;
     align-items: center;
     height: var(--button-height);
     width: 100%;
-    background-color: $backgroundColor;
+    background-color: var(--purple);
     border-radius: 0.3rem;
     color: var(--textDark);
 
@@ -18,13 +18,13 @@
     }
 }
 
-@mixin button-text($color: var(--purple)) {
+@mixin button-text {
     display: flex;
     justify-content: center;
     align-items: center;
     height: var(--button-height);
-    width: 100%;
-    color: $color;
+    color: var(--purple);
+    padding: 0 1rem;
 
     @include for-mouse {
         opacity: 0.9;
@@ -41,8 +41,8 @@
     justify-content: center;
     align-items: center;
     height: var(--button-height);
-    width: 100%;
     color: var(--textDark);
+    padding: 0 1rem;
 
     @include light {
         color: var(--textLight);
@@ -58,6 +58,24 @@
 
         &:hover {
             opacity: 1;
+        }
+    }
+}
+
+@mixin spin {
+    animation: spin 1.5s ease-in-out infinite;
+
+    @keyframes spin {
+        0% {
+            animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+            transform: rotate(0);
+        }
+        50% {
+            animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+            transform: rotate(180deg);
+        }
+        100% {
+            transform: rotate(360deg);
         }
     }
 }

@@ -89,12 +89,12 @@ export const bookRouter = createProtectedRouter()
                 const { data } = await axios.get(goodReadsUrl);
                 bookData = data;
             } catch (error) {
-                throw new trpc.TRPCError({ code: "NOT_FOUND", message: "Book URL is not valid." });
+                throw new trpc.TRPCError({ code: "NOT_FOUND", message: "book URL is not valid" });
             }
             let $ = load(bookData);
 
             const goodReadsId = parseInt($("input#book_id").first().attr("value") || "");
-            if (isNaN(goodReadsId)) throw new trpc.TRPCError({ code: "NOT_FOUND", message: "Book ID not found." });
+            if (isNaN(goodReadsId)) throw new trpc.TRPCError({ code: "NOT_FOUND", message: "book ID not found" });
 
             const title = allTrim($("#bookTitle").contents().first().text());
 
@@ -126,11 +126,11 @@ export const bookRouter = createProtectedRouter()
             const coverSrc = $("#coverImage").attr("src") || "";
 
             const authorUrl = $("#bookAuthors > span[itemprop=author] > div > a").attr("href");
-            if (!authorUrl) throw new trpc.TRPCError({ code: "NOT_FOUND", message: "Author not found." });
+            if (!authorUrl) throw new trpc.TRPCError({ code: "NOT_FOUND", message: "author not found" });
 
             const authorId = authorUrl.replace("https://www.goodreads.com/author/show/", "").match(/.+?(?=[^0-9])/g);
             if (!authorId || !authorId.length || !authorId[0] || isNaN(parseInt(authorId[0])))
-                throw new trpc.TRPCError({ code: "NOT_FOUND", message: "Author ID not found." });
+                throw new trpc.TRPCError({ code: "NOT_FOUND", message: "author ID not found" });
 
             const goodReadsAuthorId = parseInt(authorId[0]);
 
@@ -139,7 +139,7 @@ export const bookRouter = createProtectedRouter()
                 const { data } = await axios.get(authorUrl);
                 authorData = data;
             } catch (error) {
-                throw new trpc.TRPCError({ code: "NOT_FOUND", message: "Author URL is not valid." });
+                throw new trpc.TRPCError({ code: "NOT_FOUND", message: "author URL is not valid" });
             }
             $ = load(authorData);
 
