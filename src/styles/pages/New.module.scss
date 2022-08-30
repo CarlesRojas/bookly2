@@ -49,6 +49,7 @@
             margin: 1rem 0;
             background-color: var(--purple);
             border-radius: 0.2rem;
+            color: var(--textDark);
 
             @include for-mouse {
                 opacity: 0.9;
