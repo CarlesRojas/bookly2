@@ -19,7 +19,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 const New: NextPage = () => {
     const router = useRouter();
-    const { mutate: addBook, isLoading, isSuccess } = trpc.useMutation(["book-add"]);
+    const { mutate: addBook, isLoading, isSuccess, error: mutateError } = trpc.useMutation(["book-add"]);
 
     const [inputValue, setInputValue] = useState("");
     const [error, setError] = useAutoResetState("", 3000);
@@ -47,10 +47,10 @@ const New: NextPage = () => {
             {!isLoading && !isSuccess && (
                 <>
                     <div className={s.content}>
-                        <p>search the book here</p>
+                        <p>to add a book, search it here</p>
 
                         <a
-                            className={s.button}
+                            className={s.buttonText}
                             target="_blank"
                             href="https://www.goodreads.com/search/"
                             rel="noopener noreferrer"
@@ -59,7 +59,7 @@ const New: NextPage = () => {
                             <p>goodreads</p>
                         </a>
 
-                        <p>and paste the link here</p>
+                        <p>and paste the URL here</p>
 
                         <form onSubmit={onSubmit}>
                             <input
@@ -70,6 +70,7 @@ const New: NextPage = () => {
                                 type="text"
                                 name="goodReadsUrl"
                                 autoComplete="new-password"
+                                placeholder="https://www.goodreads.com/book/show/..."
                             />
 
                             <button className={s.button}>
@@ -78,7 +79,9 @@ const New: NextPage = () => {
                             </button>
                         </form>
 
-                        <p className={`${s.error} ${error ? s.visible : ""}`}>{error || "-"}</p>
+                        <p className={`${s.error} ${error || mutateError ? s.visible : ""}`}>
+                            {error || mutateError?.message || "-"}
+                        </p>
                     </div>
 
                     <div className={s.close} onClick={() => router.back()}>

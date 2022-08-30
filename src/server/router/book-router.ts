@@ -84,7 +84,13 @@ export const bookRouter = createProtectedRouter()
         async resolve({ input }) {
             const { goodReadsUrl } = input;
 
-            const { data: bookData } = await axios.get(goodReadsUrl);
+            let bookData = null;
+            try {
+                const { data } = await axios.get(goodReadsUrl);
+                bookData = data;
+            } catch (error) {
+                throw new trpc.TRPCError({ code: "NOT_FOUND", message: "Book URL is not valid." });
+            }
             let $ = load(bookData);
 
             const goodReadsId = parseInt($("input#book_id").first().attr("value") || "");
@@ -96,6 +102,10 @@ export const bookRouter = createProtectedRouter()
             $("#description > span")
                 .get(1)
                 ?.children.forEach((child) => child.type === "text" && descriptionArray.push(child.data));
+            if (!descriptionArray.length)
+                $("#description > span")
+                    .get(0)
+                    ?.children.forEach((child) => child.type === "text" && descriptionArray.push(child.data));
             const description = descriptionArray.join("%%%");
 
             const publishedAt = allTrim(
@@ -124,7 +134,13 @@ export const bookRouter = createProtectedRouter()
 
             const goodReadsAuthorId = parseInt(authorId[0]);
 
-            const { data: authorData } = await axios.get(authorUrl);
+            let authorData = null;
+            try {
+                const { data } = await axios.get(authorUrl);
+                authorData = data;
+            } catch (error) {
+                throw new trpc.TRPCError({ code: "NOT_FOUND", message: "Author URL is not valid." });
+            }
             $ = load(authorData);
 
             const name = allTrim($("h1.authorName > span[itemprop=name]").contents().first().text());
@@ -133,6 +149,10 @@ export const bookRouter = createProtectedRouter()
             $("div.aboutAuthorInfo > span")
                 .get(1)
                 ?.children.forEach((child) => child.type === "text" && authorDescriptionArray.push(child.data));
+            if (!authorDescriptionArray.length)
+                $("div.aboutAuthorInfo > span")
+                    .get(0)
+                    ?.children.forEach((child) => child.type === "text" && authorDescriptionArray.push(child.data));
             const authorDescription = authorDescriptionArray.join("%%%");
 
             const photoSrc = $("img[itemprop=image]").attr("src") || "";

@@ -34,7 +34,7 @@
         align-items: center;
         justify-content: center;
         width: 90%;
-        max-width: 25rem;
+        max-width: var(--max-form-width);
         height: var(--button-height);
         background-color: #4385f4;
         border-radius: 0.2rem;
