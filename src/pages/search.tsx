@@ -1,3 +1,4 @@
+import Bookshelf from "@components/Bookshelf";
 import Navigation from "@components/Navigation";
 import { RoutePaths } from "@constants/routes";
 import useAutoResetState from "@hooks/useAutoResetState";
@@ -25,7 +26,7 @@ const Search: NextPage = () => {
         error: booksError,
     } = trpc.useQuery(["book-search", { query }]);
     const {
-        data: authorsData,
+        // data: authorsData, TODO show authors
         isLoading: authorsAreLoading,
         error: authorsError,
     } = trpc.useQuery(["author-search", { query }]);
@@ -56,7 +57,9 @@ const Search: NextPage = () => {
             </Head>
             <div className={s.search}>
                 <div className={s.gridContainer}></div>
-                <div className={s.gridContainer}>{booksData && booksData.map((bookData) => {})}</div>
+
+                <div className={s.gridContainer}>{booksData && <Bookshelf shelfName="books" books={booksData} />}</div>
+
                 <div className={s.gridContainer}>
                     <div className={s.add} onClick={() => console.log("add book")}>
                         <RiAddLine />

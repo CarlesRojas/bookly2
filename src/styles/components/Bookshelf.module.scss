@@ -1,0 +1,43 @@
+@import "src/styles/mixins.scss";
+@import "src/styles/shared.scss";
+
+.bookshelf {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    --shelfTitleHeight: 3rem;
+
+    .shelfName {
+        font-size: 1.1rem;
+        font-weight: bold;
+        height: var(--shelfTitleHeight);
+        display: flex;
+        align-items: flex-end;
+        padding: 0.5rem 1rem;
+
+        @include for-desktop {
+            padding: 0.5rem 2rem;
+        }
+    }
+
+    .container {
+        position: relative;
+        --margin: 1rem;
+        margin: var(--margin) 0;
+        width: 100%;
+        max-width: 100%;
+        height: calc(100% - calc(var(--shelfTitleHeight) + calc(var(--margin) * 2)));
+        align-items: center;
+        display: flex;
+        overflow-x: auto;
+        overflow-y: visible;
+        overscroll-behavior: contain;
+    }
+}
+
+.book {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+}

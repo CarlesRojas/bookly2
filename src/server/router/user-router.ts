@@ -5,25 +5,28 @@ import { createProtectedRouter } from "./protected-router";
 export const userRouter = createProtectedRouter()
     .query("get-reading", {
         async resolve({ ctx }) {
-            return await prisma.status.findMany({
-                where: { userId: ctx.session.user.id, status: BookStatus.READING },
-                include: { book: true },
+            return await prisma.book.findMany({
+                where: { statuses: { some: { userId: ctx.session.user.id, status: BookStatus.READING } } },
+                include: { author: true },
             });
         },
     })
     .query("get-want-to-read", {
         async resolve({ ctx }) {
-            return await prisma.status.findMany({
-                where: { userId: ctx.session.user.id, status: BookStatus.WANT_TO_READ },
-                include: { book: true },
+            return await prisma.book.findMany({
+                where: { statuses: { some: { userId: ctx.session.user.id, status: BookStatus.WANT_TO_READ } } },
+                include: { author: true },
             });
         },
     })
     .query("get-finished", {
         async resolve({ ctx }) {
-            return await prisma.status.findMany({
-                where: { userId: ctx.session.user.id, status: BookStatus.FINISHED },
-                include: { book: true },
+            return await prisma.book.findMany({
+                where: { statuses: { some: { userId: ctx.session.user.id, status: BookStatus.FINISHED } } },
+                include: {
+                    reads: { where: { userId: ctx.session.user.id } },
+                    statuses: { where: { userId: ctx.session.user.id } },
+                },
             });
         },
     });
