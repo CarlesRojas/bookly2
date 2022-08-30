@@ -8,14 +8,16 @@ interface BookshelfProps {
     books: BooksType;
     shelfName: string;
     rowHeight: number;
+    emptyMessage: string;
 }
 
 const REM_PX = 16;
 const TITLE_AND_AUTHOR_HEIGHT_IN_REM = 2.75;
-const SHELF_TITLE_HEIGHT_IN_REM = 3;
+const SHELF_TITLE_HEIGHT_IN_REM = 2.5;
+const PADDING_TOP_AND_BOTTOM = 0.5;
 
 const Bookshelf = (props: BookshelfProps) => {
-    const { books, shelfName, rowHeight } = props;
+    const { books, shelfName, rowHeight, emptyMessage } = props;
 
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -33,7 +35,8 @@ const Bookshelf = (props: BookshelfProps) => {
         };
     }, []);
 
-    const coverHeight = rowHeight - (TITLE_AND_AUTHOR_HEIGHT_IN_REM + SHELF_TITLE_HEIGHT_IN_REM) * REM_PX;
+    const coverHeight =
+        rowHeight - (TITLE_AND_AUTHOR_HEIGHT_IN_REM + SHELF_TITLE_HEIGHT_IN_REM + PADDING_TOP_AND_BOTTOM * 2) * REM_PX;
 
     const coverStyle = {
         height: `${coverHeight}px`,
@@ -63,17 +66,20 @@ const Bookshelf = (props: BookshelfProps) => {
     });
 
     return (
-        <div className={s.bookshelf} style={{ "--shelfTitleHeight": SHELF_TITLE_HEIGHT_IN_REM } as CSSProperties}>
+        <div
+            className={s.bookshelf}
+            style={{ "--shelfTitleHeight": `${SHELF_TITLE_HEIGHT_IN_REM}rem` } as CSSProperties}
+        >
             <p className={s.shelfName}>{shelfName}</p>
 
             {books.length <= 0 && (
                 <div className={s.noBooks}>
-                    <p>no books match your query</p>
+                    <p>{emptyMessage}</p>
                 </div>
             )}
 
             {books.length > 0 && (
-                <div className={s.container} ref={containerRef}>
+                <div className={s.container} ref={containerRef} style={{ padding: `${PADDING_TOP_AND_BOTTOM}rem 0` }}>
                     {bookElems}
                 </div>
             )}

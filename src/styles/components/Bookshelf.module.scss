@@ -18,8 +18,10 @@
         display: flex;
         align-items: flex-end;
         height: var(--shelfTitleHeight);
+        min-height: var(--shelfTitleHeight);
+        max-height: var(--shelfTitleHeight);
         margin: 0 !important;
-        padding: 0.5rem var(--gap) 0;
+        padding: 0 var(--gap);
         font-size: 1.1rem;
         font-weight: bold;
     }
@@ -46,7 +48,6 @@
         max-width: 100%;
         overflow-x: auto;
         overflow-y: visible;
-        padding: var(--gap) 0;
         overscroll-behavior: contain;
         touch-action: auto;
     }
@@ -106,7 +107,7 @@
             overflow: hidden;
             opacity: 0.4;
             margin: 0 !important;
-            font-size: 0.7em;
+            font-size: 0.75em;
             font-weight: normal !important;
             text-align: center;
             text-overflow: ellipsis;

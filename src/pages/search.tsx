@@ -80,14 +80,30 @@ const Search: NextPage = () => {
                         <p>search a book or an author...</p>
                     </div>
                 )}
-                {isWaiting && <Loading />}
+                {query && isWaiting && <Loading />}
 
                 {query && !isWaiting && (
                     <>
-                        <div className={s.rowContainer} style={{ height: `${rowHeight}px` }}></div>
+                        <div className={s.rowContainer} style={{ height: `${rowHeight}px` }}>
+                            {booksData && ( // TODO swap for authors
+                                <Bookshelf
+                                    shelfName="books"
+                                    books={booksData}
+                                    rowHeight={rowHeight}
+                                    emptyMessage="no books match your query"
+                                />
+                            )}
+                        </div>
 
                         <div className={s.rowContainer} style={{ height: `${rowHeight}px` }}>
-                            {booksData && <Bookshelf shelfName="books" books={booksData} rowHeight={rowHeight} />}
+                            {booksData && (
+                                <Bookshelf
+                                    shelfName="books"
+                                    books={booksData}
+                                    rowHeight={rowHeight}
+                                    emptyMessage="no books match your query"
+                                />
+                            )}
                         </div>
                     </>
                 )}
