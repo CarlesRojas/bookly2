@@ -25,7 +25,7 @@ const QUERY_COOKIE_NAME = "bookly2-query";
 
 const Search: NextPage = () => {
     const router = useRouter();
-    const [query, setQuery] = useState((window?.localStorage?.getItem(QUERY_COOKIE_NAME) as string) || "");
+    const [query, setQuery] = useState("");
 
     const {
         data: booksData,
@@ -74,6 +74,15 @@ const Search: NextPage = () => {
     }, true);
 
     const isWaiting = booksAreLoading || authorsAreLoading;
+
+    useEffect(() => {
+        const queryValue = window?.localStorage?.getItem(QUERY_COOKIE_NAME) as string;
+
+        if (!queryValue) return;
+
+        setQuery(queryValue);
+        setInputValue(queryValue);
+    }, []);
 
     return (
         <>
