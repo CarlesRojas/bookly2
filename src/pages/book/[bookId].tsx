@@ -1,17 +1,16 @@
 import Loading from "@components/Loading";
-import Navigation from "@components/Navigation";
 import { RoutePaths } from "@constants/routes";
 import { authOptions } from "@pages/api/auth/[...nextauth]";
 import { appRouter } from "@server/router";
 import { createContextInner } from "@server/router/context";
-import s from "@styles/pages/Book.module.scss";
+import s from "@styles/pages/BookAuthor.module.scss";
 import { createSSGHelpers } from "@trpc/react/ssg";
 import { trpc } from "@utils/trpc";
 import type { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { unstable_getServerSession } from "next-auth";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { RiArrowLeftLine, RiExternalLinkLine } from "react-icons/ri";
+import { RiArrowLeftLine, RiExternalLinkLine, RiHome5Line } from "react-icons/ri";
 import superjson from "superjson";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -75,7 +74,7 @@ const Book = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => 
 
                 <p className={s.title}>{title || "untitled"}</p>
 
-                <p className={s.author} onClick={() => router.push(`${RoutePaths.AUTHOR}/${authorGoodReadsId}`)}>
+                <p className={s.subtitle} onClick={() => router.push(`${RoutePaths.AUTHOR}/${authorGoodReadsId}`)}>
                     {name || "unknown author"}
                 </p>
 
@@ -104,12 +103,28 @@ const Book = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => 
         <>
             <Head>
                 <title>Bookly - Book</title>
-                <meta name="description" content="View all the books you've read" />
+                <meta name="description" content="Book details" />
             </Head>
 
             <div className={s.book}>{content}</div>
 
-            <Navigation />
+            <div className={s.nav}>
+                <div className={s.buttons}>
+                    <div className={s.container}>
+                        <div className={s.navButton} onClick={() => router.push(RoutePaths.HOME)}>
+                            <RiHome5Line />
+                            <p>home</p>
+                        </div>
+                    </div>
+
+                    <div className={s.container}>
+                        <div className={s.navButton} onClick={() => router.back()}>
+                            <RiArrowLeftLine />
+                            <p>back</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </>
     );
 };

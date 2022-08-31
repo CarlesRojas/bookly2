@@ -16,7 +16,7 @@ const Settings: NextPage = () => {
         <>
             <Head>
                 <title>Bookly - Settings</title>
-                <meta name="description" content="View all the books you've read" />
+                <meta name="description" content="Settings for Bookly" />
             </Head>
 
             <Navigation />

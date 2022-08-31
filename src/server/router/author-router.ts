@@ -10,6 +10,13 @@ export const authorRouter = createProtectedRouter()
 
             return await prisma.author.findUnique({
                 where: { goodReadsId: authorId },
+                include: {
+                    books: {
+                        include: {
+                            author: true,
+                        },
+                    },
+                },
             });
         },
     })

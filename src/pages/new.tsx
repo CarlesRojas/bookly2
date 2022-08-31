@@ -53,7 +53,7 @@ const New: NextPage = () => {
         <>
             <Head>
                 <title>Bookly - New</title>
-                <meta name="description" content="View all the books you've read" />
+                <meta name="description" content="Add a new book to Bookly" />
             </Head>
 
             <div className={s.new}>

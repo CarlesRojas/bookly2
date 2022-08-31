@@ -16,7 +16,7 @@ const Stats: NextPage = () => {
         <>
             <Head>
                 <title>Bookly - Stats</title>
-                <meta name="description" content="View all the books you've read" />
+                <meta name="description" content="View stats about the books you've read" />
             </Head>
 
             <Navigation />

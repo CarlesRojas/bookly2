@@ -1,7 +1,8 @@
 @import "src/styles/mixins.scss";
 @import "src/styles/shared.scss";
 
-.book {
+.book,
+.author {
     position: absolute;
     display: flex;
     flex-direction: column;
@@ -132,7 +133,7 @@
         pointer-events: none;
     }
 
-    .author {
+    .subtitle {
         width: fit-content;
         max-width: 100%;
         opacity: 0.5;
@@ -170,8 +171,70 @@
         }
     }
 
+    .rowContainer {
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: var(--marginBot);
+    }
+
     .button {
         touch-action: pan-y;
         margin-bottom: calc(var(--marginBot) * 2);
+    }
+}
+
+.nav {
+    position: absolute;
+    height: var(--navigation-height);
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    @include for-desktop {
+        top: 0;
+        bottom: unset;
+    }
+
+    .buttons {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        justify-content: center;
+        max-width: 20rem;
+
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .navButton {
+                @include button-text-low;
+                height: 100%;
+                width: fit-content;
+
+                svg {
+                    height: 1.5rem;
+                    width: 1.5rem;
+                }
+
+                p {
+                    margin-left: 0.3rem;
+                    font-weight: 600;
+                }
+            }
+        }
     }
 }
