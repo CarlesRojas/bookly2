@@ -1,5 +1,7 @@
+import { RoutePaths } from "@constants/routes";
 import s from "@styles/components/Authorshelf.module.scss";
 import { inferQueryOutput } from "@utils/trpc";
+import { useRouter } from "next/router";
 import { CSSProperties, useEffect, useRef } from "react";
 
 type AuthorsType = inferQueryOutput<"author-search">;
@@ -17,6 +19,7 @@ const SHELF_TITLE_HEIGHT_IN_REM = 2.5;
 const PADDING_TOP_AND_BOTTOM = 0.5;
 
 const Authorshelf = (props: AuthorshelfProps) => {
+    const router = useRouter();
     const { authors, shelfName, rowHeight, emptyMessage } = props;
 
     const containerRef = useRef<HTMLDivElement>(null);
@@ -48,7 +51,12 @@ const Authorshelf = (props: AuthorshelfProps) => {
         const { goodReadsId, name, photoSrc } = author;
 
         return (
-            <div className={s.author} key={goodReadsId} style={{ width: photoStyle.width }}>
+            <div
+                className={s.author}
+                key={goodReadsId}
+                style={{ width: photoStyle.width }}
+                onClick={() => router.push(`${RoutePaths.AUTHOR}/${goodReadsId}`)}
+            >
                 <div className={s.cover} style={photoStyle}>
                     <img style={{ borderRadius: photoStyle.borderRadius }} src={photoSrc} alt={"Photo of the author"} />
                 </div>

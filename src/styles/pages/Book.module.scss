@@ -1,0 +1,18 @@
+@import "src/styles/mixins.scss";
+@import "src/styles/shared.scss";
+
+.book {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - var(--navigation-height));
+    max-height: calc(100% - var(--navigation-height));
+    width: 100%;
+    top: 0;
+    left: 0;
+
+    @include for-desktop {
+        top: unset;
+        bottom: 0;
+    }
+}
