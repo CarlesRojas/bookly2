@@ -65,6 +65,7 @@ export const bookRouter = createProtectedRouter()
                 include: {
                     reads: { where: { userId: ctx.session.user.id } },
                     statuses: { where: { userId: ctx.session.user.id } },
+                    author: true,
                 },
             });
         },
