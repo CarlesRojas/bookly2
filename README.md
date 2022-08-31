@@ -2,11 +2,15 @@
 
 ## Planetscale
 
+Create a planetscale database called `main`, and create a branch from it called `shadow`.
+
+Open two terminals and run these commands. One in each terminal.
 `pscale connect bookly main --port 3309`
 `pscale connect bookly shadow --port 3310`
 
 ## Prisma
 
+Every time the model in `schema.prisma` changes, run:
 `npx prisma migrate dev`
 
 ## Docs
