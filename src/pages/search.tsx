@@ -21,9 +21,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return { props: {} };
 };
 
+const QUERY_COOKIE_NAME = "bookly2-query";
+
 const Search: NextPage = () => {
     const router = useRouter();
-    const [query, setQuery] = useState("");
+    const [query, setQuery] = useState((window?.localStorage?.getItem(QUERY_COOKIE_NAME) as string) || "");
 
     const {
         data: booksData,
@@ -36,7 +38,7 @@ const Search: NextPage = () => {
         error: authorsError,
     } = trpc.useQuery(["author-search", { query }]);
 
-    const [inputValue, setInputValue] = useState("");
+    const [inputValue, setInputValue] = useState(query);
     const [error, setError] = useState("-");
     const [showError, setShowError] = useAutoResetState(false, 3000);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -47,6 +49,7 @@ const Search: NextPage = () => {
         if (booksAreLoading || authorsAreLoading) return;
 
         inputRef.current?.blur();
+        window?.localStorage?.setItem(QUERY_COOKIE_NAME, inputValue);
         setQuery(inputValue);
     };
 
