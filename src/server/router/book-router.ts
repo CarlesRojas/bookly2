@@ -8,6 +8,22 @@ import { createProtectedRouter } from "./protected-router";
 
 const allTrim = (value: string) => value.replace(/\s+/g, " ").replace(/^\s+|\s+$/, "");
 
+const getText = (elem: any) => {
+    if (elem.type === "text") return [elem.data.replace("\n", "")];
+    if (elem.type === "tag") {
+        if (elem.name === "a" || elem.name === "i") {
+            return (elem.children as []).reduce(
+                (prev, child): string[] => [...prev, ...getText(child as any)],
+                [] as string[]
+            );
+        }
+
+        if (elem.name === "br") return ["¿¿"];
+    }
+
+    return [];
+};
+
 export const bookRouter = createProtectedRouter()
     .mutation("set-finished", {
         input: z.object({ bookId: z.number() }),
@@ -101,15 +117,18 @@ export const bookRouter = createProtectedRouter()
 
             const title = allTrim($("#bookTitle").contents().first().text());
 
-            const descriptionArray: string[] = [];
-            $("#description > span")
+            let descriptionArray = $("#description > span")
                 .get(1)
-                ?.children.forEach((child) => child.type === "text" && descriptionArray.push(child.data));
-            if (!descriptionArray.length)
-                $("#description > span")
+                ?.children.reduce((prev, child) => [...prev, ...getText(child as any)], [] as string[]);
+
+            if (!descriptionArray || descriptionArray.length <= 0)
+                descriptionArray = $("#description > span")
                     .get(0)
-                    ?.children.forEach((child) => child.type === "text" && descriptionArray.push(child.data));
-            const description = descriptionArray.join("%%%");
+                    ?.children.reduce((prev, child) => [...prev, ...getText(child as any)], [] as string[]);
+
+            const description = descriptionArray
+                ? descriptionArray.join("").replaceAll("¿¿¿¿", "%%%").replaceAll("¿¿", "")
+                : "";
 
             const publishedAt = allTrim(
                 $("#details > div")
@@ -148,15 +167,18 @@ export const bookRouter = createProtectedRouter()
 
             const name = allTrim($("h1.authorName > span[itemprop=name]").contents().first().text());
 
-            const authorDescriptionArray: string[] = [];
-            $("div.aboutAuthorInfo > span")
+            let authorDescriptionArray = $("div.aboutAuthorInfo > span")
                 .get(1)
-                ?.children.forEach((child) => child.type === "text" && authorDescriptionArray.push(child.data));
-            if (!authorDescriptionArray.length)
-                $("div.aboutAuthorInfo > span")
+                ?.children.reduce((prev, child) => [...prev, ...getText(child as any)], [] as string[]);
+
+            if (!authorDescriptionArray || authorDescriptionArray.length <= 0)
+                authorDescriptionArray = $("div.aboutAuthorInfo > span")
                     .get(0)
-                    ?.children.forEach((child) => child.type === "text" && authorDescriptionArray.push(child.data));
-            const authorDescription = authorDescriptionArray.join("%%%");
+                    ?.children.reduce((prev, child) => [...prev, ...getText(child as any)], [] as string[]);
+
+            const authorDescription = authorDescriptionArray
+                ? authorDescriptionArray.join("").replaceAll("¿¿¿¿", "%%%").replaceAll("¿¿", "")
+                : "";
 
             const photoSrc = $("img[itemprop=image]").attr("src") || "";
 
