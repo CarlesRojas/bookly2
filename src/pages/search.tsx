@@ -39,14 +39,18 @@ const Search: NextPage = () => {
     const [inputValue, setInputValue] = useState("");
     const [error, setError] = useState("-");
     const [showError, setShowError] = useAutoResetState(false, 3000);
+    const inputRef = useRef<HTMLInputElement>(null);
 
     const onSubmit = (event: FormEvent) => {
         event.preventDefault();
 
         if (booksAreLoading || authorsAreLoading) return;
 
+        inputRef.current?.blur();
         setQuery(inputValue);
     };
+
+    const [hideResults, setHideResults] = useState(false);
 
     useEffect(() => {
         if (booksError) setError(booksError?.message);
@@ -84,9 +88,9 @@ const Search: NextPage = () => {
                 {query && isWaiting && <Loading />}
 
                 {query && !isWaiting && (
-                    <>
+                    <div className={`${s.results} ${hideResults ? s.hide : ""}`}>
                         <div className={s.rowContainer} style={{ height: `${rowHeight}px` }}>
-                            {authorsData && ( // TODO swap for authors
+                            {authorsData && (
                                 <Authorshelf
                                     shelfName="authors"
                                     authors={authorsData}
@@ -106,7 +110,7 @@ const Search: NextPage = () => {
                                 />
                             )}
                         </div>
-                    </>
+                    </div>
                 )}
 
                 <div className={s.rowContainer} ref={searchRef}>
@@ -122,6 +126,9 @@ const Search: NextPage = () => {
                             type="text"
                             autoComplete="new-password"
                             placeholder="book or author..."
+                            onFocus={() => setHideResults(true)}
+                            onBlur={() => setHideResults(false)}
+                            ref={inputRef}
                         />
 
                         <button className={`${s.button} ${isWaiting ? s.loading : ""}`}>

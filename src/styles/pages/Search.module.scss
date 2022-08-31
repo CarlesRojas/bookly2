@@ -29,6 +29,23 @@
         pointer-events: none;
     }
 
+    .results {
+        transition: opacity 0.2s ease-in-out;
+        opacity: 1;
+
+        @include for-desktop {
+            transition: unset;
+        }
+
+        &.hide {
+            opacity: 0;
+
+            @include for-desktop {
+                opacity: 1;
+            }
+        }
+    }
+
     .rowContainer {
         position: relative;
         width: 100%;
