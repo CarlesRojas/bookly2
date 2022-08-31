@@ -1,3 +1,4 @@
+import Authorshelf from "@components/Authorshelf";
 import Bookshelf from "@components/Bookshelf";
 import Loading from "@components/Loading";
 import Navigation from "@components/Navigation";
@@ -30,7 +31,7 @@ const Search: NextPage = () => {
         error: booksError,
     } = trpc.useQuery(["book-search", { query }]);
     const {
-        // data: authorsData, TODO show authors
+        data: authorsData,
         isLoading: authorsAreLoading,
         error: authorsError,
     } = trpc.useQuery(["author-search", { query }]);
@@ -85,12 +86,12 @@ const Search: NextPage = () => {
                 {query && !isWaiting && (
                     <>
                         <div className={s.rowContainer} style={{ height: `${rowHeight}px` }}>
-                            {booksData && ( // TODO swap for authors
-                                <Bookshelf
-                                    shelfName="books"
-                                    books={booksData}
+                            {authorsData && ( // TODO swap for authors
+                                <Authorshelf
+                                    shelfName="authors"
+                                    authors={authorsData}
                                     rowHeight={rowHeight}
-                                    emptyMessage="no books match your query"
+                                    emptyMessage="no authors match your query"
                                 />
                             )}
                         </div>
