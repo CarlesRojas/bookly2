@@ -246,4 +246,30 @@ export const bookRouter = createProtectedRouter()
                 where: { id: readId },
             });
         },
+    })
+    .query("get-rating", {
+        input: z.object({ bookId: z.number() }),
+        async resolve({ ctx, input }) {
+            const { bookId } = input;
+
+            return await prisma.status.findUnique({
+                where: { bookId_userId: { bookId, userId: ctx.session.user.id } },
+                select: { rating: true },
+            });
+        },
+    })
+    .mutation("set-rating", {
+        input: z.object({ bookId: z.number(), rating: z.number() }),
+        async resolve({ ctx, input }) {
+            const { bookId, rating } = input;
+
+            if (rating < 0 || rating > 5)
+                throw new trpc.TRPCError({ code: "BAD_REQUEST", message: "rating must be between 0 and 5" });
+
+            await prisma.status.upsert({
+                where: { bookId_userId: { bookId, userId: ctx.session.user.id } },
+                update: { rating },
+                create: { rating, status: BookStatus.FINISHED, bookId, userId: ctx.session.user.id },
+            });
+        },
     });

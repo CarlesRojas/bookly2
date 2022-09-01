@@ -1,4 +1,5 @@
 import Loading from "@components/Loading";
+import Rating from "@components/Rating";
 import { RoutePaths } from "@constants/routes";
 import { authOptions } from "@pages/api/auth/[...nextauth]";
 import { appRouter } from "@server/router";
@@ -78,11 +79,13 @@ const Book = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => 
                     {name || "unknown author"}
                 </p>
 
+                <div className={s.rating}>
+                    <Rating bookId={goodReadsId} />
+                </div>
+
                 {description && (
                     <div className={s.description}>
-                        {description.split("%%%").map((paragraph, i) => (
-                            <p key={i}>{paragraph}</p>
-                        ))}
+                        {description.split("%%%").map((paragraph, i) => paragraph && <p key={i}>{paragraph}</p>)}
                     </div>
                 )}
 

@@ -18,7 +18,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 const New: NextPage = () => {
     const router = useRouter();
-    const { mutate: addBook, isLoading, isSuccess, error: mutateError } = trpc.useMutation(["book-add"]);
+    const { mutate: addBook, isLoading, isSuccess, error: mutateError } = trpc.useMutation("book-add");
 
     const [inputValue, setInputValue] = useState("");
     const [error, setError] = useState("-");
