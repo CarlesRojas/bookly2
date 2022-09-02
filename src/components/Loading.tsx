@@ -1,10 +1,16 @@
 import s from "@styles/components/Loading.module.scss";
 import { RiLoader4Fill } from "react-icons/ri";
 
-const Loading = () => {
+interface LoadingProps {
+    small?: boolean;
+}
+
+const Loading = (props: LoadingProps) => {
+    const { small } = props;
+
     return (
         <div className={s.loading}>
-            <RiLoader4Fill />
+            <RiLoader4Fill className={small ? s.small : ""} />
         </div>
     );
 };

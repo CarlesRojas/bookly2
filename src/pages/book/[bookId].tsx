@@ -1,7 +1,9 @@
 import Loading from "@components/Loading";
 import Rating from "@components/Rating";
+import Status from "@components/Status";
 import { RoutePaths } from "@constants/routes";
 import { authOptions } from "@pages/api/auth/[...nextauth]";
+import { BookStatus } from "@prisma/client";
 import { appRouter } from "@server/router";
 import { createContextInner } from "@server/router/context";
 import s from "@styles/pages/BookAuthor.module.scss";
@@ -56,8 +58,11 @@ const Book = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => 
             </>
         );
     } else {
-        const { title, author, coverSrc, publishedAt, numPages, description, goodReadsId } = data;
+        const { title, author, coverSrc, publishedAt, numPages, description, goodReadsId, statuses } = data;
         const { name, goodReadsId: authorGoodReadsId } = author;
+
+        const status = statuses.length ? statuses[0] : null;
+        const bookIsFinished = status && status.status === BookStatus.FINISHED;
 
         content = (
             <>
@@ -79,9 +84,13 @@ const Book = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => 
                     {name || "unknown author"}
                 </p>
 
-                <div className={s.rating}>
-                    <Rating bookId={goodReadsId} />
-                </div>
+                <Status bookId={goodReadsId} />
+
+                {bookIsFinished && (
+                    <div className={s.rating}>
+                        <Rating bookId={goodReadsId} />
+                    </div>
+                )}
 
                 {description && (
                     <div className={s.description}>

@@ -1,9 +1,21 @@
+@import "src/styles/mixins.scss";
+
 .rating {
     position: relative;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     height: 100%;
     touch-action: none;
+
+    @include for-mouse {
+        &:hover {
+            cursor: grab;
+        }
+
+        &:active {
+            cursor: grabbing;
+        }
+    }
 
     .star {
         pointer-events: none;

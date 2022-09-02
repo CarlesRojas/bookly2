@@ -1,0 +1,82 @@
+@import "src/styles/mixins.scss";
+
+.status {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: max-height 0.2s ease-in-out;
+    height: 12rem;
+    max-height: 3rem;
+    width: 85%;
+    max-width: 15rem;
+    margin-bottom: var(--marginBot);
+    padding: 0 1.6rem;
+    font-weight: 600;
+    border: 1px solid var(--purple);
+    border-radius: 0.5rem;
+
+    &.expanded {
+        max-height: 12rem;
+    }
+
+    .option {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 3rem;
+        max-height: 3rem;
+        width: 100%;
+        color: var(--purple);
+        opacity: 0.8;
+
+        @include for-mouse {
+            cursor: pointer;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+    }
+
+    .newOption {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 3rem;
+        max-height: 3rem;
+        width: 100%;
+        opacity: 1;
+        transition: opacity 0.2s ease-in-out, max-height 0.2s ease-in-out;
+        height: 3rem;
+        max-height: 0rem;
+        opacity: 0;
+        pointer-events: none;
+
+        &.visible {
+            max-height: 3rem;
+            opacity: 0.6;
+            pointer-events: all;
+
+            @include for-mouse {
+                cursor: pointer;
+
+                &:hover {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+
+    .loadingContainer {
+        position: relative;
+        height: 3rem;
+        max-height: 3rem;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem;
+    }
+}
