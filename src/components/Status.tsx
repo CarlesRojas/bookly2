@@ -88,7 +88,7 @@ const Status = (props: StatusProps) => {
         setExpanded(false);
     };
 
-    const statusRef = useRef<HTMLDivElement | null>(null);
+    const statusRef = useRef<HTMLDivElement>(null);
     useClickOutsideRef(statusRef, handleClickOutside);
 
     return (

@@ -52,11 +52,14 @@ export const bookRouter = createProtectedRouter()
         async resolve({ ctx, input }) {
             const { bookId } = input;
 
-            await prisma.status.upsert({
-                where: { bookId_userId: { bookId, userId: ctx.session.user.id } },
-                update: { status: BookStatus.WANT_TO_READ },
-                create: { status: BookStatus.WANT_TO_READ, bookId, userId: ctx.session.user.id },
-            });
+            await Promise.all([
+                prisma.status.upsert({
+                    where: { bookId_userId: { bookId, userId: ctx.session.user.id } },
+                    update: { status: BookStatus.WANT_TO_READ },
+                    create: { status: BookStatus.WANT_TO_READ, bookId, userId: ctx.session.user.id },
+                }),
+                prisma.read.deleteMany({ where: { bookId, userId: ctx.session.user.id } }),
+            ]);
         },
     })
     .mutation("set-reading", {
@@ -64,11 +67,14 @@ export const bookRouter = createProtectedRouter()
         async resolve({ ctx, input }) {
             const { bookId } = input;
 
-            await prisma.status.upsert({
-                where: { bookId_userId: { bookId, userId: ctx.session.user.id } },
-                update: { status: BookStatus.READING },
-                create: { status: BookStatus.READING, bookId, userId: ctx.session.user.id },
-            });
+            await Promise.all([
+                await prisma.status.upsert({
+                    where: { bookId_userId: { bookId, userId: ctx.session.user.id } },
+                    update: { status: BookStatus.READING },
+                    create: { status: BookStatus.READING, bookId, userId: ctx.session.user.id },
+                }),
+                prisma.read.deleteMany({ where: { bookId, userId: ctx.session.user.id } }),
+            ]);
         },
     })
     .mutation("remove", {
@@ -76,9 +82,10 @@ export const bookRouter = createProtectedRouter()
         async resolve({ ctx, input }) {
             const { bookId } = input;
 
-            await prisma.status.delete({
-                where: { bookId_userId: { bookId, userId: ctx.session.user.id } },
-            });
+            await Promise.all([
+                prisma.status.delete({ where: { bookId_userId: { bookId, userId: ctx.session.user.id } } }),
+                prisma.read.deleteMany({ where: { bookId, userId: ctx.session.user.id } }),
+            ]);
         },
     })
     .query("get", {
@@ -89,7 +96,10 @@ export const bookRouter = createProtectedRouter()
             return await prisma.book.findUnique({
                 where: { goodReadsId: bookId },
                 include: {
-                    reads: { where: { userId: ctx.session.user.id } },
+                    reads: {
+                        where: { userId: ctx.session.user.id },
+                        orderBy: [{ year: "asc" }, { month: "asc" }],
+                    },
                     statuses: { where: { userId: ctx.session.user.id } },
                     author: true,
                 },
@@ -221,7 +231,7 @@ export const bookRouter = createProtectedRouter()
             });
         },
     })
-    .mutation("create-reread", {
+    .mutation("add-reread", {
         input: z.object({ bookId: z.number(), month: z.number(), year: z.number() }),
         async resolve({ ctx, input }) {
             const { bookId, month, year } = input;

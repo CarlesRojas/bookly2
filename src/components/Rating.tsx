@@ -19,7 +19,7 @@ const Rating = (props: RatingProps) => {
     const onMutationSuccess = () => trpcContext.invalidateQueries(["book-get"]);
     const { mutate: setRating } = trpc.useMutation("book-set-rating", { onSuccess: onMutationSuccess });
 
-    const containerRef = useRef<HTMLDivElement | null>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
     const containerBox = useRef<DOMRect | null>(null);
 
     const handleResize = () => {

@@ -1,0 +1,244 @@
+@import "src/styles/mixins.scss";
+
+.read {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: max-height 0.2s ease-in-out;
+    height: 17rem;
+    max-height: 3rem;
+    width: 85%;
+    max-width: 15rem;
+    margin-bottom: calc(var(--marginBot) * 0.5);
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.5rem;
+
+    @include light {
+        border: 1px solid rgba(0, 0, 0, 0.2);
+    }
+
+    @include dark {
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    &.expanded {
+        max-height: 17rem;
+    }
+
+    .main {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 3rem;
+        width: 100%;
+
+        .mainContainer {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 3rem;
+            width: 100%;
+            padding: 0 1.6rem;
+
+            @include for-mouse {
+                cursor: pointer;
+                opacity: 0.8;
+
+                &:hover {
+                    opacity: 1;
+                }
+            }
+
+            .label {
+                opacity: 0.5;
+                font-size: 0.85rem;
+            }
+
+            .date {
+                opacity: 0.8;
+                font-size: 1rem;
+                font-weight: 600;
+            }
+        }
+
+        .removeIcon {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: -3rem;
+            width: 3rem;
+            height: 3rem;
+            padding: 0.6rem;
+            opacity: 0.6;
+
+            @include for-mouse {
+                cursor: pointer;
+
+                &:hover {
+                    opacity: 1;
+                    color: var(--red);
+                }
+            }
+        }
+    }
+
+    .selector {
+        transition: opacity 0.2s ease-in-out, max-height 0.2s ease-in-out;
+        height: 14rem;
+        max-height: 0rem;
+        width: 100%;
+        opacity: 0;
+
+        &.visible {
+            max-height: 14rem;
+            opacity: 1;
+
+            .yearSelector {
+                max-height: 3rem;
+
+                .icon {
+                    max-height: 3rem;
+                }
+
+                .year {
+                    max-height: 3rem;
+                }
+            }
+
+            .monthSelector {
+                max-height: 8rem;
+
+                .month {
+                    max-height: 2rem;
+                }
+            }
+
+            .saveButton {
+                max-height: 3rem;
+            }
+        }
+
+        .yearSelector {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: max-height 0.2s ease-in-out;
+            height: 3rem;
+            max-height: 0rem;
+            width: 100%;
+
+            .icon {
+                transition: opacity 0.2s ease-in-out, max-height 0.2s ease-in-out;
+                height: 3rem;
+                width: 3rem;
+                max-height: 0rem;
+                opacity: 0.6;
+                padding: 0.5rem;
+                color: var(--textDark);
+
+                @include light {
+                    color: var(--textLight);
+                }
+
+                @include dark {
+                    color: var(--textDark);
+                }
+
+                @include for-mouse {
+                    cursor: pointer;
+
+                    &:hover {
+                        opacity: 1;
+                    }
+                }
+
+                &.disabled {
+                    pointer-events: none;
+                    opacity: 0.1;
+                }
+            }
+
+            .year {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: max-height 0.2s ease-in-out;
+                height: 3rem;
+                max-height: 0rem;
+                color: var(--purple);
+                opacity: 0.8;
+                font-size: 1rem;
+                font-weight: 600;
+            }
+        }
+
+        .monthSelector {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            transition: max-height 0.2s ease-in-out;
+            height: 8rem;
+            max-height: 0rem;
+
+            .month {
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: max-height 0.2s ease-in-out;
+                height: 2rem;
+                max-height: 0rem;
+                opacity: 0.8;
+                font-size: 1rem;
+                font-weight: 600;
+
+                @include for-mouse {
+                    cursor: pointer;
+
+                    &:hover {
+                        opacity: 1;
+                    }
+                }
+
+                &.selected {
+                    color: var(--purple);
+                }
+
+                &.disabled {
+                    pointer-events: none;
+                    opacity: 0.1;
+                }
+            }
+        }
+
+        .saveButton {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: max-height 0.2s ease-in-out;
+            height: 3rem;
+            max-height: 0rem;
+            width: 100%;
+            color: var(--purple);
+            font-weight: 600;
+
+            @include for-mouse {
+                opacity: 0.8;
+                cursor: pointer;
+
+                &:hover {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+}

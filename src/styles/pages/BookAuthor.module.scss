@@ -137,7 +137,6 @@
         max-width: 100%;
         opacity: 0.5;
         margin-bottom: var(--marginBot);
-        font-size: 1rem;
         touch-action: pan-y;
         text-align: center;
 
@@ -148,6 +147,22 @@
             &:hover {
                 opacity: 0.8;
             }
+        }
+    }
+
+    .addReread {
+        @include button-text-low;
+        width: fit-content;
+        margin-bottom: var(--marginBot);
+
+        svg {
+            height: 1.5rem;
+            width: 1.5rem;
+        }
+
+        p {
+            margin-left: 0.3rem;
+            font-weight: 600;
         }
     }
 

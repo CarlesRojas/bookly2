@@ -1,5 +1,6 @@
 import Loading from "@components/Loading";
 import Rating from "@components/Rating";
+import Read from "@components/Read";
 import Status from "@components/Status";
 import { RoutePaths } from "@constants/routes";
 import { authOptions } from "@pages/api/auth/[...nextauth]";
@@ -13,7 +14,7 @@ import type { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { unstable_getServerSession } from "next-auth";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { RiArrowLeftLine, RiExternalLinkLine, RiHome5Line } from "react-icons/ri";
+import { RiAddLine, RiArrowLeftLine, RiExternalLinkLine, RiHome5Line } from "react-icons/ri";
 import superjson from "superjson";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -36,8 +37,21 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 const Book = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
     const router = useRouter();
+    const trpcContext = trpc.useContext();
+
     const { bookId } = props;
     const { data, isLoading, error } = trpc.useQuery(["book-get", { bookId }]);
+
+    const onMutationSuccess = () => trpcContext.invalidateQueries(["book-get"]);
+    const { mutate: addReread } = trpc.useMutation(["book-add-reread"], { onSuccess: onMutationSuccess });
+
+    const onAddReread = () => {
+        const today = new Date();
+        const currYear = today.getFullYear();
+        const currMonth = today.getMonth();
+
+        addReread({ bookId, month: currMonth, year: currYear });
+    };
 
     let content = null;
     if (!data) {
@@ -58,7 +72,7 @@ const Book = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => 
             </>
         );
     } else {
-        const { title, author, coverSrc, publishedAt, numPages, description, goodReadsId, statuses } = data;
+        const { title, author, coverSrc, publishedAt, numPages, description, goodReadsId, statuses, reads } = data;
         const { name, goodReadsId: authorGoodReadsId } = author;
 
         const status = statuses.length ? statuses[0] : null;
@@ -90,6 +104,30 @@ const Book = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => 
                     <div className={s.rating}>
                         <Rating bookId={goodReadsId} rating={status.rating} />
                     </div>
+                )}
+
+                {reads && reads.length > 0 && (
+                    <>
+                        {reads.map((read, i) => {
+                            const first = i === 0;
+                            const lowerYear = first ? 1 : reads[0]?.year || 1;
+                            const lowerMonth = first ? -1 : reads[0]?.month || -1;
+                            return (
+                                <Read
+                                    key={read.id}
+                                    read={read}
+                                    first={first}
+                                    lowerYear={lowerYear}
+                                    lowerMonth={lowerMonth}
+                                />
+                            );
+                        })}
+
+                        <div className={s.addReread} onClick={onAddReread}>
+                            <RiAddLine className={s.icon} />
+                            <p>add reread</p>
+                        </div>
+                    </>
                 )}
 
                 {description && (
