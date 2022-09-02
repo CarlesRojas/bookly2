@@ -8,8 +8,6 @@ import { RiArrowLeftSFill, RiArrowRightSFill, RiCloseLine } from "react-icons/ri
 export interface ReadProps {
     read: Read;
     first: boolean;
-    lowerYear: number;
-    lowerMonth: number;
 }
 
 const MONTHS = [
@@ -29,7 +27,7 @@ const MONTHS = [
 const MONTH_NAMES_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 const Read = (props: ReadProps) => {
-    const { read, first, lowerYear, lowerMonth } = props;
+    const { read, first } = props;
     const trpcContext = trpc.useContext();
 
     const onMutationSuccess = () => trpcContext.invalidateQueries(["book-get"]);
@@ -38,7 +36,6 @@ const Read = (props: ReadProps) => {
 
     const today = new Date();
     const currYear = today.getFullYear();
-    const currMonth = today.getMonth();
 
     const [month, setMonth] = useState(read.month);
     const [year, setYear] = useState(read.year);
@@ -85,7 +82,7 @@ const Read = (props: ReadProps) => {
             <div className={`${s.selector} ${expanded ? s.visible : ""}`}>
                 <div className={s.yearSelector}>
                     <RiArrowLeftSFill
-                        className={`${s.icon} ${year <= 1 || year <= lowerYear ? s.disabled : ""}`}
+                        className={`${s.icon} ${year <= 1 ? s.disabled : ""}`}
                         onClick={() => setYear((prev) => --prev)}
                     />
 
@@ -100,11 +97,7 @@ const Read = (props: ReadProps) => {
                 <div className={s.monthSelector}>
                     {MONTH_NAMES_SHORT.map((monthName, i) => (
                         <div
-                            className={`${s.month} ${month === i ? s.selected : ""} ${
-                                (year === currYear && i > currMonth) || (year === lowerYear && i < lowerMonth)
-                                    ? s.disabled
-                                    : ""
-                            }`}
+                            className={`${s.month} ${month === i ? s.selected : ""}`}
                             onClick={() => setMonth(i)}
                             key={monthName}
                         >

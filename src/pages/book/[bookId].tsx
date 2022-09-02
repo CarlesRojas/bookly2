@@ -108,20 +108,9 @@ const Book = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => 
 
                 {reads && reads.length > 0 && (
                     <>
-                        {reads.map((read, i) => {
-                            const first = i === 0;
-                            const lowerYear = first ? 1 : reads[0]?.year || 1;
-                            const lowerMonth = first ? -1 : reads[0]?.month || -1;
-                            return (
-                                <Read
-                                    key={read.id}
-                                    read={read}
-                                    first={first}
-                                    lowerYear={lowerYear}
-                                    lowerMonth={lowerMonth}
-                                />
-                            );
-                        })}
+                        {reads.map((read, i) => (
+                            <Read key={read.id} read={read} first={i === 0} />
+                        ))}
 
                         <div className={s.addReread} onClick={onAddReread}>
                             <RiAddLine className={s.icon} />
