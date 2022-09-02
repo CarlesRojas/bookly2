@@ -21,7 +21,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return { props: {} };
 };
 
-const QUERY_COOKIE_NAME = "bookly2-query";
+export const QUERY_COOKIE_NAME = "bookly2-query";
 
 const Search: NextPage = () => {
     const router = useRouter();

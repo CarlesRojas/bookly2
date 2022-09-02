@@ -1,18 +1,19 @@
 import { RoutePaths } from "@constants/routes";
-import { useRouter } from "next/router";
+import { QUERY_COOKIE_NAME } from "@pages/search";
 import s from "@styles/components/Navigation.module.scss";
+import { useRouter } from "next/router";
 import { CSSProperties, useRef } from "react";
 import {
+    RiBarChart2Fill,
+    RiBarChart2Line,
     RiBook2Fill,
     RiBook2Line,
-    RiCheckboxCircleLine,
     RiCheckboxCircleFill,
+    RiCheckboxCircleLine,
     RiSearchFill,
     RiSearchLine,
-    RiBarChart2Line,
-    RiBarChart2Fill,
-    RiSettingsLine,
     RiSettingsFill,
+    RiSettingsLine,
 } from "react-icons/ri";
 
 interface NavigationItem {
@@ -65,6 +66,7 @@ const Navigation = () => {
     ]);
 
     const onNavigationItemClick = (route: RoutePaths) => {
+        window?.localStorage?.removeItem(QUERY_COOKIE_NAME);
         router.push(route);
     };
 
