@@ -84,11 +84,11 @@ const Book = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => 
                     {name || "unknown author"}
                 </p>
 
-                <Status bookId={goodReadsId} />
+                <Status bookId={goodReadsId} status={status?.status} />
 
                 {bookIsFinished && (
                     <div className={s.rating}>
-                        <Rating bookId={goodReadsId} />
+                        <Rating bookId={goodReadsId} rating={status.rating} />
                     </div>
                 )}
 

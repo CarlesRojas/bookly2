@@ -2,11 +2,12 @@ import useClickOutsideRef from "@hooks/useClickOutsideRef";
 import { BookStatus } from "@prisma/client";
 import s from "@styles/components/Status.module.scss";
 import { trpc } from "@utils/trpc";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import Loading from "./Loading";
 
 export interface StatusProps {
     bookId: number;
+    status?: BookStatus;
 }
 
 enum Action {
@@ -27,33 +28,21 @@ const OPTIONS_FOR_ACTION: { [key in Action]: Action[] } = {
     [Action.LOADING]: [Action.LOADING],
 };
 
-const getCurrentAction = (data: { status: BookStatus } | null | undefined): Action => {
-    if (!data) return Action.ADD_TO_LIBRARY;
-    const { status } = data;
-
-    if (status === BookStatus.FINISHED) return Action.FINISHED;
-    if (status === BookStatus.WANT_TO_READ) return Action.WANT_TO_READ;
-    if (status === BookStatus.READING) return Action.READING;
+const getCurrentAction = (bookStatus?: BookStatus): Action => {
+    if (bookStatus === BookStatus.FINISHED) return Action.FINISHED;
+    if (bookStatus === BookStatus.WANT_TO_READ) return Action.WANT_TO_READ;
+    if (bookStatus === BookStatus.READING) return Action.READING;
 
     return Action.ADD_TO_LIBRARY;
 };
 
 const Status = (props: StatusProps) => {
-    const { bookId } = props;
+    const { bookId, status } = props;
     const trpcContext = trpc.useContext();
 
-    const { data, isLoading } = trpc.useQuery(["book-get-status", { bookId }]);
-    const [currentAction, setCurrentAction] = useState(Action.LOADING);
+    const [currentAction, setCurrentAction] = useState(getCurrentAction(status));
 
-    useEffect(() => {
-        if (!isLoading) setCurrentAction(getCurrentAction(data));
-    }, [isLoading, data]);
-
-    const onMutationSuccess = () => {
-        trpcContext.invalidateQueries(["book-get-status"]);
-        trpcContext.invalidateQueries(["book-get-rating"]);
-        trpcContext.invalidateQueries(["book-get"]);
-    };
+    const onMutationSuccess = () => trpcContext.invalidateQueries(["book-get"]);
 
     const { mutate: setFinished } = trpc.useMutation("book-set-finished", { onSuccess: onMutationSuccess });
     const { mutate: setReading } = trpc.useMutation("book-set-reading", { onSuccess: onMutationSuccess });

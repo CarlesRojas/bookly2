@@ -5,7 +5,7 @@
     position: absolute;
     display: grid;
     grid-template-rows: 1fr 1fr;
-    grid-template-columns: 1fr;
+    grid-template-columns: 100%;
     height: calc(100% - var(--navigation-height));
     width: 100%;
     top: 0;

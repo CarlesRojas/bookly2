@@ -25,17 +25,6 @@ const getText = (elem: any) => {
 };
 
 export const bookRouter = createProtectedRouter()
-    .query("get-status", {
-        input: z.object({ bookId: z.number() }),
-        async resolve({ ctx, input }) {
-            const { bookId } = input;
-
-            return await prisma.status.findUnique({
-                where: { bookId_userId: { bookId, userId: ctx.session.user.id } },
-                select: { status: true },
-            });
-        },
-    })
     .mutation("set-finished", {
         input: z.object({ bookId: z.number() }),
         async resolve({ ctx, input }) {
@@ -265,17 +254,6 @@ export const bookRouter = createProtectedRouter()
 
             await prisma.read.delete({
                 where: { id: readId },
-            });
-        },
-    })
-    .query("get-rating", {
-        input: z.object({ bookId: z.number() }),
-        async resolve({ ctx, input }) {
-            const { bookId } = input;
-
-            return await prisma.status.findUnique({
-                where: { bookId_userId: { bookId, userId: ctx.session.user.id } },
-                select: { rating: true },
             });
         },
     })

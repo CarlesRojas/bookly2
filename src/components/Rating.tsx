@@ -1,4 +1,3 @@
-import useDidMount from "@hooks/useDidMount";
 import useResize from "@hooks/useResize";
 import s from "@styles/components/Rating.module.scss";
 import { trpc } from "@utils/trpc";
@@ -8,19 +7,17 @@ import { RiStarFill } from "react-icons/ri";
 
 export interface RatingProps {
     bookId: number;
+    rating: number;
 }
 
 const HEIGHT = 3 * 16;
 
 const Rating = (props: RatingProps) => {
-    const { bookId } = props;
+    const { bookId, rating } = props;
     const trpcContext = trpc.useContext();
-    const { data } = trpc.useQuery(["book-get-rating", { bookId }]);
-    const { mutate: setRating } = trpc.useMutation("book-set-rating", {
-        onSuccess() {
-            trpcContext.invalidateQueries(["book-get-rating"]);
-        },
-    });
+
+    const onMutationSuccess = () => trpcContext.invalidateQueries(["book-get"]);
+    const { mutate: setRating } = trpc.useMutation("book-set-rating", { onSuccess: onMutationSuccess });
 
     const containerRef = useRef<HTMLDivElement | null>(null);
     const containerBox = useRef<DOMRect | null>(null);
@@ -33,8 +30,8 @@ const Rating = (props: RatingProps) => {
     };
     useResize(handleResize, true);
 
-    const rating = useRef(false);
-    const [currRating, setCurrRating] = useState(data ? data.rating : 0);
+    const isRating = useRef(false);
+    const [currRating, setCurrRating] = useState(rating);
 
     const calculateNewMouseRating = useCallback(
         (event: MouseEvent | ReactMouseEvent) => {
@@ -78,7 +75,7 @@ const Rating = (props: RatingProps) => {
         (event: ReactMouseEvent) => {
             handleResize();
 
-            rating.current = true;
+            isRating.current = true;
             calculateNewMouseRating(event);
         },
         [calculateNewMouseRating]
@@ -88,7 +85,7 @@ const Rating = (props: RatingProps) => {
         (event: TouchEvent) => {
             handleResize();
 
-            rating.current = true;
+            isRating.current = true;
             calculateNewTouchRating(event);
         },
         [calculateNewTouchRating]
@@ -96,7 +93,7 @@ const Rating = (props: RatingProps) => {
 
     const handleMouseMove = useCallback(
         (event: MouseEvent) => {
-            if (rating.current) calculateNewMouseRating(event);
+            if (isRating.current) calculateNewMouseRating(event);
 
             return true;
         },
@@ -105,7 +102,7 @@ const Rating = (props: RatingProps) => {
 
     const handleTouchMove = useCallback(
         (event: TouchEvent) => {
-            if (rating.current) calculateNewTouchRating(event);
+            if (isRating.current) calculateNewTouchRating(event);
 
             return true;
         },
@@ -113,9 +110,9 @@ const Rating = (props: RatingProps) => {
     );
 
     const handleMouseUp = useCallback(() => {
-        if (!rating.current || Number.isNaN(currRating)) return;
+        if (!isRating.current || Number.isNaN(currRating)) return;
 
-        rating.current = false;
+        isRating.current = false;
         setRating({ bookId, rating: currRating });
     }, [currRating, setRating, bookId]);
 
@@ -128,10 +125,6 @@ const Rating = (props: RatingProps) => {
             window.removeEventListener("mouseup", handleMouseUp);
         };
     }, [handleMouseMove, handleMouseUp]);
-
-    useDidMount(() => {
-        setCurrRating(data ? data.rating : 0);
-    });
 
     const stars = [];
     for (let i = 0; i < 5; i++)
