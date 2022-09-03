@@ -10,6 +10,7 @@ import Loading from "./Loading";
 export interface ReadProps {
     read: Read;
     first: boolean;
+    disabled?: boolean;
 }
 
 const MONTHS = [
@@ -29,7 +30,7 @@ const MONTHS = [
 const MONTH_NAMES_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 const Read = (props: ReadProps) => {
-    const { read, first } = props;
+    const { read, first, disabled } = props;
     const trpcContext = trpc.useContext();
 
     const onMutationSuccess = () => trpcContext.invalidateQueries(["book-get"]);
@@ -79,7 +80,10 @@ const Read = (props: ReadProps) => {
     return (
         <div className={`${s.read} ${expanded ? s.expanded : ""}`} ref={statusRef}>
             <div className={s.main}>
-                <div className={`${s.mainContainer} ${updateIsLoading ? s.disabled : ""}`} onClick={handleExpandButton}>
+                <div
+                    className={`${s.mainContainer} ${updateIsLoading || disabled ? s.disabled : ""}`}
+                    onClick={handleExpandButton}
+                >
                     {updateIsLoading && <Loading small />}
 
                     {!updateIsLoading && (

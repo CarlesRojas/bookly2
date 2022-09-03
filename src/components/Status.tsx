@@ -1,13 +1,16 @@
 import useClickOutsideRef from "@hooks/useClickOutsideRef";
 import { BookStatus } from "@prisma/client";
 import s from "@styles/components/Status.module.scss";
-import { trpc } from "@utils/trpc";
 import { useCallback, useRef, useState } from "react";
 import Loading from "./Loading";
 
 export interface StatusProps {
     bookId: number;
     status?: BookStatus;
+    setFinished: any;
+    setReading: any;
+    setWantToRead: any;
+    remove: any;
 }
 
 enum Action {
@@ -37,17 +40,9 @@ const getCurrentAction = (bookStatus?: BookStatus): Action => {
 };
 
 const Status = (props: StatusProps) => {
-    const { bookId, status } = props;
-    const trpcContext = trpc.useContext();
+    const { bookId, status, setFinished, setReading, setWantToRead, remove } = props;
 
     const [currentAction, setCurrentAction] = useState(getCurrentAction(status));
-
-    const onMutationSuccess = () => trpcContext.invalidateQueries(["book-get"]);
-
-    const { mutate: setFinished } = trpc.useMutation("book-set-finished", { onSuccess: onMutationSuccess });
-    const { mutate: setReading } = trpc.useMutation("book-set-reading", { onSuccess: onMutationSuccess });
-    const { mutate: setWantToRead } = trpc.useMutation("book-set-want-to-read", { onSuccess: onMutationSuccess });
-    const { mutate: remove } = trpc.useMutation("book-remove", { onSuccess: onMutationSuccess });
 
     const [expanded, setExpanded] = useState(false);
 

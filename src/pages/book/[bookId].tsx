@@ -5,7 +5,7 @@ import Status from "@components/Status";
 import { RoutePaths } from "@constants/routes";
 import useMutationLoading from "@hooks/useMutationLoading";
 import { authOptions } from "@pages/api/auth/[...nextauth]";
-import { BookStatus } from "@prisma/client";
+import { BookStatus, Read as ReadType } from "@prisma/client";
 import { appRouter } from "@server/router";
 import { createContextInner } from "@server/router/context";
 import s from "@styles/pages/BookAuthor.module.scss";
@@ -44,10 +44,28 @@ const Book = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => 
     const { data, isLoading, error } = trpc.useQuery(["book-get", { bookId }]);
 
     const onMutationSuccess = () => trpcContext.invalidateQueries(["book-get"]);
+
     const { mutate: addReread, isLoading: addRereadLoading } = trpc.useMutation(["book-add-reread"], {
         onSuccess: onMutationSuccess,
     });
+    const { mutate: setFinished, isLoading: setFinishedLoading } = trpc.useMutation("book-set-finished", {
+        onSuccess: onMutationSuccess,
+    });
+    const { mutate: setReading, isLoading: setReadingLoading } = trpc.useMutation("book-set-reading", {
+        onSuccess: onMutationSuccess,
+    });
+    const { mutate: setWantToRead, isLoading: setWantToReadLoading } = trpc.useMutation("book-set-want-to-read", {
+        onSuccess: onMutationSuccess,
+    });
+    const { mutate: remove, isLoading: removeLoading } = trpc.useMutation("book-remove", {
+        onSuccess: onMutationSuccess,
+    });
+
     useMutationLoading(addRereadLoading);
+    useMutationLoading(setFinishedLoading);
+    useMutationLoading(setReadingLoading);
+    useMutationLoading(setWantToReadLoading);
+    useMutationLoading(removeLoading);
 
     const onAddReread = () => {
         const today = new Date();
@@ -79,8 +97,22 @@ const Book = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => 
         const { title, author, coverSrc, publishedAt, numPages, description, goodReadsId, statuses, reads } = data;
         const { name, goodReadsId: authorGoodReadsId } = author;
 
+        const today = new Date();
+        const currYear = today.getFullYear();
+        const currMonth = today.getMonth();
+
         const status = statuses.length ? statuses[0] : null;
-        const bookIsFinished = status && status.status === BookStatus.FINISHED;
+        const bookIsFinished = (status && status.status === BookStatus.FINISHED) || setFinishedLoading;
+        const defaultRead: ReadType = {
+            id: "fake",
+            bookId: -1,
+            userId: "fake",
+            month: currMonth,
+            year: currYear,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        };
+        const isLoadingRemoveRead = setReadingLoading || setWantToReadLoading || removeLoading;
 
         content = (
             <>
@@ -102,21 +134,33 @@ const Book = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => 
                     {name || "unknown author"}
                 </p>
 
-                <Status bookId={goodReadsId} status={status?.status} />
+                <Status
+                    bookId={goodReadsId}
+                    status={status?.status}
+                    remove={remove}
+                    setFinished={setFinished}
+                    setReading={setReading}
+                    setWantToRead={setWantToRead}
+                />
 
-                {bookIsFinished && (
+                {bookIsFinished && !isLoadingRemoveRead && (
                     <div className={s.rating}>
-                        <Rating bookId={goodReadsId} rating={status.rating} />
+                        <Rating bookId={goodReadsId} rating={status?.rating ?? 0} />
                     </div>
                 )}
 
-                {reads && reads.length > 0 && (
+                {bookIsFinished && !isLoadingRemoveRead && (
                     <>
+                        {setFinishedLoading && <Read read={defaultRead} first={true} disabled />}
+
                         {reads.map((read, i) => (
                             <Read key={read.id} read={read} first={i === 0} />
                         ))}
 
-                        <div className={`${s.addReread} ${addRereadLoading ? s.disabled : ""}`} onClick={onAddReread}>
+                        <div
+                            className={`${s.addReread} ${addRereadLoading || setFinishedLoading ? s.disabled : ""}`}
+                            onClick={onAddReread}
+                        >
                             {addRereadLoading && <Loading />}
                             {!addRereadLoading && (
                                 <>

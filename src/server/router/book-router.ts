@@ -33,7 +33,7 @@ export const bookRouter = createProtectedRouter()
             await Promise.all([
                 prisma.status.upsert({
                     where: { bookId_userId: { bookId, userId: ctx.session.user.id } },
-                    update: { status: BookStatus.FINISHED },
+                    update: { status: BookStatus.FINISHED, rating: 0 },
                     create: { status: BookStatus.FINISHED, bookId, userId: ctx.session.user.id },
                 }),
                 prisma.read.create({
@@ -55,7 +55,7 @@ export const bookRouter = createProtectedRouter()
             await Promise.all([
                 prisma.status.upsert({
                     where: { bookId_userId: { bookId, userId: ctx.session.user.id } },
-                    update: { status: BookStatus.WANT_TO_READ },
+                    update: { status: BookStatus.WANT_TO_READ, rating: 0 },
                     create: { status: BookStatus.WANT_TO_READ, bookId, userId: ctx.session.user.id },
                 }),
                 prisma.read.deleteMany({ where: { bookId, userId: ctx.session.user.id } }),
@@ -70,7 +70,7 @@ export const bookRouter = createProtectedRouter()
             await Promise.all([
                 await prisma.status.upsert({
                     where: { bookId_userId: { bookId, userId: ctx.session.user.id } },
-                    update: { status: BookStatus.READING },
+                    update: { status: BookStatus.READING, rating: 0 },
                     create: { status: BookStatus.READING, bookId, userId: ctx.session.user.id },
                 }),
                 prisma.read.deleteMany({ where: { bookId, userId: ctx.session.user.id } }),
