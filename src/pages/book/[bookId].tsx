@@ -3,6 +3,7 @@ import Rating from "@components/Rating";
 import Read from "@components/Read";
 import Status from "@components/Status";
 import { RoutePaths } from "@constants/routes";
+import useMutationLoading from "@hooks/useMutationLoading";
 import { authOptions } from "@pages/api/auth/[...nextauth]";
 import { BookStatus } from "@prisma/client";
 import { appRouter } from "@server/router";
@@ -43,7 +44,10 @@ const Book = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => 
     const { data, isLoading, error } = trpc.useQuery(["book-get", { bookId }]);
 
     const onMutationSuccess = () => trpcContext.invalidateQueries(["book-get"]);
-    const { mutate: addReread } = trpc.useMutation(["book-add-reread"], { onSuccess: onMutationSuccess });
+    const { mutate: addReread, isLoading: addRereadLoading } = trpc.useMutation(["book-add-reread"], {
+        onSuccess: onMutationSuccess,
+    });
+    useMutationLoading(addRereadLoading);
 
     const onAddReread = () => {
         const today = new Date();
@@ -112,9 +116,14 @@ const Book = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => 
                             <Read key={read.id} read={read} first={i === 0} />
                         ))}
 
-                        <div className={s.addReread} onClick={onAddReread}>
-                            <RiAddLine className={s.icon} />
-                            <p>add reread</p>
+                        <div className={`${s.addReread} ${addRereadLoading ? s.disabled : ""}`} onClick={onAddReread}>
+                            {addRereadLoading && <Loading />}
+                            {!addRereadLoading && (
+                                <>
+                                    <RiAddLine className={s.icon} />
+                                    <p>add reread</p>
+                                </>
+                            )}
                         </div>
                     </>
                 )}

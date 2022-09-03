@@ -4,7 +4,7 @@ import { ThemeProvider } from "@context/theme";
 import type { AppRouter } from "@server/router";
 import "@styles/globals.scss";
 import { httpBatchLink } from "@trpc/client/links/httpBatchLink";
-import { loggerLink } from "@trpc/client/links/loggerLink";
+// import { loggerLink } from "@trpc/client/links/loggerLink";
 import { withTRPC } from "@trpc/next";
 import { SessionProvider } from "next-auth/react";
 import type { AppType } from "next/dist/shared/lib/utils";
@@ -56,11 +56,11 @@ export default withTRPC<AppRouter>({
 
         return {
             links: [
-                loggerLink({
-                    enabled: (opts) =>
-                        process.env.NODE_ENV === "development" ||
-                        (opts.direction === "down" && opts.result instanceof Error),
-                }),
+                // loggerLink({
+                //     enabled: (opts) =>
+                //         process.env.NODE_ENV === "development" ||
+                //         (opts.direction === "down" && opts.result instanceof Error),
+                // }),
                 httpBatchLink({ url }),
             ],
             /**

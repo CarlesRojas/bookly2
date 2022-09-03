@@ -1,9 +1,11 @@
 import useClickOutsideRef from "@hooks/useClickOutsideRef";
+import useMutationLoading from "@hooks/useMutationLoading";
 import { Read } from "@prisma/client";
 import s from "@styles/components/Read.module.scss";
 import { trpc } from "@utils/trpc";
 import { useCallback, useRef, useState } from "react";
 import { RiArrowLeftSFill, RiArrowRightSFill, RiCloseLine } from "react-icons/ri";
+import Loading from "./Loading";
 
 export interface ReadProps {
     read: Read;
@@ -31,8 +33,15 @@ const Read = (props: ReadProps) => {
     const trpcContext = trpc.useContext();
 
     const onMutationSuccess = () => trpcContext.invalidateQueries(["book-get"]);
-    const { mutate: deleteReread } = trpc.useMutation(["book-delete-reread"], { onSuccess: onMutationSuccess });
-    const { mutate: updateReread } = trpc.useMutation(["book-update-reread"], { onSuccess: onMutationSuccess });
+    const { mutate: deleteReread, isLoading: deleteIsLoading } = trpc.useMutation(["book-delete-reread"], {
+        onSuccess: onMutationSuccess,
+    });
+    const { mutate: updateReread, isLoading: updateIsLoading } = trpc.useMutation(["book-update-reread"], {
+        onSuccess: onMutationSuccess,
+    });
+
+    useMutationLoading(deleteIsLoading);
+    useMutationLoading(updateIsLoading);
 
     const today = new Date();
     const currYear = today.getFullYear();
@@ -65,15 +74,23 @@ const Read = (props: ReadProps) => {
     const statusRef = useRef<HTMLDivElement>(null);
     useClickOutsideRef(statusRef, handleClickOutside);
 
+    if (deleteIsLoading) return null;
+
     return (
         <div className={`${s.read} ${expanded ? s.expanded : ""}`} ref={statusRef}>
             <div className={s.main}>
                 <div className={s.mainContainer} onClick={handleExpandButton}>
-                    <p className={s.label}>{first ? "finished on" : "read again on"}</p>
+                    {updateIsLoading && <Loading small />}
 
-                    <p className={s.date}>{`${read.month >= 0 && read.month <= 11 ? MONTHS[read.month] : ""} ${
-                        read.year
-                    }`}</p>
+                    {!updateIsLoading && (
+                        <>
+                            <p className={s.label}>{first ? "finished on" : "read again on"}</p>
+
+                            <p className={s.date}>{`${read.month >= 0 && read.month <= 11 ? MONTHS[read.month] : ""} ${
+                                read.year
+                            }`}</p>
+                        </>
+                    )}
                 </div>
 
                 {!first && <RiCloseLine className={s.removeIcon} onClick={onDeleteReread} />}

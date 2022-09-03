@@ -34,6 +34,7 @@ function EventsProvider({ children }: EventsProviderProps) {
 
     const emit = (eventName: string, data: any) => {
         const curerntEvent = events.current[eventName];
+        console.log(`Event fired: ${eventName}`);
         if (curerntEvent)
             curerntEvent.forEach(function (func) {
                 func(data);
@@ -49,4 +50,9 @@ function useEvents() {
     return context;
 }
 
-export { EventsProvider, useEvents };
+enum Events {
+    MUTATION_LOADING = "mutationLoading",
+    MUTATION_DONE = "mutationDone",
+}
+
+export { EventsProvider, useEvents, Events };
