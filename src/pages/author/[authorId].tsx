@@ -3,40 +3,24 @@ import Loading from "@components/Loading";
 import { RoutePaths } from "@constants/routes";
 import useResize from "@hooks/useResize";
 import { authOptions } from "@pages/api/auth/[...nextauth]";
-import { appRouter } from "@server/router";
-import { createContextInner } from "@server/router/context";
 import s from "@styles/pages/BookAuthor.module.scss";
-import { createSSGHelpers } from "@trpc/react/ssg";
 import { trpc } from "@utils/trpc";
-import type { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import { unstable_getServerSession } from "next-auth";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { RiArrowLeftLine, RiExternalLinkLine, RiHome5Line } from "react-icons/ri";
-import superjson from "superjson";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const session = await unstable_getServerSession(context.req, context.res, authOptions);
     if (!session) return { redirect: { destination: RoutePaths.LOGIN, permanent: false } };
-
-    const ssg = createSSGHelpers({
-        router: appRouter,
-        ctx: await createContextInner({ session }),
-        transformer: superjson,
-    });
-
-    const { query } = context;
-    const { authorId } = query;
-    const id = parseInt(authorId as string);
-    await ssg.prefetchQuery("author-get", { authorId: id });
-
-    return { props: { authorId: id, trpcState: ssg.dehydrate() } };
+    return { props: {} };
 };
 
-const Author = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const Author: NextPage = () => {
     const router = useRouter();
-    const { authorId } = props;
+    const authorId = parseInt(router.query.authorId as string);
     const { data, isLoading, error } = trpc.useQuery(["author-get", { authorId }]);
 
     const [rowHeight, setRowHeight] = useState(0);
