@@ -2,7 +2,7 @@ import { RoutePaths } from "@constants/routes";
 import { QUERY_COOKIE_NAME } from "@pages/search";
 import s from "@styles/components/Navigation.module.scss";
 import { useRouter } from "next/router";
-import { CSSProperties, useRef } from "react";
+import { CSSProperties, useRef, useState } from "react";
 import {
     RiBarChart2Fill,
     RiBarChart2Line,
@@ -19,7 +19,6 @@ import {
 interface NavigationItem {
     label: string;
     route: RoutePaths;
-    current: boolean;
     icon: JSX.Element;
     selectedIcon: JSX.Element;
 }
@@ -31,41 +30,43 @@ const Navigation = () => {
         {
             label: "home",
             route: RoutePaths.HOME,
-            current: RoutePaths.HOME === router.pathname,
             icon: <RiBook2Line />,
             selectedIcon: <RiBook2Fill />,
         },
         {
             label: "finished",
             route: RoutePaths.FINISHED,
-            current: RoutePaths.FINISHED === router.pathname,
             icon: <RiCheckboxCircleLine />,
             selectedIcon: <RiCheckboxCircleFill />,
         },
         {
             label: "search",
             route: RoutePaths.SEARCH,
-            current: RoutePaths.SEARCH === router.pathname,
             icon: <RiSearchLine />,
             selectedIcon: <RiSearchFill />,
         },
         {
             label: "stats",
             route: RoutePaths.STATS,
-            current: RoutePaths.STATS === router.pathname,
             icon: <RiBarChart2Line />,
             selectedIcon: <RiBarChart2Fill />,
         },
         {
             label: "settings",
             route: RoutePaths.SETTINGS,
-            current: RoutePaths.SETTINGS === router.pathname,
             icon: <RiSettingsLine />,
             selectedIcon: <RiSettingsFill />,
         },
     ]);
 
+    const [currentPath, setCurrentPath] = useState(router.pathname);
+    const changing = useRef(false);
+
     const onNavigationItemClick = (route: RoutePaths) => {
+        if (changing.current) return;
+        changing.current = true;
+        setCurrentPath(route);
+
         window?.localStorage?.removeItem(QUERY_COOKIE_NAME);
         router.push(route);
     };
@@ -73,14 +74,14 @@ const Navigation = () => {
     return (
         <div className={s.navigation}>
             <div className={s.container} style={{ "--num-items": navigationItems.current.length } as CSSProperties}>
-                {navigationItems.current.map(({ label, route, current, icon, selectedIcon }) => {
+                {navigationItems.current.map(({ label, route, icon, selectedIcon }) => {
                     return (
                         <div
                             key={route}
-                            className={`${s.item} ${current ? s.current : ""}`}
+                            className={`${s.item} ${route === currentPath ? s.current : ""}`}
                             onClick={() => onNavigationItemClick(route)}
                         >
-                            {current ? selectedIcon : icon}
+                            {route === currentPath ? selectedIcon : icon}
                             <p>{label}</p>
                         </div>
                     );
