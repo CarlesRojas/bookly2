@@ -3,7 +3,6 @@ import Rating from "@components/Rating";
 import Read from "@components/Read";
 import Status from "@components/Status";
 import { RoutePaths } from "@constants/routes";
-import useMutationLoading from "@hooks/useMutationLoading";
 import { authOptions } from "@pages/api/auth/[...nextauth]";
 import { BookStatus, Read as ReadType } from "@prisma/client";
 import { appRouter } from "@server/router";
@@ -60,12 +59,6 @@ const Book = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => 
     const { mutate: remove, isLoading: removeLoading } = trpc.useMutation("book-remove", {
         onSuccess: onMutationSuccess,
     });
-
-    useMutationLoading(addRereadLoading);
-    useMutationLoading(setFinishedLoading);
-    useMutationLoading(setReadingLoading);
-    useMutationLoading(setWantToReadLoading);
-    useMutationLoading(removeLoading);
 
     const onAddReread = () => {
         const today = new Date();

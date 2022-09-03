@@ -1,5 +1,4 @@
 import useClickOutsideRef from "@hooks/useClickOutsideRef";
-import useMutationLoading from "@hooks/useMutationLoading";
 import { Read } from "@prisma/client";
 import s from "@styles/components/Read.module.scss";
 import { trpc } from "@utils/trpc";
@@ -40,9 +39,6 @@ const Read = (props: ReadProps) => {
     const { mutate: updateReread, isLoading: updateIsLoading } = trpc.useMutation(["book-update-reread"], {
         onSuccess: onMutationSuccess,
     });
-
-    useMutationLoading(deleteIsLoading);
-    useMutationLoading(updateIsLoading);
 
     const today = new Date();
     const currYear = today.getFullYear();

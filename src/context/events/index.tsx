@@ -50,9 +50,6 @@ function useEvents() {
     return context;
 }
 
-enum Events {
-    MUTATION_LOADING = "mutationLoading",
-    MUTATION_DONE = "mutationDone",
-}
+enum Events {}
 
 export { EventsProvider, useEvents, Events };

@@ -1,4 +1,3 @@
-import useMutationLoading from "@hooks/useMutationLoading";
 import useResize from "@hooks/useResize";
 import s from "@styles/components/Rating.module.scss";
 import { trpc } from "@utils/trpc";
@@ -18,10 +17,9 @@ const Rating = (props: RatingProps) => {
     const trpcContext = trpc.useContext();
 
     const onMutationSuccess = () => trpcContext.invalidateQueries(["book-get"]);
-    const { mutate: setRating, isLoading: setRatingLoading } = trpc.useMutation("book-set-rating", {
+    const { mutate: setRating } = trpc.useMutation("book-set-rating", {
         onSuccess: onMutationSuccess,
     });
-    useMutationLoading(setRatingLoading);
 
     const containerRef = useRef<HTMLDivElement>(null);
     const containerBox = useRef<DOMRect | null>(null);
