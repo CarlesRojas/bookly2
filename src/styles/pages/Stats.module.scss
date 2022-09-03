@@ -5,14 +5,156 @@
     position: absolute;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
     height: calc(100% - var(--navigation-height));
     max-height: calc(100% - var(--navigation-height));
     width: 100%;
     top: 0;
     left: 0;
+    --statsMargin: 1rem;
 
     @include for-desktop {
         top: unset;
         bottom: 0;
+    }
+
+    .grid {
+        display: grid;
+        gap: var(--statsMargin);
+        grid-template-columns: 1fr 1fr;
+        width: calc(100% - calc(var(--statsMargin) * 2));
+        max-width: 25rem;
+        margin-bottom: var(--marginBot);
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: var(--statsMargin);
+
+            .value {
+                opacity: 0.8;
+                font-size: 1.6rem;
+                font-weight: 600;
+                text-align: center;
+                margin-bottom: 0.3rem;
+            }
+
+            .title {
+                opacity: 0.4;
+                font-size: 0.85rem;
+                font-weight: 500;
+                text-align: center;
+            }
+        }
+    }
+
+    .graph {
+        max-height: 20rem;
+        height: 100%;
+        touch-action: pan-x;
+        width: fit-content;
+        max-width: 100%;
+        overflow-x: auto;
+        overflow-y: visible;
+        display: grid;
+        gap: var(--statsMargin);
+        padding: 0 var(--statsMargin);
+
+        .column {
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            padding: var(--statsMargin) 0;
+            position: relative;
+
+            .barContainer {
+                position: relative;
+                flex: 1;
+                width: 1.5rem;
+                margin: var(--statsMargin) 0 0.5rem 0;
+
+                .bar {
+                    position: absolute;
+                    width: 100%;
+                    bottom: 0;
+                    left: 0;
+                    background-color: var(--purple);
+                    border-radius: 0.2rem;
+                }
+            }
+
+            .year {
+                color: var(--purple);
+                margin-bottom: var(--statsMargin);
+                font-size: 0.8rem;
+                font-weight: 600;
+                text-align: center;
+            }
+
+            .value {
+                opacity: 0.8;
+                margin-bottom: -0.15rem;
+                font-size: 0.7rem;
+                font-weight: 600;
+                text-align: center;
+            }
+
+            .unit {
+                opacity: 0.4;
+                font-size: 0.65rem;
+                font-weight: 600;
+                text-align: center;
+            }
+        }
+    }
+
+    .graphSwitch {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+        max-width: 30rem;
+        margin-top: var(--statsMargin);
+        margin-bottom: var(--marginBot);
+        gap: var(--statsMargin);
+        padding: 0 var(--statsMargin);
+
+        .switch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 3rem;
+            max-height: 3rem;
+            min-height: 3rem;
+            padding: 0 1.6rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-align: center;
+            border: 1px solid var(--purple);
+            border-radius: 0.5rem;
+
+            &.active {
+                background-color: var(--purple);
+                color: white;
+            }
+
+            @include for-mouse {
+                cursor: pointer;
+                opacity: 0.8;
+
+                &:hover {
+                    opacity: 1;
+                }
+            }
+        }
     }
 }

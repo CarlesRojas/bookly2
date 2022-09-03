@@ -30,6 +30,15 @@ export const userRouter = createProtectedRouter()
             });
         },
     })
+    .query("get-reads", {
+        async resolve({ ctx }) {
+            return await prisma.read.findMany({
+                where: { userId: ctx.session.user.id },
+                orderBy: { year: "desc" },
+                include: { book: true },
+            });
+        },
+    })
     .mutation("delete-account", {
         async resolve({ ctx }) {
             await prisma.user.delete({ where: { id: ctx.session.user.id } });
