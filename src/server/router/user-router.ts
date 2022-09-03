@@ -29,4 +29,9 @@ export const userRouter = createProtectedRouter()
                 },
             });
         },
+    })
+    .mutation("delete-account", {
+        async resolve({ ctx }) {
+            await prisma.user.delete({ where: { id: ctx.session.user.id } });
+        },
     });

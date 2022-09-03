@@ -32,10 +32,9 @@
 
     .button {
         @include button;
-        width: 90%;
-        max-width: var(--max-form-width);
-        background-color: #4385f4;
-        color: var(--textDark);
+        width: 95%;
+        max-width: 20rem;
+        border-radius: 0.5rem;
 
         svg {
             margin-right: 1rem;

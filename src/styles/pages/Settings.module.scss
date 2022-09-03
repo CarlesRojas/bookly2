@@ -1,0 +1,76 @@
+@import "src/styles/mixins.scss";
+@import "src/styles/shared.scss";
+
+.settings {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: calc(100% - var(--navigation-height));
+    max-height: calc(100% - var(--navigation-height));
+    width: 100%;
+    top: 0;
+    left: 0;
+
+    &.disable {
+        pointer-events: none;
+    }
+
+    @include for-desktop {
+        top: unset;
+        bottom: 0;
+    }
+
+    .button {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 3rem;
+        width: 95%;
+        max-width: 20rem;
+        margin-bottom: calc(var(--marginBot) * 0.5);
+        padding: 0 1.6rem;
+        font-weight: 600;
+        border: 1px solid var(--purple);
+        border-radius: 0.5rem;
+        overflow: hidden;
+
+        &:first-child {
+            margin-bottom: var(--marginBot);
+        }
+
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background-color: var(--purple);
+            opacity: 0.7;
+        }
+
+        p {
+            z-index: 1;
+        }
+
+        @include for-mouse {
+            opacity: 0.7;
+            cursor: pointer;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+    }
+
+    .subtitle {
+        font-size: 0.8rem;
+        opacity: 0.5;
+        width: 85%;
+        max-width: 15rem;
+        text-align: center;
+    }
+}
