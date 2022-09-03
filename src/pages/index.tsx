@@ -1,23 +1,14 @@
 import Bookshelf from "@components/Bookshelf";
 import Loading from "@components/Loading";
 import Navigation from "@components/Navigation";
-import { RoutePaths } from "@constants/routes";
 import useResize from "@hooks/useResize";
-import { authOptions } from "@pages/api/auth/[...nextauth]";
+import { NextPageWithAuth } from "@pages/_app";
 import s from "@styles/pages/Home.module.scss";
 import { trpc } from "@utils/trpc";
-import type { GetServerSideProps, NextPage } from "next";
-import { unstable_getServerSession } from "next-auth";
 import Head from "next/head";
 import { useRef, useState } from "react";
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    const session = await unstable_getServerSession(context.req, context.res, authOptions);
-    if (!session) return { redirect: { destination: RoutePaths.LOGIN, permanent: false } };
-    return { props: {} };
-};
-
-const Home: NextPage = () => {
+const Home: NextPageWithAuth = () => {
     const { data: readingData, isLoading: readingIsLoading } = trpc.useQuery(["user-get-reading"]);
     const { data: wantToReadData, isLoading: wantToReadIsLoading } = trpc.useQuery(["user-get-want-to-read"]);
 
@@ -74,4 +65,5 @@ const Home: NextPage = () => {
     );
 };
 
+Home.auth = true;
 export default Home;

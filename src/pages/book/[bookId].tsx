@@ -3,43 +3,19 @@ import Rating from "@components/Rating";
 import Read from "@components/Read";
 import Status from "@components/Status";
 import { RoutePaths } from "@constants/routes";
-import { authOptions } from "@pages/api/auth/[...nextauth]";
+import { NextPageWithAuth } from "@pages/_app";
 import { BookStatus } from "@prisma/client";
-import { appRouter } from "@server/router";
-import { createContextInner } from "@server/router/context";
 import s from "@styles/pages/BookAuthor.module.scss";
-import { createSSGHelpers } from "@trpc/react/ssg";
 import { trpc } from "@utils/trpc";
-import type { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import { unstable_getServerSession } from "next-auth";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { RiAddLine, RiArrowLeftLine, RiExternalLinkLine, RiHome5Line } from "react-icons/ri";
-import superjson from "superjson";
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    const session = await unstable_getServerSession(context.req, context.res, authOptions);
-    if (!session) return { redirect: { destination: RoutePaths.LOGIN, permanent: false } };
-
-    const ssg = createSSGHelpers({
-        router: appRouter,
-        ctx: await createContextInner({ session }),
-        transformer: superjson,
-    });
-
-    const { query } = context;
-    const { bookId } = query;
-    const id = parseInt(bookId as string);
-    await ssg.prefetchQuery("book-get", { bookId: id });
-
-    return { props: { bookId: id, trpcState: ssg.dehydrate() } };
-};
-
-const Book = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const Book: NextPageWithAuth = () => {
     const router = useRouter();
+    const bookId = parseInt(router.query.bookId as string);
     const trpcContext = trpc.useContext();
 
-    const { bookId } = props;
     const { data, isLoading, error } = trpc.useQuery(["book-get", { bookId }]);
 
     const onMutationSuccess = () => trpcContext.invalidateQueries(["book-get"]);
@@ -168,4 +144,5 @@ const Book = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => 
     );
 };
 
+Book.auth = true;
 export default Book;

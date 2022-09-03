@@ -1,28 +1,22 @@
-import { RoutePaths } from "@constants/routes";
-import { authOptions } from "@pages/api/auth/[...nextauth]";
+import useDidMount from "@hooks/useDidMount";
+import { getBaseUrl, NextPageWithAuth } from "@pages/_app";
 import s from "@styles/pages/auth/Login.module.scss";
-import type { GetServerSideProps, NextPage } from "next";
-import { unstable_getServerSession } from "next-auth";
-import { Provider } from "next-auth/providers";
-import { getProviders, signIn } from "next-auth/react";
+import { BuiltInProviderType } from "next-auth/providers";
+import { ClientSafeProvider, getProviders, LiteralUnion, signIn } from "next-auth/react";
 import Head from "next/head";
 import Image from "next/image";
+import { useState } from "react";
 import { RiGoogleFill } from "react-icons/ri";
 
-interface LoginProps {
-    providers: Provider[];
-}
+type ClienProvider = Record<LiteralUnion<BuiltInProviderType, string>, ClientSafeProvider>;
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    const providers = await getProviders();
-    const session = await unstable_getServerSession(context.req, context.res, authOptions);
+const Login: NextPageWithAuth = () => {
+    const [providers, setProviders] = useState<ClienProvider>();
 
-    if (session) return { redirect: { destination: RoutePaths.HOME, permanent: false } };
-    return { props: { providers } };
-};
-
-const Login: NextPage<LoginProps> = (props) => {
-    const { providers } = props;
+    useDidMount(async () => {
+        const providers = await getProviders();
+        if (providers) setProviders(providers);
+    });
 
     return (
         <div className={s.login}>
@@ -38,7 +32,11 @@ const Login: NextPage<LoginProps> = (props) => {
 
             {providers &&
                 Object.values(providers).map((provider) => (
-                    <div className={s.button} key={provider.name} onClick={() => signIn(provider.id)}>
+                    <div
+                        className={s.button}
+                        key={provider.name}
+                        onClick={() => signIn(provider.id, { callbackUrl: getBaseUrl() })}
+                    >
                         <RiGoogleFill />
                         <p>{`Sign in with ${provider.name}`}</p>
                     </div>
@@ -47,4 +45,5 @@ const Login: NextPage<LoginProps> = (props) => {
     );
 };
 
+Login.auth = false;
 export default Login;

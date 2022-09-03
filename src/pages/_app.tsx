@@ -1,4 +1,5 @@
 // src/pages/_app.tsx
+import Loading from "@components/Loading";
 import { EventsProvider } from "@context/events";
 import { ThemeProvider } from "@context/theme";
 import type { AppRouter } from "@server/router";
@@ -6,17 +7,33 @@ import "@styles/globals.scss";
 import { httpBatchLink } from "@trpc/client/links/httpBatchLink";
 import { loggerLink } from "@trpc/client/links/loggerLink";
 import { withTRPC } from "@trpc/next";
-import { SessionProvider } from "next-auth/react";
-import type { AppType } from "next/dist/shared/lib/utils";
+import type { NextComponentType, NextPage } from "next";
+import { SessionProvider, useSession } from "next-auth/react";
+import { AppProps } from "next/app";
 import Head from "next/head";
 import { useEffect } from "react";
 import superjson from "superjson";
 
-const MyApp: AppType = ({ Component, pageProps: { session, ...pageProps } }) => {
+interface AuthProps {
+    children: any;
+}
+
+const Auth = ({ children }: AuthProps) => {
+    const { status } = useSession({ required: true });
+    if (status === "loading") return <Loading />;
+    return children;
+};
+
+type AuthPageProps = AppProps & {
+    Component: NextComponentType & { auth?: boolean };
+};
+
+export type NextPageWithAuth = NextPage & { auth?: boolean };
+
+const MyApp = ({ Component, pageProps: { session, ...pageProps } }: AuthPageProps) => {
     useEffect(() => {
-        if ("serviceWorker" in navigator) {
+        if ("serviceWorker" in navigator)
             window.addEventListener("load", () => navigator.serviceWorker.register("/sw.mjs"));
-        }
     });
 
     return (
@@ -30,20 +47,31 @@ const MyApp: AppType = ({ Component, pageProps: { session, ...pageProps } }) => 
             </Head>
 
             <SessionProvider session={session}>
-                <EventsProvider>
-                    <ThemeProvider>
-                        <Component {...pageProps} />
-                    </ThemeProvider>
-                </EventsProvider>
+                {Component.auth ? (
+                    <Auth>
+                        <EventsProvider>
+                            <ThemeProvider>
+                                <Component {...pageProps} />
+                            </ThemeProvider>
+                        </EventsProvider>
+                    </Auth>
+                ) : (
+                    <Component {...pageProps} />
+                )}
             </SessionProvider>
         </>
     );
 };
 
-const getBaseUrl = () => {
-    if (typeof window !== "undefined") return ""; // browser should use relative url
-    if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`; // SSR should use vercel url
-    return `http://localhost:${process.env.PORT ?? 3000}`; // dev SSR should use localhost
+export const getBaseUrl = () => {
+    // browser should use relative url
+    if (typeof window !== "undefined") return "";
+
+    // SSR should use vercel url
+    if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+
+    // dev SSR should use localhost
+    return `http://localhost:${process.env.PORT ?? 3000}`;
 };
 
 export default withTRPC<AppRouter>({
@@ -61,7 +89,7 @@ export default withTRPC<AppRouter>({
                         process.env.NODE_ENV === "development" ||
                         (opts.direction === "down" && opts.result instanceof Error),
                 }),
-                httpBatchLink({ url }),
+                httpBatchLink({ url, maxBatchSize: 10 }),
             ],
             /**
              * @link https://react-query.tanstack.com/reference/QueryClient
@@ -77,11 +105,12 @@ export default withTRPC<AppRouter>({
                 },
             },
             url,
+            headers: { "x-ssr": "1" },
             transformer: superjson,
         };
     },
     /**
      * @link https://trpc.io/docs/ssr
      */
-    ssr: false,
+    ssr: true,
 })(MyApp);

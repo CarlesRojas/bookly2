@@ -5,25 +5,17 @@ import Navigation from "@components/Navigation";
 import { RoutePaths } from "@constants/routes";
 import useAutoResetState from "@hooks/useAutoResetState";
 import useResize from "@hooks/useResize";
-import { authOptions } from "@pages/api/auth/[...nextauth]";
+import { NextPageWithAuth } from "@pages/_app";
 import s from "@styles/pages/Search.module.scss";
 import { trpc } from "@utils/trpc";
-import type { GetServerSideProps, NextPage } from "next";
-import { unstable_getServerSession } from "next-auth";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { RiAddLine, RiLoader4Fill, RiSearchLine } from "react-icons/ri";
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    const session = await unstable_getServerSession(context.req, context.res, authOptions);
-    if (!session) return { redirect: { destination: RoutePaths.LOGIN, permanent: false } };
-    return { props: {} };
-};
-
 export const QUERY_COOKIE_NAME = "bookly2-query";
 
-const Search: NextPage = () => {
+const Search: NextPageWithAuth = () => {
     const router = useRouter();
     const [query, setQuery] = useState("");
 
@@ -158,4 +150,5 @@ const Search: NextPage = () => {
     );
 };
 
+Search.auth = true;
 export default Search;

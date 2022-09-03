@@ -1,22 +1,13 @@
-import { RoutePaths } from "@constants/routes";
 import useAutoResetState from "@hooks/useAutoResetState";
-import { authOptions } from "@pages/api/auth/[...nextauth]";
+import { NextPageWithAuth } from "@pages/_app";
 import s from "@styles/pages/New.module.scss";
 import { trpc } from "@utils/trpc";
-import type { GetServerSideProps, NextPage } from "next";
-import { unstable_getServerSession } from "next-auth";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { FormEvent, useEffect, useState } from "react";
 import { RiAddLine, RiArrowLeftLine, RiExternalLinkLine, RiLoader4Fill } from "react-icons/ri";
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    const session = await unstable_getServerSession(context.req, context.res, authOptions);
-    if (!session) return { redirect: { destination: RoutePaths.LOGIN, permanent: false } };
-    return { props: {} };
-};
-
-const New: NextPage = () => {
+const New: NextPageWithAuth = () => {
     const router = useRouter();
     const { mutate: addBook, isLoading, isSuccess, error: mutateError } = trpc.useMutation("book-add");
 
@@ -103,4 +94,5 @@ const New: NextPage = () => {
     );
 };
 
+New.auth = true;
 export default New;

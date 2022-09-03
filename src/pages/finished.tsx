@@ -1,17 +1,8 @@
 import Navigation from "@components/Navigation";
-import { RoutePaths } from "@constants/routes";
-import { authOptions } from "@pages/api/auth/[...nextauth]";
-import type { GetServerSideProps, NextPage } from "next";
-import { unstable_getServerSession } from "next-auth";
+import { NextPageWithAuth } from "@pages/_app";
 import Head from "next/head";
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    const session = await unstable_getServerSession(context.req, context.res, authOptions);
-    if (!session) return { redirect: { destination: RoutePaths.LOGIN, permanent: false } };
-    return { props: {} };
-};
-
-const Finished: NextPage = () => {
+const Finished: NextPageWithAuth = () => {
     return (
         <>
             <Head>
@@ -24,4 +15,5 @@ const Finished: NextPage = () => {
     );
 };
 
+Finished.auth = true;
 export default Finished;
