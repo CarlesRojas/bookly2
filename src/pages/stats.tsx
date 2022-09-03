@@ -1,3 +1,4 @@
+import Loading from "@components/Loading";
 import Navigation from "@components/Navigation";
 import { RoutePaths } from "@constants/routes";
 import { authOptions } from "@pages/api/auth/[...nextauth]";
@@ -27,6 +28,7 @@ interface StatsObject {
     maxPagesInAYear: number;
     maxBooksInAYear: number;
     years: number[];
+    calculated: boolean;
 }
 
 const DEFAULT_STATS: StatsObject = {
@@ -39,6 +41,7 @@ const DEFAULT_STATS: StatsObject = {
     maxPagesInAYear: 0,
     maxBooksInAYear: 0,
     years: [],
+    calculated: false,
 };
 
 const Stats: NextPage = () => {
@@ -86,6 +89,8 @@ const Stats: NextPage = () => {
         newStats.years = [];
         for (let i = maxYear; i >= minYear; i--) newStats.years.push(i);
 
+        newStats.calculated = true;
+
         stats.current = newStats;
         setRecalculated((prev) => prev + 1);
     }, [data, isLoading, error]);
@@ -100,6 +105,7 @@ const Stats: NextPage = () => {
         maxPagesInAYear,
         maxBooksInAYear,
         years,
+        calculated,
     } = stats.current;
 
     return (
@@ -110,66 +116,72 @@ const Stats: NextPage = () => {
             </Head>
 
             <div className={s.stats}>
-                <div className={s.grid}>
-                    <div className={s.stat}>
-                        <p className={s.value}>{totalNumBooksFinished}</p>
-                        <p className={s.title}>total number of books read</p>
-                    </div>
+                {!calculated && <Loading />}
 
-                    <div className={s.stat}>
-                        <p className={s.value}>{totalPagesRead}</p>
-                        <p className={s.title}>total number of pages read</p>
-                    </div>
+                {calculated && (
+                    <>
+                        <div className={s.grid}>
+                            <div className={s.stat}>
+                                <p className={s.value}>{totalNumBooksFinished}</p>
+                                <p className={s.title}>total number of books read</p>
+                            </div>
 
-                    <div className={s.stat}>
-                        <p className={s.value}>{averagePagesPerYear}</p>
-                        <p className={s.title}>average pages read per year</p>
-                    </div>
+                            <div className={s.stat}>
+                                <p className={s.value}>{totalPagesRead}</p>
+                                <p className={s.title}>total number of pages read</p>
+                            </div>
 
-                    <div className={s.stat}>
-                        <p className={s.value}>{parseFloat(averageBooksPerYear.toFixed(2))}</p>
-                        <p className={s.title}>average books read per year</p>
-                    </div>
-                </div>
+                            <div className={s.stat}>
+                                <p className={s.value}>{averagePagesPerYear}</p>
+                                <p className={s.title}>average pages read per year</p>
+                            </div>
 
-                {years.length > 0 && (
-                    <div className={s.graph} style={{ gridTemplateColumns: `repeat(${years.length}, 2.5rem)` }}>
-                        {years.map((year) => {
-                            const value = (booksSelected ? booksByYear[year] : bookPagesByYear[year]) ?? 0;
-                            const max = booksSelected ? maxBooksInAYear : maxPagesInAYear;
-                            const percentage = max > 0 ? (value / max) * 100 : 0;
-                            const unit = (booksSelected ? "book" : "page") + (value === 1 ? "" : "s");
+                            <div className={s.stat}>
+                                <p className={s.value}>{parseFloat(averageBooksPerYear.toFixed(2))}</p>
+                                <p className={s.title}>average books read per year</p>
+                            </div>
+                        </div>
 
-                            return (
-                                <div className={s.column} key={year}>
-                                    <div className={s.barContainer}>
-                                        <div className={s.bar} style={{ height: `${percentage}%` }}></div>
-                                    </div>
+                        {years.length > 0 && (
+                            <div className={s.graph} style={{ gridTemplateColumns: `repeat(${years.length}, 2.5rem)` }}>
+                                {years.map((year) => {
+                                    const value = (booksSelected ? booksByYear[year] : bookPagesByYear[year]) ?? 0;
+                                    const max = booksSelected ? maxBooksInAYear : maxPagesInAYear;
+                                    const percentage = max > 0 ? (value / max) * 100 : 0;
+                                    const unit = (booksSelected ? "book" : "page") + (value === 1 ? "" : "s");
 
-                                    <p className={s.year}>{year}</p>
-                                    <p className={s.value}>{value}</p>
-                                    <p className={s.unit}>{unit}</p>
+                                    return (
+                                        <div className={s.column} key={year}>
+                                            <div className={s.barContainer}>
+                                                <div className={s.bar} style={{ height: `${percentage}%` }}></div>
+                                            </div>
+
+                                            <p className={s.year}>{year}</p>
+                                            <p className={s.value}>{value}</p>
+                                            <p className={s.unit}>{unit}</p>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+
+                        {years.length > 0 && (
+                            <div className={s.graphSwitch}>
+                                <div
+                                    className={`${s.switch} ${booksSelected ? "" : s.active}`}
+                                    onClick={() => setBooksSelected(false)}
+                                >
+                                    pages per year
                                 </div>
-                            );
-                        })}
-                    </div>
-                )}
-
-                {years.length > 0 && (
-                    <div className={s.graphSwitch}>
-                        <div
-                            className={`${s.switch} ${booksSelected ? "" : s.active}`}
-                            onClick={() => setBooksSelected(false)}
-                        >
-                            pages per year
-                        </div>
-                        <div
-                            className={`${s.switch} ${booksSelected ? s.active : ""}`}
-                            onClick={() => setBooksSelected(true)}
-                        >
-                            books per year
-                        </div>
-                    </div>
+                                <div
+                                    className={`${s.switch} ${booksSelected ? s.active : ""}`}
+                                    onClick={() => setBooksSelected(true)}
+                                >
+                                    books per year
+                                </div>
+                            </div>
+                        )}
+                    </>
                 )}
             </div>
 
