@@ -5,14 +5,135 @@
     position: absolute;
     display: flex;
     flex-direction: column;
+    align-items: center;
     height: calc(100% - var(--navigation-height));
     max-height: calc(100% - var(--navigation-height));
     width: 100%;
     top: 0;
     left: 0;
+    --sortHeight: 3rem;
 
     @include for-desktop {
         top: unset;
         bottom: 0;
+    }
+
+    .sortGrid {
+        position: relative;
+        height: var(--sortHeight);
+        width: 100%;
+        max-width: 25rem;
+        display: grid;
+        gap: 0.5rem;
+        justify-content: center;
+        grid-template-columns: 3rem 1fr 1fr 1fr 1fr 3rem;
+        padding: 0.5rem;
+
+        &.absolute {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            max-width: 25rem;
+
+            .border {
+                border: 1px solid var(--purple);
+                border-radius: 0.5rem;
+                grid-column-start: 2;
+                grid-column-end: 6;
+                grid-row-start: 1;
+                grid-row-end: 1;
+            }
+        }
+
+        .sort {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            opacity: 0.4;
+
+            &.current {
+                color: var(--purple);
+                opacity: 1 !important;
+            }
+
+            @include for-mouse {
+                cursor: pointer;
+
+                &:hover {
+                    opacity: 1;
+                }
+            }
+        }
+
+        .direction {
+            transition: transform 0.2s ease-in-out;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: rotate(0deg);
+
+            &.asc {
+                transform: rotate(180deg);
+            }
+
+            svg {
+                width: 1.5rem;
+                height: 1.5rem;
+            }
+        }
+    }
+
+    .content {
+        position: relative;
+        width: 100%;
+        height: calc(100% - var(--sortHeight));
+        overflow-y: auto;
+        --gap: 1rem;
+        touch-action: pan-y;
+
+        .section {
+            position: relative;
+            width: 100%;
+            padding: 0 var(--gap);
+            touch-action: pan-y;
+
+            .sectionTitle {
+                font-size: 1.4rem;
+                font-weight: bold;
+                margin: var(--sortHeight) 0 0;
+                padding-bottom: calc(var(--gap) * 0.5);
+                position: sticky;
+                top: 0;
+                background-color: var(--backgroundDark);
+                z-index: 1;
+                color: var(--purple);
+                touch-action: pan-y;
+
+                @include light {
+                    background-color: var(--backgroundLight);
+                }
+
+                @include dark {
+                    background-color: var(--backgroundDark);
+                }
+            }
+
+            .books {
+                position: relative;
+                width: 100%;
+                display: grid;
+                gap: var(--gap);
+                touch-action: pan-y;
+                grid-template-columns: repeat(auto-fill, minmax(min(15rem, 40vw), 1fr));
+            }
+        }
     }
 }

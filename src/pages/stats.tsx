@@ -52,6 +52,8 @@ const Stats: NextPage = () => {
 
     const [booksSelected, setBooksSelected] = useState(false);
 
+    // TODO use scroll wheel to scroll graph
+
     useEffect(() => {
         if (isLoading || error || !data) return;
 
@@ -90,7 +92,6 @@ const Stats: NextPage = () => {
         for (let i = maxYear; i >= minYear; i--) newStats.years.push(i);
 
         newStats.calculated = true;
-
         stats.current = newStats;
         setRecalculated((prev) => prev + 1);
     }, [data, isLoading, error]);

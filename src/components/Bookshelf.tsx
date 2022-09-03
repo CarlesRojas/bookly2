@@ -59,7 +59,21 @@ const Bookshelf = (props: BookshelfProps) => {
                 onClick={() => router.push(`${RoutePaths.BOOK}/${goodReadsId}`)}
             >
                 <div className={s.cover} style={coverStyle}>
-                    <img style={{ borderRadius: coverStyle.borderRadius }} src={coverSrc} alt={"Cover for the book"} />
+                    {coverSrc && (
+                        <img
+                            style={{ borderRadius: coverStyle.borderRadius }}
+                            src={coverSrc}
+                            alt={"Cover for the book"}
+                        />
+                    )}
+
+                    {!coverSrc && (
+                        <img
+                            style={{ borderRadius: coverStyle.borderRadius }}
+                            src="/placeholderCover.png"
+                            alt={"cover for the book"}
+                        />
+                    )}
                 </div>
 
                 <div

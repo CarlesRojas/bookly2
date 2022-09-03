@@ -58,7 +58,21 @@ const Authorshelf = (props: AuthorshelfProps) => {
                 onClick={() => router.push(`${RoutePaths.AUTHOR}/${goodReadsId}`)}
             >
                 <div className={s.cover} style={photoStyle}>
-                    <img style={{ borderRadius: photoStyle.borderRadius }} src={photoSrc} alt={"Photo of the author"} />
+                    {photoSrc && (
+                        <img
+                            style={{ borderRadius: photoStyle.borderRadius }}
+                            src={photoSrc}
+                            alt={"Photo of the author"}
+                        />
+                    )}
+
+                    {!photoSrc && (
+                        <img
+                            style={{ borderRadius: photoStyle.borderRadius }}
+                            src="/placeholderPhoto.png"
+                            alt={"photo of the author"}
+                        />
+                    )}
                 </div>
 
                 <div className={s.info} style={{ height: `${AUTHOR_NAME_HEIGHT}rem`, width: photoStyle.width }}>

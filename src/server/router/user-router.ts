@@ -24,6 +24,7 @@ export const userRouter = createProtectedRouter()
             return await prisma.book.findMany({
                 where: { statuses: { some: { userId: ctx.session.user.id, status: BookStatus.FINISHED } } },
                 include: {
+                    author: true,
                     reads: { where: { userId: ctx.session.user.id } },
                     statuses: { where: { userId: ctx.session.user.id } },
                 },
