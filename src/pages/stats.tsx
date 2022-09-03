@@ -60,7 +60,7 @@ const Stats: NextPage = () => {
         let minYear = Number.MAX_VALUE;
         let maxYear = Number.MIN_VALUE;
 
-        const booksByYear: { [key: number]: (ReadBook & { book: Book })[] } = {};
+        const booksByYear: { [key: number]: ReadBook[] } = {};
         data.forEach((read) => {
             if (read.year in booksByYear) booksByYear[read.year]?.push(read);
             else booksByYear[read.year] = [read];
