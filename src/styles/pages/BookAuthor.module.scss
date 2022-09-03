@@ -180,7 +180,6 @@
         width: 100%;
         max-width: 50rem;
         opacity: 0.8;
-        margin-bottom: var(--marginBot);
         font-size: 0.9rem;
         font-weight: 500;
         line-height: 1.3rem;
@@ -192,6 +191,39 @@
             &:last-child {
                 margin-bottom: var(--marginBot);
             }
+        }
+    }
+
+    .authorPreview {
+        width: fit-content;
+        margin-bottom: calc(var(--marginBot) * 2);
+
+        @include for-mouse {
+            transform: scale(1);
+            cursor: pointer;
+
+            &:hover {
+                transform: scale(1.03);
+                opacity: 1;
+            }
+        }
+
+        img {
+            width: 10rem;
+            height: 10rem;
+            border-radius: 100vw;
+            margin-bottom: calc(var(--marginBot) * 0.5);
+            pointer-events: none;
+            box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
+            object-fit: cover;
+        }
+
+        p {
+            max-width: 15rem;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+            pointer-events: none;
         }
     }
 

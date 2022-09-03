@@ -88,7 +88,7 @@ const Book = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => 
         );
     } else {
         const { title, author, coverSrc, publishedAt, numPages, description, goodReadsId, statuses, reads } = data;
-        const { name, goodReadsId: authorGoodReadsId } = author;
+        const { name, goodReadsId: authorGoodReadsId, photoSrc } = author;
 
         const today = new Date();
         const currYear = today.getFullYear();
@@ -168,6 +168,19 @@ const Book = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => 
                 {description && (
                     <div className={s.description}>
                         {description.split("%%%").map((paragraph, i) => paragraph && <p key={i}>{paragraph}</p>)}
+                    </div>
+                )}
+
+                {author && (
+                    <div
+                        className={s.authorPreview}
+                        onClick={() => router.push(`${RoutePaths.AUTHOR}/${authorGoodReadsId}`)}
+                    >
+                        {photoSrc && <img src={photoSrc} alt={"photo of the author"} />}
+                        {!photoSrc && (
+                            <img className={s.placeholder} src="/placeholderPhoto.png" alt={"photo of the author"} />
+                        )}
+                        <p>{name || "unknown author"}</p>
                     </div>
                 )}
 

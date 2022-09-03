@@ -64,7 +64,6 @@
     touch-action: auto;
 
     @include for-mouse {
-        // transition: transform 0.1s ease-in-out;
         transform: scale(1);
         cursor: pointer;
 
