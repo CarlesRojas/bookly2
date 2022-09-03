@@ -47,6 +47,10 @@
             width: 100%;
             padding: 0 1.6rem;
 
+            &.disabled {
+                pointer-events: none;
+            }
+
             @include for-mouse {
                 cursor: pointer;
                 opacity: 0.8;

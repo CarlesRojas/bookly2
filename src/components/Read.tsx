@@ -79,7 +79,7 @@ const Read = (props: ReadProps) => {
     return (
         <div className={`${s.read} ${expanded ? s.expanded : ""}`} ref={statusRef}>
             <div className={s.main}>
-                <div className={s.mainContainer} onClick={handleExpandButton}>
+                <div className={`${s.mainContainer} ${updateIsLoading ? s.disabled : ""}`} onClick={handleExpandButton}>
                     {updateIsLoading && <Loading small />}
 
                     {!updateIsLoading && (
