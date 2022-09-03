@@ -239,6 +239,7 @@
     }
 
     .button {
+        opacity: 0.3;
         touch-action: pan-y;
         margin-bottom: calc(var(--marginBot) * 2);
     }

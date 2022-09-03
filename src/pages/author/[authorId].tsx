@@ -102,7 +102,7 @@ const Author = (props: InferGetServerSidePropsType<typeof getServerSideProps>) =
                     rel="noopener noreferrer"
                 >
                     <RiExternalLinkLine />
-                    <p>view on goodreads</p>
+                    <p>view author on goodreads</p>
                 </a>
             </>
         );
