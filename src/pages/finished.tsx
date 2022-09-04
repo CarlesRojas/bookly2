@@ -2,6 +2,7 @@ import BooksSection from "@components/BooksSection";
 import Loading from "@components/Loading";
 import Navigation from "@components/Navigation";
 import { RoutePaths } from "@constants/routes";
+import { SortBy, useSort } from "@context/sort";
 import { authOptions } from "@pages/api/auth/[...nextauth]";
 import { Author, Book, Read, Status } from "@prisma/client";
 import s from "@styles/pages/Finished.module.scss";
@@ -21,13 +22,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 export type FinishedBook = Book & { author: Author; reads: Read[]; statuses: Status[] };
 
 type SortGroup = { [key: number | string]: FinishedBook[] };
-
-enum SortBy {
-    TITLE = "title",
-    AUTHOR = "author",
-    RATING = "rating",
-    YEAR = "year",
-}
 
 interface Section {
     title: string | number | null;
@@ -63,11 +57,9 @@ const getOldestReadYear = (reads: Read[]) => {
 
 const Finished: NextPage = () => {
     const { data, isLoading, error } = trpc.useQuery(["user-get-finished"]);
+    const { sortedBy, setSortedBy, descending, setDescending, viewGrouped, setViewGrouped } = useSort();
 
     const [sortedData, setSortedData] = useState<Section[]>([]);
-    const [sortedBy, setSortedBy] = useState(SortBy.YEAR); // TODO save in state context
-    const [descending, setDescending] = useState(true); // TODO save in state context
-    const [viewGrouped, setViewGrouped] = useState(true); // TODO save in state context
 
     const getBooksAlphabetically = useCallback(
         (desc: boolean, viewGrouped: boolean, field: "title" | "author") => {

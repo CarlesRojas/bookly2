@@ -1,6 +1,7 @@
 // src/pages/_app.tsx
 import { EventsProvider } from "@context/events";
 import { SearchProvider } from "@context/search";
+import { SortProvider } from "@context/sort";
 import { ThemeProvider } from "@context/theme";
 import type { AppRouter } from "@server/router";
 import "@styles/globals.scss";
@@ -34,7 +35,9 @@ const MyApp: AppType = ({ Component, pageProps: { session, ...pageProps } }) => 
                 <EventsProvider>
                     <ThemeProvider>
                         <SearchProvider>
-                            <Component {...pageProps} />
+                            <SortProvider>
+                                <Component {...pageProps} />
+                            </SortProvider>
                         </SearchProvider>
                     </ThemeProvider>
                 </EventsProvider>

@@ -3,7 +3,7 @@ import BooksSection from "@components/BooksSection";
 import Loading from "@components/Loading";
 import Navigation from "@components/Navigation";
 import { RoutePaths } from "@constants/routes";
-import { useSearch } from "@context/search";
+import { ResultsType, useSearch } from "@context/search";
 import useAutoResetState from "@hooks/useAutoResetState";
 import { authOptions } from "@pages/api/auth/[...nextauth]";
 import s from "@styles/pages/Search.module.scss";
@@ -22,11 +22,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 export const QUERY_COOKIE_NAME = "bookly2-query";
-
-enum ResultsType {
-    BOOK = "books",
-    AUTHOR = "authors",
-}
 
 const Search: NextPage = () => {
     const router = useRouter();
