@@ -87,21 +87,27 @@ const Search: NextPage = () => {
                     </div>
                 </div>
 
-                <div className={`${s.results} ${hideResults ? s.hide : ""}`}>
-                    {!query && (
-                        <div className={s.noResults}>
-                            <p>search a book or an author...</p>
-                        </div>
-                    )}
-                    {query && isWaiting && <Loading />}
+                <div className={s.results}>
+                    <div className={`${s.resultsContent} ${hideResults ? s.hide : ""}`}>
+                        {!query && (
+                            <div className={s.noResults}>
+                                <p>search a book or an author...</p>
+                            </div>
+                        )}
+                        {query && isWaiting && <Loading />}
 
-                    {query && !isWaiting && resultsType === ResultsType.BOOK && booksData && (
-                        <BooksSection title={null} books={booksData} emptyMessage="no books match your query" />
-                    )}
+                        {query && !isWaiting && resultsType === ResultsType.BOOK && booksData && (
+                            <BooksSection title={null} books={booksData} emptyMessage="no books match your query" />
+                        )}
 
-                    {query && !isWaiting && resultsType === ResultsType.AUTHOR && authorsData && (
-                        <AuthorsSection title={null} authors={authorsData} emptyMessage="no authors match your query" />
-                    )}
+                        {query && !isWaiting && resultsType === ResultsType.AUTHOR && authorsData && (
+                            <AuthorsSection
+                                title={null}
+                                authors={authorsData}
+                                emptyMessage="no authors match your query"
+                            />
+                        )}
+                    </div>
                 </div>
 
                 <div className={s.rowContainer}>
