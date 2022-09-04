@@ -7,12 +7,13 @@ import BookCover from "./BookCover";
 interface BooksSectionProps {
     title: string | number | null;
     books: (FinishedBook | BookWithAuthor)[];
+    emptyMessage: string;
     first?: boolean;
     isRating?: boolean;
 }
 
 const BooksSection = (props: BooksSectionProps) => {
-    const { title, books, first, isRating } = props;
+    const { title, books, first, isRating, emptyMessage } = props;
 
     return (
         <div className={s.section}>
@@ -28,6 +29,7 @@ const BooksSection = (props: BooksSectionProps) => {
             )}
 
             <div className={s.books}>
+                {books.length <= 0 && <p className={s.emptyMessage}>{emptyMessage}</p>}
                 {books.map((book) => (
                     <BookCover key={book.goodReadsId} book={book} interactive />
                 ))}

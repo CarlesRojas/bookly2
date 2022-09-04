@@ -1,7 +1,6 @@
-import Bookshelf from "@components/Bookshelf";
+import BooksSection from "@components/BooksSection";
 import Loading from "@components/Loading";
 import { RoutePaths } from "@constants/routes";
-import useResize from "@hooks/useResize";
 import { authOptions } from "@pages/api/auth/[...nextauth]";
 import s from "@styles/pages/BookAuthor.module.scss";
 import { trpc } from "@utils/trpc";
@@ -9,7 +8,6 @@ import type { GetServerSideProps, NextPage } from "next";
 import { unstable_getServerSession } from "next-auth";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useState } from "react";
 import { RiArrowLeftLine, RiExternalLinkLine, RiHome5Line } from "react-icons/ri";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -22,11 +20,6 @@ const Author: NextPage = () => {
     const router = useRouter();
     const authorId = parseInt(router.query.authorId as string);
     const { data, isLoading, error } = trpc.useQuery(["author-get", { authorId }]);
-
-    const [rowHeight, setRowHeight] = useState(0);
-    useResize(() => {
-        setRowHeight(window.innerHeight * 0.4);
-    }, true);
 
     let content = null;
     if (!data) {
@@ -70,15 +63,6 @@ const Author: NextPage = () => {
                     </div>
                 )}
 
-                <div className={s.rowContainer}>
-                    <Bookshelf
-                        books={books}
-                        rowHeight={rowHeight}
-                        shelfName="works"
-                        emptyMessage="we have no works for this author"
-                    />
-                </div>
-
                 <a
                     className={s.button}
                     target="_blank"
@@ -88,6 +72,10 @@ const Author: NextPage = () => {
                     <RiExternalLinkLine />
                     <p>view author on goodreads</p>
                 </a>
+
+                <BooksSection books={books} title="works" emptyMessage="we have no works for this author" first />
+
+                <div className={s.margin} />
             </>
         );
     }

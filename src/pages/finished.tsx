@@ -255,7 +255,7 @@ const Finished: NextPage = () => {
 
                         <div className={s.content}>
                             {sortedData.map((section, i) => (
-                                <BooksSection key={i} {...section} />
+                                <BooksSection key={i} {...section} emptyMessage="" />
                             ))}
                         </div>
                     </>

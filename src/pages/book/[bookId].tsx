@@ -153,6 +153,16 @@ const Book: NextPage = () => {
                     </div>
                 )}
 
+                <a
+                    className={s.button}
+                    target="_blank"
+                    href={`https://www.goodreads.com/book/show/${goodReadsId}`}
+                    rel="noopener noreferrer"
+                >
+                    <RiExternalLinkLine />
+                    <p>view book on goodreads</p>
+                </a>
+
                 {author && (
                     <div
                         className={s.authorPreview}
@@ -165,16 +175,6 @@ const Book: NextPage = () => {
                         <p>{name || "unknown author"}</p>
                     </div>
                 )}
-
-                <a
-                    className={s.button}
-                    target="_blank"
-                    href={`https://www.goodreads.com/book/show/${goodReadsId}`}
-                    rel="noopener noreferrer"
-                >
-                    <RiExternalLinkLine />
-                    <p>view book on goodreads</p>
-                </a>
             </>
         );
     }

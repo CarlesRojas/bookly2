@@ -22,6 +22,7 @@ export type BookWithAuthor = Book & { author: Author };
 interface Section {
     title: string;
     books: BookWithAuthor[];
+    emptyMessage: string;
 }
 
 const Home: NextPage = () => {
@@ -33,8 +34,8 @@ const Home: NextPage = () => {
 
     useEffect(() => {
         const newSections: Section[] = [
-            { title: "reading", books: readingData ?? [] },
-            { title: "want to read", books: wantToReadData ?? [] },
+            { title: "reading", books: readingData ?? [], emptyMessage: "you're not reading any books right now" },
+            { title: "want to read", books: wantToReadData ?? [], emptyMessage: "you have no pending books to read" },
         ];
 
         setBooksBySection(newSections);

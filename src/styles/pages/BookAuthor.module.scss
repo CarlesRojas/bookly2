@@ -194,6 +194,12 @@
         }
     }
 
+    .margin {
+        width: 100%;
+        pointer-events: none;
+        margin-bottom: calc(var(--marginBot) * 2);
+    }
+
     .rowContainer {
         position: relative;
         width: 100%;
