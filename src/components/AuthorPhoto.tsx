@@ -6,11 +6,12 @@ import { useRouter } from "next/router";
 interface AuthorPhotoProps {
     author: Author;
     interactive?: boolean;
+    showName?: boolean;
 }
 
 const AuthorPhoto = (props: AuthorPhotoProps) => {
     const router = useRouter();
-    const { author, interactive } = props;
+    const { author, interactive, showName } = props;
     const { name, goodReadsId, photoSrc } = author;
 
     return (
@@ -23,9 +24,11 @@ const AuthorPhoto = (props: AuthorPhotoProps) => {
                 {!photoSrc && <img className={s.placeholder} src="/placeholderPhoto.png" alt={"photo of the author"} />}
             </div>
 
-            <div className={s.info}>
-                <p className={s.title}>{name}</p>
-            </div>
+            {showName && (
+                <div className={s.info}>
+                    <p className={s.title}>{name || "unknown author"}</p>
+                </div>
+            )}
         </div>
     );
 };

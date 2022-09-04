@@ -1,3 +1,4 @@
+import AuthorPhoto from "@components/AuthorPhoto";
 import BooksSection from "@components/BooksSection";
 import Loading from "@components/Loading";
 import { RoutePaths } from "@constants/routes";
@@ -40,15 +41,12 @@ const Author: NextPage = () => {
             </>
         );
     } else {
-        const { goodReadsId, name, description, photoSrc, books } = data;
+        const { goodReadsId, name, description, books } = data;
 
         content = (
             <>
-                <div className={s.cover}>
-                    {photoSrc && <img src={photoSrc} alt={"photo of the author"} />}
-                    {!photoSrc && (
-                        <img className={s.placeholder} src="/placeholderPhoto.png" alt={"photo of the author"} />
-                    )}
+                <div className={s.coverContainer}>
+                    <AuthorPhoto author={data} />
                 </div>
 
                 <p className={s.title}>{name || "unknown name"}</p>

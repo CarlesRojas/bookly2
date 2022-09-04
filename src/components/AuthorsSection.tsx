@@ -19,7 +19,7 @@ const AuthorsSection = (props: AuthorsSectionProps) => {
             <div className={s.authors}>
                 {authors.length <= 0 && <p className={s.emptyMessage}>{emptyMessage}</p>}
                 {authors.map((author) => (
-                    <AuthorPhoto key={author.goodReadsId} author={author} interactive />
+                    <AuthorPhoto key={author.goodReadsId} author={author} interactive showName />
                 ))}
             </div>
         </div>
