@@ -1,10 +1,10 @@
+import AuthorsSection from "@components/AuthorsSection";
 import BooksSection from "@components/BooksSection";
 import Loading from "@components/Loading";
 import Navigation from "@components/Navigation";
 import { RoutePaths } from "@constants/routes";
 import useAutoResetState from "@hooks/useAutoResetState";
 import { authOptions } from "@pages/api/auth/[...nextauth]";
-import { BookWithAuthor } from "@pages/index";
 import s from "@styles/pages/Search.module.scss";
 import { trpc } from "@utils/trpc";
 import type { GetServerSideProps, NextPage } from "next";
@@ -111,30 +111,14 @@ const Search: NextPage = () => {
                     )}
                     {query && isWaiting && <Loading />}
 
-                    {query && !isWaiting && resultsType === ResultsType.BOOK && (
-                        <BooksSection
-                            title={null}
-                            books={booksData as BookWithAuthor[]}
-                            emptyMessage="no books match your query"
-                        />
+                    {query && !isWaiting && resultsType === ResultsType.BOOK && booksData && (
+                        <BooksSection title={null} books={booksData} emptyMessage="no books match your query" />
+                    )}
+
+                    {query && !isWaiting && resultsType === ResultsType.AUTHOR && authorsData && (
+                        <AuthorsSection title={null} authors={authorsData} emptyMessage="no authors match your query" />
                     )}
                 </div>
-
-                {/* 
-                {query && !isWaiting && (
-                    <div className={`${s.results} ${hideResults ? s.hide : ""}`}>
-                        <div className={s.rowContainer} style={{ height: `${rowHeight}px` }}>
-                            {authorsData && (
-                                <Authorshelf
-                                    shelfName="authors"
-                                    authors={authorsData}
-                                    rowHeight={rowHeight}
-                                    emptyMessage="no authors match your query"
-                                />
-                            )}
-                        </div>
-                    </div>
-                )} */}
 
                 <div className={s.rowContainer}>
                     <div className={s.add} onClick={() => router.push(RoutePaths.NEW)}>

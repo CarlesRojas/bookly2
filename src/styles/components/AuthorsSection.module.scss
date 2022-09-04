@@ -34,21 +34,9 @@
         @include dark {
             background-color: var(--backgroundDark);
         }
-
-        .star {
-            height: 1.3rem;
-            width: 1.3rem;
-            color: var(--purple);
-            opacity: 0;
-            margin-right: 0.25rem;
-
-            &.active {
-                opacity: 1;
-            }
-        }
     }
 
-    .books {
+    .authors {
         position: relative;
         width: 100%;
         display: grid;

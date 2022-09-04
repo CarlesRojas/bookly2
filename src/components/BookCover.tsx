@@ -20,7 +20,7 @@ const BookCover = (props: BookCoverProps) => {
             onClick={() => router.push(`${RoutePaths.BOOK}/${goodReadsId}`)}
         >
             <div className={s.cover}>
-                {coverSrc && <img src={coverSrc} alt={"Cover for the book"} />}
+                {coverSrc && <img src={coverSrc} alt={"cover for the book"} />}
                 {!coverSrc && <img className={s.placeholder} src="/placeholderCover.png" alt={"cover for the book"} />}
 
                 <div className={`${s.info} ${coverSrc ? s.hidden : ""}`}>

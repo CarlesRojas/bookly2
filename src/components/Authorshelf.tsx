@@ -62,7 +62,7 @@ const Authorshelf = (props: AuthorshelfProps) => {
                         <img
                             style={{ borderRadius: photoStyle.borderRadius }}
                             src={photoSrc}
-                            alt={"Photo of the author"}
+                            alt={"photo of the author"}
                         />
                     )}
 

@@ -1,0 +1,79 @@
+@import "src/styles/mixins.scss";
+@import "src/styles/shared.scss";
+
+.authorPhoto {
+    position: relative;
+    pointer-events: none;
+    width: 100%;
+
+    &.interactive {
+        touch-action: pan-y;
+        pointer-events: all;
+
+        @include for-mouse {
+            transform: scale(1);
+            cursor: pointer;
+
+            &:hover {
+                transform: scale(1.03);
+                opacity: 1;
+            }
+        }
+    }
+
+    .cover {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 0.65;
+        overflow: hidden;
+        border-radius: 0.75rem;
+        pointer-events: none;
+        background-color: #292929;
+        box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
+
+        @include dark {
+            background-color: #292929;
+        }
+
+        @include light {
+            background-color: #d7d7d7;
+        }
+
+        img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            pointer-events: none;
+            user-select: none;
+
+            &.placeholder {
+                @include dark {
+                    filter: invert(1);
+                }
+            }
+        }
+    }
+
+    .info {
+        width: 100%;
+        pointer-events: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0.5rem 0;
+
+        .title {
+            width: 100%;
+            overflow: hidden;
+            font-size: 0.8em;
+            text-align: center;
+            text-overflow: ellipsis;
+            letter-spacing: normal;
+            white-space: nowrap;
+
+            @include for-desktop {
+                font-size: 1em;
+            }
+        }
+    }
+}
