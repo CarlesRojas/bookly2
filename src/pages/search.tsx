@@ -25,7 +25,7 @@ export const QUERY_COOKIE_NAME = "bookly2-query";
 
 const Search: NextPage = () => {
     const router = useRouter();
-    const [query, setQuery] = useState("");
+    const [query, setQuery] = useState(""); // TODO save in state context
 
     const {
         data: booksData,

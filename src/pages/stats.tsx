@@ -52,8 +52,6 @@ const Stats: NextPage = () => {
 
     const [booksSelected, setBooksSelected] = useState(false);
 
-    // TODO use scroll wheel to scroll graph
-
     useEffect(() => {
         if (isLoading || error || !data) return;
 
@@ -109,6 +107,22 @@ const Stats: NextPage = () => {
         calculated,
     } = stats.current;
 
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    const scroll = (event: WheelEvent) => {
+        event.preventDefault();
+        if (containerRef.current) containerRef.current.scrollLeft += event.deltaY;
+    };
+
+    useEffect(() => {
+        const containerRefAux = containerRef.current;
+        if (containerRefAux) containerRefAux.addEventListener("wheel", scroll, { passive: false });
+
+        return () => {
+            if (containerRefAux) containerRefAux.removeEventListener("wheel", scroll);
+        };
+    }, [calculated]);
+
     return (
         <>
             <Head>
@@ -144,7 +158,11 @@ const Stats: NextPage = () => {
                         </div>
 
                         {years.length > 0 && (
-                            <div className={s.graph} style={{ gridTemplateColumns: `repeat(${years.length}, 2.5rem)` }}>
+                            <div
+                                className={s.graph}
+                                style={{ gridTemplateColumns: `repeat(${years.length}, 2.5rem)` }}
+                                ref={containerRef}
+                            >
                                 {years.map((year) => {
                                     const value = (booksSelected ? booksByYear[year] : bookPagesByYear[year]) ?? 0;
                                     const max = booksSelected ? maxBooksInAYear : maxPagesInAYear;

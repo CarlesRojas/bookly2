@@ -63,7 +63,7 @@ const Finished: NextPage = () => {
     const { data, isLoading, error } = trpc.useQuery(["user-get-finished"]);
 
     const [sortedData, setSortedData] = useState<Section[]>([]);
-    const [sortedBy, setSortedBy] = useState(SortBy.YEAR); // TODO save in localstorage
+    const [sortedBy, setSortedBy] = useState(SortBy.YEAR); // TODO save in state context
     const [descending, setDescending] = useState(true);
     const [viewGrouped, setViewGrouped] = useState(true);
 
