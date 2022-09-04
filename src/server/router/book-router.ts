@@ -115,6 +115,7 @@ export const bookRouter = createProtectedRouter()
             return await prisma.book.findMany({
                 where: { title: { contains: query } },
                 include: { author: true },
+                take: 30,
             });
         },
     })

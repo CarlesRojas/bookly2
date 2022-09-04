@@ -28,6 +28,7 @@ export const authorRouter = createProtectedRouter()
 
             return await prisma.author.findMany({
                 where: { name: { contains: query } },
+                take: 30,
             });
         },
     });
