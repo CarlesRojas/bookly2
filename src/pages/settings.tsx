@@ -5,7 +5,7 @@ import s from "@styles/pages/Settings.module.scss";
 import { trpc } from "@utils/trpc";
 import type { GetServerSideProps, NextPage } from "next";
 import { unstable_getServerSession } from "next-auth";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import { MouseEvent, useRef, useState } from "react";
 
@@ -16,6 +16,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 const Settings: NextPage = () => {
+    const session = useSession();
+
     const { mutate: deleteAccount, isLoading: deletingAccount } = trpc.useMutation("user-delete-account", {
         onSuccess: () => signOut(),
     });
@@ -102,6 +104,32 @@ const Settings: NextPage = () => {
         event.preventDefault();
     };
 
+    const [userImageError, setUserImageError] = useState(false);
+
+    let user = null;
+    if (session.status === "authenticated" && session.data.user) {
+        const { name, image, email } = session.data.user;
+
+        user = (
+            <div className={s.user}>
+                {image && !userImageError && (
+                    <div className={s.profilePicture}>
+                        <img src={image} alt="user picture" onError={() => setUserImageError(true)} />
+                    </div>
+                )}
+
+                {(!image || userImageError) && name && (
+                    <div className={s.profilePicture}>
+                        <p>{name.charAt(0)?.toUpperCase() ?? ""}</p>
+                    </div>
+                )}
+
+                {name && <p className={s.name}>{name}</p>}
+                {email && <p className={s.email}>{email}</p>}
+            </div>
+        );
+    }
+
     return (
         <>
             <Head>
@@ -110,6 +138,8 @@ const Settings: NextPage = () => {
             </Head>
 
             <div className={`${s.settings} ${deletingAccount || loggingOut ? s.disable : ""}`}>
+                {user}
+
                 <div
                     className={s.button}
                     onMouseDown={onLogoutDown}

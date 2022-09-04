@@ -17,6 +17,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return { props: {} };
 };
 
+// TODO when redirecting to this page -> show loading
 const Author: NextPage = () => {
     const router = useRouter();
     const authorId = parseInt(router.query.authorId as string);
