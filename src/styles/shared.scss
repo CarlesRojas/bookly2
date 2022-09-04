@@ -3,7 +3,7 @@
     width: 100%;
     padding: 0.5rem 1.5rem;
     border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 0.5rem;
+    border-radius: var(--borderRadius);
     color: var(--textDark);
     background-color: transparent;
 
@@ -40,7 +40,7 @@
     color: var(--purple);
     font-weight: 600;
     border: 1px solid var(--purple);
-    border-radius: 0.5rem;
+    border-radius: var(--borderRadius);
 
     @include for-mouse {
         opacity: 0.9;

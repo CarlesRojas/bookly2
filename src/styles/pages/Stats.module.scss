@@ -34,6 +34,16 @@
             justify-content: center;
             width: 100%;
             padding: var(--statsMargin);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: var(--borderRadius);
+
+            @include light {
+                border: 1px solid rgba(0, 0, 0, 0.3);
+            }
+
+            @include dark {
+                border: 1px solid rgba(255, 255, 255, 0.3);
+            }
 
             .value {
                 opacity: 0.8;
@@ -141,11 +151,12 @@
             text-align: center;
             border: 1px solid transparent;
             opacity: 0.5;
-            border-radius: 0.5rem;
+            border-radius: var(--borderRadius);
 
             &.active {
                 border: 1px solid var(--purple);
                 opacity: 1;
+                color: var(--purple);
             }
 
             @include for-mouse {

@@ -34,7 +34,7 @@
         @include button;
         width: 95%;
         max-width: 20rem;
-        border-radius: 0.5rem;
+        border-radius: var(--borderRadius);
 
         svg {
             margin-right: 1rem;

@@ -36,7 +36,7 @@
 
             .border {
                 border: 1px solid var(--purple);
-                border-radius: 0.5rem;
+                border-radius: var(--borderRadius);
                 grid-column-start: 2;
                 grid-column-end: 6;
                 grid-row-start: 1;
