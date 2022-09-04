@@ -132,11 +132,6 @@
             font-weight: 600;
         }
 
-        .add {
-            width: fit-content;
-            @include button-text-low;
-        }
-
         form {
             width: 90%;
             max-width: var(--max-form-width);

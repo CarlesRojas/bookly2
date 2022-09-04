@@ -11,9 +11,8 @@ import { trpc } from "@utils/trpc";
 import type { GetServerSideProps, NextPage } from "next";
 import { unstable_getServerSession } from "next-auth";
 import Head from "next/head";
-import { useRouter } from "next/router";
 import { FormEvent, useEffect, useRef, useState } from "react";
-import { RiAddLine, RiLoader4Fill, RiSearchLine } from "react-icons/ri";
+import { RiLoader4Fill, RiSearchLine } from "react-icons/ri";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const session = await unstable_getServerSession(context.req, context.res, authOptions);
@@ -24,7 +23,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 export const QUERY_COOKIE_NAME = "bookly2-query";
 
 const Search: NextPage = () => {
-    const router = useRouter();
     const { query, setQuery, resultsType, setResultsType } = useSearch();
 
     const {
@@ -136,11 +134,6 @@ const Search: NextPage = () => {
                 )}
 
                 <div className={s.searchBarContainer}>
-                    <div className={s.add} onClick={() => router.push(RoutePaths.NEW)}>
-                        <RiAddLine />
-                        <p>add book</p>
-                    </div>
-
                     <form onSubmit={onSubmit}>
                         <input
                             value={inputValue}

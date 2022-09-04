@@ -165,6 +165,7 @@ const Settings: NextPage = () => {
                 </div>
 
                 <p className={s.subtitle}>by deleting your account, you will lose all your data</p>
+                <p className={s.subtitle}>hold the button to confirm</p>
             </div>
 
             <Navigation />
