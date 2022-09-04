@@ -171,6 +171,14 @@
         touch-action: pan-y;
         margin-bottom: calc(var(--marginBot) * 2);
 
+        @include for-mouse {
+            cursor: pointer;
+
+            &:hover {
+                opacity: 0.5 !important;
+            }
+        }
+
         svg {
             height: 2rem;
             width: 2rem;
