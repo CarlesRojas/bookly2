@@ -1,4 +1,5 @@
 import FinishedBook from "@components/FinishedBook";
+import Loading from "@components/Loading";
 import Navigation from "@components/Navigation";
 import { RoutePaths } from "@constants/routes";
 import { authOptions } from "@pages/api/auth/[...nextauth]";
@@ -8,8 +9,8 @@ import { trpc } from "@utils/trpc";
 import type { GetServerSideProps, NextPage } from "next";
 import { unstable_getServerSession } from "next-auth";
 import Head from "next/head";
-import { useEffect, useRef, useState } from "react";
-import { RiArrowDownSLine } from "react-icons/ri";
+import { useCallback, useEffect, useState } from "react";
+import { RiArrowDownSLine, RiStarFill } from "react-icons/ri";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const session = await unstable_getServerSession(context.req, context.res, authOptions);
@@ -19,38 +20,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 export type FinishedBook = Book & { author: Author; reads: Read[]; statuses: Status[] };
 
-interface SortedData {
-    title: FinishedBook[];
-    author: FinishedBook[];
-    rating: { [key: number]: FinishedBook[] };
-    year: { [key: number]: FinishedBook[] };
-    years: number[];
-    ratings: number[];
-    calculated: boolean;
-}
-
-const DEFAULT_SORTED_DATA: SortedData = {
-    title: [],
-    author: [],
-    rating: [],
-    year: [],
-    years: [],
-    ratings: [],
-    calculated: false,
-};
-
-const removeFirstArticle = (value: string) => {
-    const articles = ["the ", "an ", "a "];
-    for (const article of articles) if (value.startsWith(article)) return value.replace(article, "");
-    return value;
-};
-
-const compareStrings = (a: string, b: string) => {
-    const aNormalized = removeFirstArticle(a.toLowerCase());
-    const bNormalized = removeFirstArticle(b.toLowerCase());
-
-    return aNormalized.localeCompare(bNormalized, "en", { sensitivity: "base", ignorePunctuation: true });
-};
+type SortGroup = { [key: number | string]: FinishedBook[] };
 
 enum SortBy {
     TITLE = "title",
@@ -60,87 +30,164 @@ enum SortBy {
 }
 
 interface Section {
-    title?: string;
+    title: JSX.Element;
     books: FinishedBook[];
 }
+
+const normalizeString = (value: string) => {
+    const normalized = value
+        .toLowerCase()
+        .normalize("NFKD")
+        .replace(/\p{Diacritic}/gu, "");
+    const articles = ["the ", "an ", "a "];
+    for (const article of articles) if (normalized.startsWith(article)) return normalized.replace(article, "");
+    return normalized;
+};
+
+const compareStrings = (a: string, b: string) => {
+    const aNormalized = normalizeString(a);
+    const bNormalized = normalizeString(b);
+
+    return aNormalized.localeCompare(bNormalized, "en", { sensitivity: "base", ignorePunctuation: true });
+};
+
+const charIsLetter = (char: string) => /^[a-zA-Z]+$/.test(char);
+
+const getOldestReadYear = (reads: Read[]) => {
+    let oldestYear = Number.MAX_VALUE;
+    reads.forEach((read) => read.year < oldestYear && (oldestYear = read.year));
+    return oldestYear;
+};
 
 const Finished: NextPage = () => {
     const { data, isLoading, error } = trpc.useQuery(["user-get-finished"]);
 
-    const sortedData = useRef(DEFAULT_SORTED_DATA);
-    const [, setRecalculated] = useState(0);
-
-    const getOldestReadYear = (reads: Read[]) => {
-        let oldestYear = Number.MAX_VALUE;
-        reads.forEach((read) => read.year < oldestYear && (oldestYear = read.year));
-        return oldestYear;
-    };
-
-    useEffect(() => {
-        if (isLoading || error || !data) return;
-        const newSortedData = DEFAULT_SORTED_DATA;
-
-        newSortedData.title = [...data].sort((a, b) => compareStrings(a.title, b.title));
-        newSortedData.author = [...data].sort((a, b) => compareStrings(a.author.name, b.author.name));
-
-        newSortedData.rating = {};
-        data.forEach((book) => {
-            const status = (book.statuses.length ? book.statuses[0] : null) ?? { rating: 0 };
-
-            if (status.rating in newSortedData.rating) newSortedData.rating[status.rating]?.push(book);
-            else newSortedData.rating[status.rating] = [book];
-        });
-
-        let minYear = Number.MAX_VALUE;
-        let maxYear = Number.MIN_VALUE;
-
-        newSortedData.year = {};
-        data.forEach((book) => {
-            const oldestReadYear = getOldestReadYear(book.reads);
-            if (oldestReadYear in newSortedData.year) newSortedData.year[oldestReadYear]?.push(book);
-            else newSortedData.year[oldestReadYear] = [book];
-
-            if (oldestReadYear < minYear) minYear = oldestReadYear;
-            if (oldestReadYear > maxYear) maxYear = oldestReadYear;
-        });
-
-        newSortedData.years = [];
-        for (let i = maxYear; i >= minYear; i--) if (i in newSortedData.year) newSortedData.years.push(i);
-
-        newSortedData.ratings = [];
-        for (let i = 5; i >= 0; i--) if (i in newSortedData.rating) newSortedData.ratings.push(i);
-
-        newSortedData.calculated = true;
-        sortedData.current = newSortedData;
-        setRecalculated((prev) => prev + 1);
-    }, [data, isLoading, error]);
-
-    const [sortedBy, setSortedBy] = useState(SortBy.TITLE);
+    const [sortedData, setSortedData] = useState<Section[]>([]);
+    const [sortedBy, setSortedBy] = useState(SortBy.TITLE); // TODO save in localstorage
     const [descending, setDescending] = useState(true);
 
-    let booksToShow: Section[] = [];
-    if (sortedBy === SortBy.TITLE && descending) booksToShow.push({ books: sortedData.current.title });
-    else if (sortedBy === SortBy.TITLE && !descending)
-        booksToShow.push({ books: [...sortedData.current.title].reverse() });
-    else if (sortedBy === SortBy.AUTHOR && descending) booksToShow.push({ books: sortedData.current.author });
-    else if (sortedBy === SortBy.AUTHOR && !descending)
-        booksToShow.push({ books: [...sortedData.current.author].reverse() });
-    else if (sortedBy === SortBy.RATING && descending)
-        booksToShow = sortedData.current.ratings.map((rating) => ({ books: sortedData.current.rating[rating] ?? [] }));
-    else if (sortedBy === SortBy.RATING && !descending)
-        booksToShow = [...sortedData.current.ratings]
-            .reverse()
-            .map((rating) => ({ books: sortedData.current.rating[rating] ?? [] }));
-    else if (sortedBy === SortBy.YEAR && descending)
-        booksToShow = sortedData.current.years.map((year) => ({
-            title: year.toString(),
-            books: sortedData.current.year[year] ?? [],
-        }));
-    else if (sortedBy === SortBy.YEAR && !descending)
-        booksToShow = [...sortedData.current.years]
-            .reverse()
-            .map((year) => ({ title: year.toString(), books: sortedData.current.year[year] ?? [] }));
+    const getBooksAlphabetically = useCallback(
+        (desc = true, field: "title" | "author") => {
+            if (isLoading || error || !data) return null;
 
+            const getString = (book: FinishedBook) => (field === "title" ? book.title : book.author.name);
+
+            const sorted = [...data].sort((a, b) => compareStrings(getString(a), getString(b)));
+            if (!desc) sorted.reverse();
+
+            const grouped: SortGroup = {};
+            sorted.forEach((book) => {
+                const firstChar = normalizeString(getString(book)).charAt(0);
+                if (!charIsLetter(firstChar))
+                    "other" in grouped ? grouped["other"]?.push(book) : (grouped["other"] = [book]);
+                else firstChar in grouped ? grouped[firstChar]?.push(book) : (grouped[firstChar] = [book]);
+            });
+
+            const alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
+            if (!desc) {
+                alphabet.reverse();
+                alphabet.unshift("other");
+            } else alphabet.push("other");
+
+            const result: Section[] = [];
+            alphabet.forEach((letter) => {
+                if (grouped[letter] && grouped[letter]?.length)
+                    result.push({
+                        title: <p className={s.sectionTitle}>{letter.toUpperCase()}</p>,
+                        books: grouped[letter] ?? [],
+                    });
+            });
+
+            setSortedData(result);
+        },
+        [data, error, isLoading]
+    );
+
+    const getBooksByYear = useCallback(
+        (desc = true) => {
+            if (isLoading || error || !data) return null;
+
+            const grouped: SortGroup = {};
+            let minYear = Number.MAX_VALUE;
+            let maxYear = Number.MIN_VALUE;
+
+            data.forEach((book) => {
+                const oldestReadYear = getOldestReadYear(book.reads);
+                if (oldestReadYear in grouped) grouped[oldestReadYear]?.push(book);
+                else grouped[oldestReadYear] = [book];
+
+                if (oldestReadYear < minYear) minYear = oldestReadYear;
+                if (oldestReadYear > maxYear) maxYear = oldestReadYear;
+            });
+
+            const years = [];
+            for (let i = maxYear; i >= minYear; i--) if (i in grouped) years.push(i);
+
+            if (!desc) years.reverse();
+
+            const result: Section[] = [];
+            years.forEach((year) => {
+                if (grouped[year] && grouped[year]?.length)
+                    result.push({
+                        title: <p className={s.sectionTitle}>{year.toString()}</p>,
+                        books: grouped[year] ?? [],
+                    });
+            });
+
+            setSortedData(result);
+        },
+        [data, error, isLoading]
+    );
+
+    const getBooksByRating = useCallback(
+        (desc = true) => {
+            if (isLoading || error || !data) return null;
+
+            const grouped: SortGroup = {};
+
+            data.forEach((book) => {
+                const status = (book.statuses.length ? book.statuses[0] : null) ?? { rating: 0 };
+
+                if (status.rating in grouped) grouped[status.rating]?.push(book);
+                else grouped[status.rating] = [book];
+            });
+
+            const ratings = [];
+            for (let i = 5; i >= 0; i--) if (i in grouped) ratings.push(i);
+
+            if (!desc) ratings.reverse();
+
+            const result: Section[] = [];
+            ratings.forEach((rating) => {
+                if (grouped[rating] && grouped[rating]?.length)
+                    result.push({
+                        title:
+                            rating === 0 ? (
+                                <p className={s.sectionTitle}>unrated</p>
+                            ) : (
+                                <div className={s.sectionTitle}>
+                                    {[1, 2, 3, 4, 5].map((i) => (
+                                        <RiStarFill key={i} className={`${s.star} ${i <= rating ? s.active : ""}`} />
+                                    ))}
+                                </div>
+                            ),
+                        books: grouped[rating] ?? [],
+                    });
+            });
+
+            setSortedData(result);
+        },
+        [data, error, isLoading]
+    );
+
+    useEffect(() => {
+        if (sortedBy === SortBy.TITLE) getBooksAlphabetically(descending, "title");
+        if (sortedBy === SortBy.AUTHOR) getBooksAlphabetically(descending, "author");
+        if (sortedBy === SortBy.YEAR) getBooksByYear(descending);
+        if (sortedBy === SortBy.RATING) getBooksByRating(descending);
+    }, [sortedBy, descending, getBooksAlphabetically, getBooksByYear, getBooksByRating]);
+
+    const isWaiting = isLoading || error || !data;
     return (
         <>
             <Head>
@@ -149,43 +196,49 @@ const Finished: NextPage = () => {
             </Head>
 
             <div className={s.finished}>
-                <div className={`${s.sortGrid} ${s.absolute}`}>
-                    <div className={s.border} />
-                </div>
+                {isWaiting && <Loading />}
 
-                <div className={s.sortGrid}>
-                    <div />
-
-                    {[SortBy.TITLE, SortBy.AUTHOR, SortBy.RATING, SortBy.YEAR].map((sortBy) => (
-                        <div
-                            key={sortBy}
-                            className={`${s.sort} ${sortedBy === sortBy ? s.current : ""}`}
-                            onClick={() => setSortedBy(sortBy)}
-                        >
-                            {sortBy}
+                {!isWaiting && (
+                    <>
+                        <div className={`${s.sortGrid} ${s.absolute}`}>
+                            <div className={s.border} />
                         </div>
-                    ))}
 
-                    <div
-                        className={`${s.direction} ${descending ? "" : s.asc}`}
-                        onClick={() => setDescending((prev) => !prev)}
-                    >
-                        <RiArrowDownSLine />
-                    </div>
-                </div>
+                        <div className={s.sortGrid}>
+                            <div />
 
-                <div className={s.content}>
-                    {booksToShow.map((section, i) => (
-                        <div key={i} className={s.section}>
-                            {section.title && <p className={s.sectionTitle}>{section.title}</p>}
-                            <div className={s.books}>
-                                {section.books.map((book) => (
-                                    <FinishedBook key={book.goodReadsId} book={book} />
-                                ))}
+                            {[SortBy.TITLE, SortBy.AUTHOR, SortBy.RATING, SortBy.YEAR].map((sortBy) => (
+                                <div
+                                    key={sortBy}
+                                    className={`${s.sort} ${sortedBy === sortBy ? s.current : ""}`}
+                                    onClick={() => setSortedBy(sortBy)}
+                                >
+                                    {sortBy}
+                                </div>
+                            ))}
+
+                            <div
+                                className={`${s.direction} ${descending ? "" : s.asc}`}
+                                onClick={() => setDescending((prev) => !prev)}
+                            >
+                                <RiArrowDownSLine />
                             </div>
                         </div>
-                    ))}
-                </div>
+
+                        <div className={s.content}>
+                            {sortedData.map((section, i) => (
+                                <div key={i} className={s.section}>
+                                    {section.title}
+                                    <div className={s.books}>
+                                        {section.books.map((book) => (
+                                            <FinishedBook key={book.goodReadsId} book={book} />
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </>
+                )}
             </div>
 
             <Navigation />

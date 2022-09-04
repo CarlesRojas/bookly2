@@ -98,6 +98,7 @@
         overflow-y: auto;
         --gap: 1rem;
         touch-action: pan-y;
+        padding-bottom: calc(var(--marginBot) * 2);
 
         .section {
             position: relative;
@@ -109,7 +110,8 @@
                 font-size: 1.4rem;
                 font-weight: bold;
                 margin: var(--sortHeight) 0 0;
-                padding-bottom: calc(var(--gap) * 0.5);
+                --paddingBot: calc(var(--gap) * 0.5);
+                padding-bottom: var(--paddingBot);
                 position: sticky;
                 top: 0;
                 background-color: var(--backgroundDark);
@@ -124,6 +126,18 @@
                 @include dark {
                     background-color: var(--backgroundDark);
                 }
+
+                .star {
+                    height: 1.3rem;
+                    width: 1.3rem;
+                    color: var(--purple);
+                    opacity: 0;
+                    margin-right: 0.25rem;
+
+                    &.active {
+                        opacity: 1;
+                    }
+                }
             }
 
             .books {
@@ -133,6 +147,8 @@
                 gap: var(--gap);
                 touch-action: pan-y;
                 grid-template-columns: repeat(auto-fill, minmax(min(15rem, 40vw), 1fr));
+                overflow: visible;
+                margin: 1rem 0;
             }
         }
     }
