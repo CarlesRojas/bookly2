@@ -1,3 +1,4 @@
+import BookCover from "@components/BookCover";
 import Loading from "@components/Loading";
 import Rating from "@components/Rating";
 import Read from "@components/Read";
@@ -71,7 +72,7 @@ const Book: NextPage = () => {
             </>
         );
     } else {
-        const { title, author, coverSrc, publishedAt, numPages, description, goodReadsId, statuses, reads } = data;
+        const { title, author, publishedAt, numPages, description, goodReadsId, statuses, reads } = data;
         const { name, goodReadsId: authorGoodReadsId, photoSrc } = author;
 
         const today = new Date();
@@ -93,11 +94,8 @@ const Book: NextPage = () => {
 
         content = (
             <>
-                <div className={s.cover}>
-                    {coverSrc && <img src={coverSrc} alt={"cover for the book"} />}
-                    {!coverSrc && (
-                        <img className={s.placeholder} src="/placeholderCover.png" alt={"cover for the book"} />
-                    )}
+                <div className={s.coverContainer}>
+                    <BookCover book={data} />
                 </div>
 
                 <div className={s.details}>

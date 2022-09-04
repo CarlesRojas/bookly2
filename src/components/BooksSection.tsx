@@ -29,7 +29,7 @@ const BooksSection = (props: BooksSectionProps) => {
 
             <div className={s.books}>
                 {books.map((book) => (
-                    <BookCover key={book.goodReadsId} book={book} />
+                    <BookCover key={book.goodReadsId} book={book} interactive />
                 ))}
             </div>
         </div>

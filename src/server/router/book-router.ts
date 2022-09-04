@@ -155,7 +155,7 @@ export const bookRouter = createProtectedRouter()
                     .get(1)
                     ?.children.map((child) => child.type === "text" && child.data)
                     .join(" ") as string
-            );
+            ); // TODO split by the word "by" and take the first part
 
             const numPages = parseInt(
                 $("#details > div > span[itemprop=numberOfPages]")

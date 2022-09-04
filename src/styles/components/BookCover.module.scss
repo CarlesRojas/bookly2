@@ -1,19 +1,23 @@
 @import "src/styles/mixins.scss";
 @import "src/styles/shared.scss";
 
-.finishedBook {
+.bookCover {
     position: relative;
+    pointer-events: none;
     width: 100%;
-    touch-action: pan-y;
-    pointer-events: all;
 
-    @include for-mouse {
-        transform: scale(1);
-        cursor: pointer;
+    &.interactive {
+        touch-action: pan-y;
+        pointer-events: all;
 
-        &:hover {
-            transform: scale(1.03);
-            opacity: 1;
+        @include for-mouse {
+            transform: scale(1);
+            cursor: pointer;
+
+            &:hover {
+                transform: scale(1.03);
+                opacity: 1;
+            }
         }
     }
 
@@ -24,6 +28,7 @@
         overflow: hidden;
         border-radius: 0.75rem;
         pointer-events: none;
+        background-color: #292929;
         box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
 
         @include dark {
@@ -38,6 +43,8 @@
             height: 100%;
             width: 100%;
             object-fit: cover;
+            pointer-events: none;
+            user-select: none;
 
             &.placeholder {
                 @include dark {
@@ -58,6 +65,10 @@
             align-items: center;
             justify-content: center;
             padding: 80% 1rem 0;
+
+            &.hidden {
+                display: none;
+            }
 
             .title,
             .author {

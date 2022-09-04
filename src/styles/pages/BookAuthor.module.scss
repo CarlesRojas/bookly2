@@ -54,44 +54,10 @@
         }
     }
 
-    .cover {
+    .coverContainer {
         pointer-events: none;
-        user-select: none;
-        position: relative;
-        height: 40%;
-        max-height: 40%;
-        min-height: 40%;
-        border-radius: 0.5rem;
-        background-color: #292929;
-        overflow: hidden;
-        box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
-        margin-bottom: calc(var(--marginBot) * 0.5);
-        touch-action: pan-y;
-
-        @include dark {
-            background-color: #292929;
-        }
-
-        @include light {
-            background-color: #d7d7d7;
-        }
-
-        @include for-desktop {
-            border-radius: 0.75rem;
-        }
-
-        img {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-
-            &.placeholder {
-                @include dark {
-                    filter: invert(1);
-                }
-            }
-        }
+        width: 80%;
+        max-width: 20rem;
     }
 
     .details {
@@ -103,6 +69,7 @@
         opacity: 0.5;
         font-size: 0.85rem;
         text-align: center;
+        margin-top: calc(var(--marginBot) * 0.5);
         touch-action: pan-y;
 
         p {
