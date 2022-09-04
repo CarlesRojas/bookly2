@@ -151,12 +151,13 @@ export const bookRouter = createProtectedRouter()
                 ? descriptionArray.join("").replaceAll("¿¿¿¿", "%%%").replaceAll("¿¿", "")
                 : "";
 
-            const publishedAt = allTrim(
+            let publishedAt = allTrim(
                 $("#details > div")
                     .get(1)
                     ?.children.map((child) => child.type === "text" && child.data)
                     .join(" ") as string
-            ); // TODO split by the word "by" and take the first part
+            );
+            publishedAt = allTrim(publishedAt.split(" by ")[0] ?? publishedAt);
 
             const numPages = parseInt(
                 $("#details > div > span[itemprop=numberOfPages]")
