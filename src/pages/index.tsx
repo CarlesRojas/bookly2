@@ -23,6 +23,7 @@ interface Section {
     title: string;
     books: BookWithAuthor[];
     emptyMessage: string;
+    first?: boolean;
 }
 
 const Home: NextPage = () => {
@@ -34,7 +35,12 @@ const Home: NextPage = () => {
 
     useEffect(() => {
         const newSections: Section[] = [
-            { title: "reading", books: readingData ?? [], emptyMessage: "you're not reading any books right now" },
+            {
+                title: "reading",
+                books: readingData ?? [],
+                emptyMessage: "you're not reading any books right now",
+                first: true,
+            },
             { title: "want to read", books: wantToReadData ?? [], emptyMessage: "you have no pending books to read" },
         ];
 

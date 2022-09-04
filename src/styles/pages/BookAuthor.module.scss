@@ -163,7 +163,7 @@
 
     .authorPreview {
         width: fit-content;
-        margin-bottom: calc(var(--marginBot) * 2);
+        margin: calc(var(--marginBot) * 2) 0;
 
         @include for-mouse {
             transform: scale(1);
@@ -214,7 +214,6 @@
     .button {
         opacity: 0.3;
         touch-action: pan-y;
-        margin-bottom: calc(var(--marginBot) * 2);
     }
 }
 
