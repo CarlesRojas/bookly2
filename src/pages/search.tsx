@@ -87,28 +87,53 @@ const Search: NextPage = () => {
                     </div>
                 </div>
 
-                <div className={s.results}>
-                    <div className={`${s.resultsContent} ${hideResults ? s.hide : ""}`}>
-                        {!query && (
-                            <div className={s.noResults}>
-                                <p>search a book or an author...</p>
-                            </div>
-                        )}
-                        {query && isWaiting && <Loading />}
+                {resultsType === ResultsType.BOOK && (
+                    <div className={s.results}>
+                        <div className={`${s.resultsContent} ${hideResults ? s.hide : ""}`}>
+                            {!query && (
+                                <div className={s.noResults}>
+                                    <p>search a book or an author...</p>
+                                </div>
+                            )}
 
-                        {query && !isWaiting && resultsType === ResultsType.BOOK && booksData && (
-                            <BooksSection title={null} books={booksData} emptyMessage="no books match your query" />
-                        )}
+                            {query && isWaiting && <Loading />}
 
-                        {query && !isWaiting && resultsType === ResultsType.AUTHOR && authorsData && (
-                            <AuthorsSection
-                                title={null}
-                                authors={authorsData}
-                                emptyMessage="no authors match your query"
-                            />
-                        )}
+                            {query && !isWaiting && booksData && booksData.length <= 0 && (
+                                <div className={s.noResults}>
+                                    <p>no books match your query</p>
+                                </div>
+                            )}
+
+                            {query && !isWaiting && booksData && booksData.length > 0 && (
+                                <BooksSection title={null} books={booksData} emptyMessage="" />
+                            )}
+                        </div>
                     </div>
-                </div>
+                )}
+
+                {resultsType === ResultsType.AUTHOR && (
+                    <div className={s.results}>
+                        <div className={`${s.resultsContent} ${hideResults ? s.hide : ""}`}>
+                            {!query && (
+                                <div className={s.noResults}>
+                                    <p>search a book or an author...</p>
+                                </div>
+                            )}
+
+                            {query && isWaiting && <Loading />}
+
+                            {query && !isWaiting && authorsData && authorsData.length <= 0 && (
+                                <div className={s.noResults}>
+                                    <p>no authors match your query</p>
+                                </div>
+                            )}
+
+                            {query && !isWaiting && authorsData && authorsData.length > 0 && (
+                                <AuthorsSection title={null} authors={authorsData} emptyMessage="" />
+                            )}
+                        </div>
+                    </div>
+                )}
 
                 <div className={s.rowContainer}>
                     <div className={s.add} onClick={() => router.push(RoutePaths.NEW)}>
