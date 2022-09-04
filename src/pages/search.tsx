@@ -3,6 +3,7 @@ import BooksSection from "@components/BooksSection";
 import Loading from "@components/Loading";
 import Navigation from "@components/Navigation";
 import { RoutePaths } from "@constants/routes";
+import { useSearch } from "@context/search";
 import useAutoResetState from "@hooks/useAutoResetState";
 import { authOptions } from "@pages/api/auth/[...nextauth]";
 import s from "@styles/pages/Search.module.scss";
@@ -29,8 +30,7 @@ enum ResultsType {
 
 const Search: NextPage = () => {
     const router = useRouter();
-    const [query, setQuery] = useState(""); // TODO save in state context
-    const [resultsType, setResultsType] = useState(ResultsType.BOOK); // TODO save in state context
+    const { query, setQuery, resultsType, setResultsType } = useSearch();
 
     const {
         data: booksData,
@@ -55,27 +55,16 @@ const Search: NextPage = () => {
         if (booksAreLoading || authorsAreLoading) return;
 
         inputRef.current?.blur();
-        window?.localStorage?.setItem(QUERY_COOKIE_NAME, inputValue);
         setQuery(inputValue);
     };
 
     useEffect(() => {
         if (booksError) setError(booksError?.message);
         if (authorsError) setError(authorsError?.message);
-
         if (booksError || authorsError) setShowError(true);
     }, [booksError, authorsError, setShowError]);
 
     const isWaiting = booksAreLoading || authorsAreLoading;
-
-    useEffect(() => {
-        const queryValue = window?.localStorage?.getItem(QUERY_COOKIE_NAME) as string;
-
-        if (!queryValue) return;
-
-        setQuery(queryValue);
-        setInputValue(queryValue);
-    }, []);
 
     return (
         <>

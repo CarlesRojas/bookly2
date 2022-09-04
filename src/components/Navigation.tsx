@@ -1,5 +1,4 @@
 import { RoutePaths } from "@constants/routes";
-import { QUERY_COOKIE_NAME } from "@pages/search";
 import s from "@styles/components/Navigation.module.scss";
 import { useRouter } from "next/router";
 import { CSSProperties, useRef, useState } from "react";
@@ -66,8 +65,6 @@ const Navigation = () => {
         if (changing.current) return;
         changing.current = true;
         setCurrentPath(route);
-
-        window?.localStorage?.removeItem(QUERY_COOKIE_NAME);
         router.push(route);
     };
 
