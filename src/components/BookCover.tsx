@@ -11,13 +11,18 @@ interface BookCoverProps {
 const BookCover = (props: BookCoverProps) => {
     const router = useRouter();
     const { book } = props;
-    const { coverSrc, goodReadsId } = book;
+    const { coverSrc, goodReadsId, title, author } = book;
 
     return (
         <div className={s.finishedBook} onClick={() => router.push(`${RoutePaths.BOOK}/${goodReadsId}`)}>
             <div className={s.cover}>
                 {coverSrc && <img src={coverSrc} alt={"Cover for the book"} />}
-                {!coverSrc && <img src="/placeholderCover.png" alt={"cover for the book"} />}
+                {!coverSrc && <img className={s.placeholder} src="/placeholderCover.png" alt={"cover for the book"} />}
+
+                <div className={s.info}>
+                    <p className={s.title}>{title}</p>
+                    <p className={s.author}>{author.name}</p>
+                </div>
             </div>
         </div>
     );

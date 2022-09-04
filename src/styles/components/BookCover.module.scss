@@ -24,11 +24,62 @@
         overflow: hidden;
         border-radius: 0.75rem;
         pointer-events: none;
+        box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
+
+        @include dark {
+            background-color: #292929;
+        }
+
+        @include light {
+            background-color: #d7d7d7;
+        }
 
         img {
             height: 100%;
             width: 100%;
             object-fit: cover;
+
+            &.placeholder {
+                @include dark {
+                    filter: invert(1);
+                }
+            }
+        }
+
+        .info {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80% 1rem 0;
+
+            .title,
+            .author {
+                width: 100%;
+                overflow: hidden;
+                opacity: 0.4;
+                margin: 0;
+                font-size: 0.8em;
+                text-align: center;
+                text-overflow: ellipsis;
+                letter-spacing: normal;
+                white-space: nowrap;
+
+                @include for-desktop {
+                    font-size: 1em;
+                }
+            }
+
+            .title {
+                opacity: 1;
+                margin-bottom: 0.2rem;
+            }
         }
     }
 }
