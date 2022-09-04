@@ -1,13 +1,32 @@
 @mixin input {
     height: var(--button-height);
     width: 100%;
-    background-color: white;
-    border-radius: var(--borderRadius);
     padding: 0.5rem 1.5rem;
-    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 0.5rem;
+    color: var(--textDark);
+    background-color: transparent;
 
     &::placeholder {
-        opacity: 0.5;
+        opacity: 0.7;
+    }
+
+    @include light {
+        border: 1px solid rgba(0, 0, 0, 0.3);
+        color: var(--textLight);
+
+        &::placeholder {
+            opacity: 0.5;
+        }
+    }
+
+    @include dark {
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: var(--textDark);
+
+        &::placeholder {
+            opacity: 0.7;
+        }
     }
 }
 
@@ -17,11 +36,11 @@
     align-items: center;
     height: var(--button-height);
     width: 100%;
-    background-color: var(--purple);
-    border-radius: var(--borderRadius);
-    color: var(--textDark);
-    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.1);
+    background-color: transparent;
+    color: var(--purple);
     font-weight: 600;
+    border: 1px solid var(--purple);
+    border-radius: 0.5rem;
 
     @include for-mouse {
         opacity: 0.9;
@@ -58,6 +77,7 @@
     height: var(--button-height);
     color: var(--textDark);
     padding: 0 1rem;
+    opacity: 0.7;
 
     @include light {
         color: var(--textLight);
@@ -68,7 +88,6 @@
     }
 
     @include for-mouse {
-        opacity: 0.7;
         cursor: pointer;
 
         &:hover {

@@ -140,15 +140,16 @@
             font-weight: 600;
             text-align: center;
             border: 1px solid transparent;
+            opacity: 0.5;
             border-radius: 0.5rem;
 
             &.active {
                 border: 1px solid var(--purple);
+                opacity: 1;
             }
 
             @include for-mouse {
                 cursor: pointer;
-                opacity: 0.8;
 
                 &:hover {
                     opacity: 1;

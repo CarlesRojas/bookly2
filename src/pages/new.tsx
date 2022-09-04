@@ -57,7 +57,7 @@ const New: NextPage = () => {
             </Head>
 
             <div className={s.new}>
-                <p>to add a book, search it here</p>
+                <p className={s.text}>to add a book, search it here</p>
 
                 <a
                     className={s.buttonText}
@@ -69,7 +69,7 @@ const New: NextPage = () => {
                     <p>goodreads</p>
                 </a>
 
-                <p>and paste the URL here</p>
+                <p className={s.text}>and paste the URL here</p>
 
                 <form onSubmit={onSubmit}>
                     <input

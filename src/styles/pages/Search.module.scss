@@ -113,7 +113,7 @@
         }
     }
 
-    .rowContainer {
+    .searchBarContainer {
         position: relative;
         width: 100%;
         max-width: 100%;
@@ -153,6 +153,7 @@
                 @include input;
                 border-top-right-radius: 0 !important;
                 border-bottom-right-radius: 0 !important;
+                border-right-color: transparent !important;
             }
 
             svg {
@@ -165,12 +166,13 @@
                 border-top-left-radius: 0 !important;
                 border-bottom-left-radius: 0 !important;
                 width: fit-content !important;
-                padding: 0 1.1rem 0 0.9rem;
+                padding: 0 1rem;
 
                 &.loading {
                     pointer-events: none;
 
                     svg {
+                        color: var(--purple);
                         height: 1.5rem;
                         width: 1.5rem;
                     }

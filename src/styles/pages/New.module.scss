@@ -20,6 +20,10 @@
         font-weight: 600;
     }
 
+    .text {
+        font-weight: unset;
+    }
+
     .buttonText {
         margin: 1rem 0;
         @include button-text;
@@ -28,6 +32,10 @@
     form {
         width: 90%;
         max-width: var(--max-form-width);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
 
         input {
             margin-top: 1rem;
@@ -37,6 +45,8 @@
         .button {
             margin: 1rem 0;
             @include button;
+            width: fit-content !important;
+            padding: 0 2rem;
 
             &.loading {
                 pointer-events: none;
@@ -68,6 +78,7 @@
         position: absolute;
         bottom: 0;
         @include button-text-low;
+        height: var(--navigation-height);
 
         @include for-desktop {
             position: relative;

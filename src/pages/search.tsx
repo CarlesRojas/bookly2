@@ -135,7 +135,7 @@ const Search: NextPage = () => {
                     </div>
                 )}
 
-                <div className={s.rowContainer}>
+                <div className={s.searchBarContainer}>
                     <div className={s.add} onClick={() => router.push(RoutePaths.NEW)}>
                         <RiAddLine />
                         <p>add book</p>
