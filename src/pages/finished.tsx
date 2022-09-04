@@ -10,7 +10,7 @@ import type { GetServerSideProps, NextPage } from "next";
 import { unstable_getServerSession } from "next-auth";
 import Head from "next/head";
 import { useCallback, useEffect, useState } from "react";
-import { RiArrowDownSLine, RiStarFill } from "react-icons/ri";
+import { RiArrowDownSLine, RiGridFill, RiMenuLine, RiStarFill } from "react-icons/ri";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const session = await unstable_getServerSession(context.req, context.res, authOptions);
@@ -63,17 +63,24 @@ const Finished: NextPage = () => {
     const { data, isLoading, error } = trpc.useQuery(["user-get-finished"]);
 
     const [sortedData, setSortedData] = useState<Section[]>([]);
-    const [sortedBy, setSortedBy] = useState(SortBy.TITLE); // TODO save in localstorage
+    const [sortedBy, setSortedBy] = useState(SortBy.YEAR); // TODO save in localstorage
     const [descending, setDescending] = useState(true);
+    const [viewGrouped, setViewGrouped] = useState(true);
 
     const getBooksAlphabetically = useCallback(
-        (desc = true, field: "title" | "author") => {
+        (desc: boolean, viewGrouped: boolean, field: "title" | "author") => {
             if (isLoading || error || !data) return null;
 
             const getString = (book: FinishedBook) => (field === "title" ? book.title : book.author.name);
 
             const sorted = [...data].sort((a, b) => compareStrings(getString(a), getString(b)));
             if (!desc) sorted.reverse();
+
+            if (!viewGrouped) {
+                const result: Section[] = [{ title: <></>, books: sorted }];
+                setSortedData(result);
+                return;
+            }
 
             const grouped: SortGroup = {};
             sorted.forEach((book) => {
@@ -104,7 +111,7 @@ const Finished: NextPage = () => {
     );
 
     const getBooksByYear = useCallback(
-        (desc = true) => {
+        (desc: boolean, viewGrouped: boolean) => {
             if (isLoading || error || !data) return null;
 
             const grouped: SortGroup = {};
@@ -125,6 +132,17 @@ const Finished: NextPage = () => {
 
             if (!desc) years.reverse();
 
+            if (!viewGrouped) {
+                let sortedBooks: FinishedBook[] = [];
+                years.forEach((year) => {
+                    sortedBooks = [...sortedBooks, ...(grouped[year] ?? [])];
+                });
+
+                const result: Section[] = [{ title: <></>, books: sortedBooks }];
+                setSortedData(result);
+                return;
+            }
+
             const result: Section[] = [];
             years.forEach((year) => {
                 if (grouped[year] && grouped[year]?.length)
@@ -140,7 +158,7 @@ const Finished: NextPage = () => {
     );
 
     const getBooksByRating = useCallback(
-        (desc = true) => {
+        (desc: boolean, viewGrouped: boolean) => {
             if (isLoading || error || !data) return null;
 
             const grouped: SortGroup = {};
@@ -156,6 +174,17 @@ const Finished: NextPage = () => {
             for (let i = 5; i >= 0; i--) if (i in grouped) ratings.push(i);
 
             if (!desc) ratings.reverse();
+
+            if (!viewGrouped) {
+                let sortedBooks: FinishedBook[] = [];
+                ratings.forEach((rating) => {
+                    sortedBooks = [...sortedBooks, ...(grouped[rating] ?? [])];
+                });
+
+                const result: Section[] = [{ title: <></>, books: sortedBooks }];
+                setSortedData(result);
+                return;
+            }
 
             const result: Section[] = [];
             ratings.forEach((rating) => {
@@ -181,11 +210,11 @@ const Finished: NextPage = () => {
     );
 
     useEffect(() => {
-        if (sortedBy === SortBy.TITLE) getBooksAlphabetically(descending, "title");
-        if (sortedBy === SortBy.AUTHOR) getBooksAlphabetically(descending, "author");
-        if (sortedBy === SortBy.YEAR) getBooksByYear(descending);
-        if (sortedBy === SortBy.RATING) getBooksByRating(descending);
-    }, [sortedBy, descending, getBooksAlphabetically, getBooksByYear, getBooksByRating]);
+        if (sortedBy === SortBy.TITLE) getBooksAlphabetically(descending, viewGrouped, "title");
+        if (sortedBy === SortBy.AUTHOR) getBooksAlphabetically(descending, viewGrouped, "author");
+        if (sortedBy === SortBy.YEAR) getBooksByYear(descending, viewGrouped);
+        if (sortedBy === SortBy.RATING) getBooksByRating(descending, viewGrouped);
+    }, [sortedBy, descending, viewGrouped, getBooksAlphabetically, getBooksByYear, getBooksByRating]);
 
     const isWaiting = isLoading || error || !data;
     return (
@@ -205,9 +234,11 @@ const Finished: NextPage = () => {
                         </div>
 
                         <div className={s.sortGrid}>
-                            <div />
+                            <div className={s.groups} onClick={() => setViewGrouped((prev) => !prev)}>
+                                {viewGrouped ? <RiGridFill /> : <RiMenuLine />}
+                            </div>
 
-                            {[SortBy.TITLE, SortBy.AUTHOR, SortBy.RATING, SortBy.YEAR].map((sortBy) => (
+                            {[SortBy.YEAR, SortBy.TITLE, SortBy.AUTHOR, SortBy.RATING].map((sortBy) => (
                                 <div
                                     key={sortBy}
                                     className={`${s.sort} ${sortedBy === sortBy ? s.current : ""}`}
