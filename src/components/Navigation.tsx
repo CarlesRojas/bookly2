@@ -1,4 +1,5 @@
 import { RoutePaths } from "@constants/routes";
+import { Event, useEvents } from "@context/events";
 import s from "@styles/components/Navigation.module.scss";
 import { useRouter } from "next/router";
 import { CSSProperties, useRef, useState } from "react";
@@ -24,6 +25,7 @@ interface NavigationItem {
 
 const Navigation = () => {
     const router = useRouter();
+    const { emit } = useEvents();
 
     const navigationItems = useRef<NavigationItem[]>([
         {
@@ -65,6 +67,7 @@ const Navigation = () => {
         if (changing.current) return;
         changing.current = true;
         setCurrentPath(route);
+        emit(Event.REDIRECT_STARTED);
         router.push(route);
     };
 

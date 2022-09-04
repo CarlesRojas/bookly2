@@ -5,6 +5,7 @@ import Navigation from "@components/Navigation";
 import { RoutePaths } from "@constants/routes";
 import { ResultsType, useSearch } from "@context/search";
 import useAutoResetState from "@hooks/useAutoResetState";
+import useRedirectLoading from "@hooks/useRedirectLoading";
 import { authOptions } from "@pages/api/auth/[...nextauth]";
 import s from "@styles/pages/Search.module.scss";
 import { trpc } from "@utils/trpc";
@@ -24,6 +25,7 @@ export const QUERY_COOKIE_NAME = "bookly2-query";
 
 const Search: NextPage = () => {
     const { query, setQuery, resultsType, setResultsType } = useSearch();
+    const isRedirecting = useRedirectLoading();
 
     const {
         data: booksData,
@@ -57,7 +59,7 @@ const Search: NextPage = () => {
         if (booksError || authorsError) setShowError(true);
     }, [booksError, authorsError, setShowError]);
 
-    const isWaiting = booksAreLoading || authorsAreLoading;
+    const isWaiting = booksAreLoading || authorsAreLoading || isRedirecting;
 
     return (
         <>

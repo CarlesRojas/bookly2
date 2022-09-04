@@ -1,4 +1,5 @@
 import { RoutePaths } from "@constants/routes";
+import { Event, useEvents } from "@context/events";
 import useAutoResetState from "@hooks/useAutoResetState";
 import { authOptions } from "@pages/api/auth/[...nextauth]";
 import s from "@styles/pages/New.module.scss";
@@ -7,7 +8,7 @@ import type { GetServerSideProps, NextPage } from "next";
 import { unstable_getServerSession } from "next-auth";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useCallback, useEffect, useState } from "react";
 import { RiAddLine, RiArrowLeftLine, RiExternalLinkLine, RiLoader4Fill } from "react-icons/ri";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -18,11 +19,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 const New: NextPage = () => {
     const router = useRouter();
+    const { emit } = useEvents();
+
     const { mutate: addBook, isLoading, isSuccess, error: mutateError } = trpc.useMutation("book-add");
 
     const [inputValue, setInputValue] = useState("");
     const [error, setError] = useState("-");
     const [showError, setShowError] = useAutoResetState(false, 3000);
+    const [showSuccess, setShowSuccess] = useAutoResetState(false, 3000);
 
     const onSubmit = (event: FormEvent) => {
         event.preventDefault();
@@ -36,9 +40,10 @@ const New: NextPage = () => {
         addBook({ goodReadsUrl: inputValue });
     };
 
-    useEffect(() => {
-        if (isSuccess) router.back();
-    }, [isSuccess, router]);
+    const onBackClick = useCallback(() => {
+        emit(Event.REDIRECT_STARTED);
+        router.back();
+    }, [emit, router]);
 
     useEffect(() => {
         if (mutateError) {
@@ -47,7 +52,12 @@ const New: NextPage = () => {
         }
     }, [mutateError, setShowError]);
 
-    const isWaiting = isLoading || isSuccess;
+    useEffect(() => {
+        if (isSuccess) {
+            setInputValue("");
+            setShowSuccess(true);
+        }
+    }, [isSuccess, setShowSuccess]);
 
     return (
         <>
@@ -80,10 +90,10 @@ const New: NextPage = () => {
                         placeholder="https://www.goodreads.com/book/show/..."
                     />
 
-                    <button className={`${s.button} ${isWaiting ? s.loading : ""}`}>
-                        {isWaiting && <RiLoader4Fill className={s.load} />}
+                    <button className={`${s.button} ${isLoading ? s.loading : ""}`}>
+                        {isLoading && <RiLoader4Fill className={s.load} />}
 
-                        {!isWaiting && (
+                        {!isLoading && (
                             <>
                                 <RiAddLine />
                                 <p>add book</p>
@@ -93,8 +103,9 @@ const New: NextPage = () => {
                 </form>
 
                 <p className={`${s.error} ${showError ? s.visible : ""}`}>{error}</p>
+                <p className={`${s.success} ${showSuccess ? s.visible : ""}`}>book added correctly</p>
 
-                <div className={s.back} onClick={() => router.back()}>
+                <div className={s.back} onClick={onBackClick}>
                     <RiArrowLeftLine />
                     <p>back</p>
                 </div>

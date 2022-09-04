@@ -1,4 +1,5 @@
 import { RoutePaths } from "@constants/routes";
+import { Event, useEvents } from "@context/events";
 import { FinishedBook } from "@pages/finished";
 import { BookWithAuthor } from "@pages/index";
 import s from "@styles/components/BookCover.module.scss";
@@ -11,14 +12,18 @@ interface BookCoverProps {
 
 const BookCover = (props: BookCoverProps) => {
     const router = useRouter();
+    const { emit } = useEvents();
+
     const { book, interactive } = props;
     const { coverSrc, goodReadsId, title, author } = book;
 
+    const onBookClick = () => {
+        emit(Event.REDIRECT_STARTED);
+        router.push(`${RoutePaths.BOOK}/${goodReadsId}`);
+    };
+
     return (
-        <div
-            className={`${s.bookCover} ${interactive ? s.interactive : ""}`}
-            onClick={() => router.push(`${RoutePaths.BOOK}/${goodReadsId}`)}
-        >
+        <div className={`${s.bookCover} ${interactive ? s.interactive : ""}`} onClick={onBookClick}>
             <div className={s.cover}>
                 {coverSrc && <img src={coverSrc} alt={"cover for the book"} />}
                 {!coverSrc && <img className={s.placeholder} src="/placeholderCover.png" alt={"cover for the book"} />}

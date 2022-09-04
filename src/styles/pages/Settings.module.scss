@@ -136,4 +136,19 @@
         text-align: center;
         padding-bottom: 0.5rem;
     }
+
+    .addBook {
+        @include button-text-low;
+        margin-top: var(--marginBot);
+
+        svg {
+            height: 2rem;
+            width: 2rem;
+        }
+
+        p {
+            margin-left: 0.3rem;
+            font-weight: 600;
+        }
+    }
 }

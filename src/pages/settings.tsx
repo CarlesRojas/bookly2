@@ -1,5 +1,6 @@
 import Navigation from "@components/Navigation";
 import { RoutePaths } from "@constants/routes";
+import { Event, useEvents } from "@context/events";
 import { authOptions } from "@pages/api/auth/[...nextauth]";
 import s from "@styles/pages/Settings.module.scss";
 import { trpc } from "@utils/trpc";
@@ -7,7 +8,9 @@ import type { GetServerSideProps, NextPage } from "next";
 import { unstable_getServerSession } from "next-auth";
 import { signOut, useSession } from "next-auth/react";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { MouseEvent, useRef, useState } from "react";
+import { RiAddLine } from "react-icons/ri";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const session = await unstable_getServerSession(context.req, context.res, authOptions);
@@ -16,7 +19,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 const Settings: NextPage = () => {
+    const router = useRouter();
     const session = useSession();
+    const { emit } = useEvents();
 
     const { mutate: deleteAccount, isLoading: deletingAccount } = trpc.useMutation("user-delete-account", {
         onSuccess: () => signOut(),
@@ -32,6 +37,11 @@ const Settings: NextPage = () => {
     const deleteComplete = useRef(false);
 
     const [loggingOut, setLoggingOut] = useState(false);
+
+    const onAddBookClick = () => {
+        emit(Event.REDIRECT_STARTED);
+        router.push(RoutePaths.NEW);
+    };
 
     const onLogoutDown = () => {
         if (logoutComplete.current) return;
@@ -166,6 +176,13 @@ const Settings: NextPage = () => {
 
                 <p className={s.subtitle}>by deleting your account, you will lose all your data</p>
                 <p className={s.subtitle}>hold the button to confirm</p>
+
+                <div className={s.addBook} onClick={onAddBookClick}>
+                    <RiAddLine />
+                    <p>add book to bookly</p>
+                </div>
+
+                <p className={s.subtitle}>{"use only if you can't find the book in the search"}</p>
             </div>
 
             <Navigation />

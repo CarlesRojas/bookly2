@@ -1,13 +1,14 @@
 import { createContext, useContext, useRef } from "react";
 
-interface Subscription {
-    [key: string]: ((data?: any) => void)[];
+enum Event {
+    REDIRECT_STARTED = "redirect-started",
+    REDIRECT_ENDED = "redirect-ended",
 }
 
 type State = {
     sub: (eventName: any, func: any) => void;
     unsub: (eventName: any, func: any) => void;
-    emit: (eventName: any, data: any) => void;
+    emit: (eventName: any, data?: any) => void;
 };
 
 type EventsProviderProps = { children: React.ReactNode };
@@ -15,14 +16,14 @@ type EventsProviderProps = { children: React.ReactNode };
 const EventsContext = createContext<State | undefined>(undefined);
 
 function EventsProvider({ children }: EventsProviderProps) {
-    const events = useRef<Subscription>({});
+    const events = useRef<{ [key in Event]?: ((data?: any) => void)[] }>({});
 
-    const sub = (eventName: string, func: (data: any) => void) => {
+    const sub = (eventName: Event, func: (data: any) => void) => {
         events.current[eventName] = events.current[eventName] || [];
         events.current[eventName]?.push(func);
     };
 
-    const unsub = (eventName: string, func: (data: any) => void) => {
+    const unsub = (eventName: Event, func: (data: any) => void) => {
         const curerntEvent = events.current[eventName];
         if (curerntEvent)
             for (let i = 0; i < curerntEvent.length; i++)
@@ -32,7 +33,7 @@ function EventsProvider({ children }: EventsProviderProps) {
                 }
     };
 
-    const emit = (eventName: string, data: any) => {
+    const emit = (eventName: Event, data: any) => {
         const curerntEvent = events.current[eventName];
         console.log(`Event fired: ${eventName}`);
         if (curerntEvent)
@@ -50,6 +51,4 @@ function useEvents() {
     return context;
 }
 
-enum Events {}
-
-export { EventsProvider, useEvents, Events };
+export { EventsProvider, useEvents, Event };

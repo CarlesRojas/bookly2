@@ -3,6 +3,7 @@ import Loading from "@components/Loading";
 import Navigation from "@components/Navigation";
 import { RoutePaths } from "@constants/routes";
 import { SortBy, useSort } from "@context/sort";
+import useRedirectLoading from "@hooks/useRedirectLoading";
 import { authOptions } from "@pages/api/auth/[...nextauth]";
 import { Author, Book, Read, Status } from "@prisma/client";
 import s from "@styles/pages/Finished.module.scss";
@@ -58,6 +59,8 @@ const getOldestReadYear = (reads: Read[]) => {
 const Finished: NextPage = () => {
     const { data, isLoading, error } = trpc.useQuery(["user-get-finished"]);
     const { sortedBy, setSortedBy, descending, setDescending, viewGrouped, setViewGrouped } = useSort();
+
+    const isRedirecting = useRedirectLoading();
 
     const [sortedData, setSortedData] = useState<Section[]>([]);
 
@@ -205,7 +208,7 @@ const Finished: NextPage = () => {
         if (sortedBy === SortBy.RATING) getBooksByRating(descending, viewGrouped);
     }, [sortedBy, descending, viewGrouped, getBooksAlphabetically, getBooksByYear, getBooksByRating]);
 
-    const isWaiting = isLoading || error || !data;
+    const isWaiting = isLoading || error || !data || isRedirecting;
     return (
         <>
             <Head>

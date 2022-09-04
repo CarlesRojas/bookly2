@@ -4,6 +4,8 @@ import Rating from "@components/Rating";
 import Read from "@components/Read";
 import Status from "@components/Status";
 import { RoutePaths } from "@constants/routes";
+import { Event, useEvents } from "@context/events";
+import useRedirectLoading from "@hooks/useRedirectLoading";
 import { authOptions } from "@pages/api/auth/[...nextauth]";
 import { BookStatus, Read as ReadType } from "@prisma/client";
 import s from "@styles/pages/BookAuthor.module.scss";
@@ -23,6 +25,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 // TODO when redirecting to this page -> show loading
 const Book: NextPage = () => {
     const router = useRouter();
+    const { emit } = useEvents();
+
+    const isRedirecting = useRedirectLoading();
+
     const trpcContext = trpc.useContext();
 
     const bookId = parseInt(router.query.bookId as string);
@@ -54,17 +60,29 @@ const Book: NextPage = () => {
         addReread({ bookId, month: currMonth, year: currYear });
     };
 
+    const onBackClick = () => {
+        emit(Event.REDIRECT_STARTED);
+        router.back();
+    };
+
+    const onHomeClick = () => {
+        emit(Event.REDIRECT_STARTED);
+        router.push(RoutePaths.HOME);
+    };
+
+    const isWaiting = isLoading || isRedirecting;
+
     let content = null;
-    if (!data || error || isLoading) {
+    if (!data || error || isWaiting) {
         content = (
             <>
-                {isLoading && <Loading />}
+                {isWaiting && <Loading />}
 
-                {!isLoading && (!data || error) && (
+                {!isWaiting && (!data || error) && (
                     <div className={s.error}>
                         <p className={s.message}>there was an error fetching the book</p>
 
-                        <div className={s.button} onClick={() => router.back()}>
+                        <div className={s.button} onClick={onBackClick}>
                             <RiArrowLeftLine />
                             <p>go back</p>
                         </div>
@@ -75,6 +93,11 @@ const Book: NextPage = () => {
     } else {
         const { title, author, publishedAt, numPages, description, goodReadsId, statuses, reads } = data;
         const { name, goodReadsId: authorGoodReadsId, photoSrc } = author;
+
+        const onAuthorClick = () => {
+            emit(Event.REDIRECT_STARTED);
+            router.push(`${RoutePaths.AUTHOR}/${authorGoodReadsId}`);
+        };
 
         const today = new Date();
         const currYear = today.getFullYear();
@@ -106,7 +129,7 @@ const Book: NextPage = () => {
 
                 <p className={s.title}>{title || "untitled"}</p>
 
-                <p className={s.subtitle} onClick={() => router.push(`${RoutePaths.AUTHOR}/${authorGoodReadsId}`)}>
+                <p className={s.subtitle} onClick={onAuthorClick}>
                     {name || "unknown author"}
                 </p>
 
@@ -165,10 +188,7 @@ const Book: NextPage = () => {
                 </a>
 
                 {author && (
-                    <div
-                        className={s.authorPreview}
-                        onClick={() => router.push(`${RoutePaths.AUTHOR}/${authorGoodReadsId}`)}
-                    >
+                    <div className={s.authorPreview} onClick={onAuthorClick}>
                         {photoSrc && <img src={photoSrc} alt={"photo of the author"} />}
                         {!photoSrc && (
                             <img className={s.placeholder} src="/placeholderPhoto.png" alt={"photo of the author"} />
@@ -192,14 +212,14 @@ const Book: NextPage = () => {
             <div className={s.nav}>
                 <div className={s.buttons}>
                     <div className={s.container}>
-                        <div className={s.navButton} onClick={() => router.push(RoutePaths.HOME)}>
+                        <div className={s.navButton} onClick={onHomeClick}>
                             <RiHome5Line />
                             <p>home</p>
                         </div>
                     </div>
 
                     <div className={s.container}>
-                        <div className={s.navButton} onClick={() => router.back()}>
+                        <div className={s.navButton} onClick={onBackClick}>
                             <RiArrowLeftLine />
                             <p>back</p>
                         </div>

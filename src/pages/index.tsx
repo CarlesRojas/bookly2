@@ -2,6 +2,7 @@ import BooksSection from "@components/BooksSection";
 import Loading from "@components/Loading";
 import Navigation from "@components/Navigation";
 import { RoutePaths } from "@constants/routes";
+import useRedirectLoading from "@hooks/useRedirectLoading";
 import { authOptions } from "@pages/api/auth/[...nextauth]";
 import { Author, Book } from "@prisma/client";
 import s from "@styles/pages/Home.module.scss";
@@ -30,8 +31,10 @@ const Home: NextPage = () => {
     const { data: readingData, isLoading: readingIsLoading } = trpc.useQuery(["user-get-reading"]);
     const { data: wantToReadData, isLoading: wantToReadIsLoading } = trpc.useQuery(["user-get-want-to-read"]);
 
+    const isRedirecting = useRedirectLoading();
+
     const [booksBySection, setBooksBySection] = useState<Section[]>([]);
-    const isWaiting = readingIsLoading || wantToReadIsLoading;
+    const isWaiting = readingIsLoading || wantToReadIsLoading || isRedirecting;
 
     useEffect(() => {
         const newSections: Section[] = [
