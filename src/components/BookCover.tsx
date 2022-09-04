@@ -1,13 +1,14 @@
 import { RoutePaths } from "@constants/routes";
 import { FinishedBook } from "@pages/finished";
-import s from "@styles/components/FinishedBook.module.scss";
+import { BookWithAuthor } from "@pages/index";
+import s from "@styles/components/BookCover.module.scss";
 import { useRouter } from "next/router";
 
-interface FinishedBookProps {
-    book: FinishedBook;
+interface BookCoverProps {
+    book: FinishedBook | BookWithAuthor;
 }
 
-const FinishedBook = (props: FinishedBookProps) => {
+const BookCover = (props: BookCoverProps) => {
     const router = useRouter();
     const { book } = props;
     const { coverSrc, goodReadsId } = book;
@@ -22,4 +23,4 @@ const FinishedBook = (props: FinishedBookProps) => {
     );
 };
 
-export default FinishedBook;
+export default BookCover;

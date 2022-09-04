@@ -135,7 +135,6 @@
         .section {
             position: relative;
             width: 100%;
-            padding: 0 var(--gap);
             touch-action: pan-y;
 
             .sectionTitle {
@@ -143,7 +142,7 @@
                 font-weight: bold;
                 margin: var(--sortHeight) 0 0;
                 --paddingBot: calc(var(--gap) * 0.5);
-                padding-bottom: var(--paddingBot);
+                padding: 0 var(--gap) var(--paddingBot);
                 position: sticky;
                 top: 0;
                 background-color: var(--backgroundDark);
@@ -180,6 +179,7 @@
                 touch-action: pan-y;
                 grid-template-columns: repeat(auto-fill, minmax(min(15rem, 40vw), 1fr));
                 overflow: visible;
+                padding: 0 var(--gap);
 
                 @include for-mouse {
                     margin: 1rem 0;

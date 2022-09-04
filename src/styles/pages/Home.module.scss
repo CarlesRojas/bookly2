@@ -3,27 +3,91 @@
 
 .home {
     position: absolute;
-    display: grid;
-    grid-template-rows: 1fr 1fr;
-    grid-template-columns: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     height: calc(100% - var(--navigation-height));
+    max-height: calc(100% - var(--navigation-height));
     width: 100%;
     top: 0;
     left: 0;
+    --sortHeight: 3rem;
 
     @include for-desktop {
         top: unset;
         bottom: 0;
     }
 
-    .gridContainer {
+    .content {
         position: relative;
         width: 100%;
-        max-width: 100%;
         height: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
+        overflow-y: auto;
+        --gap: 1rem;
+        touch-action: pan-y;
+        padding-bottom: calc(var(--marginBot) * 2);
+
+        .section {
+            position: relative;
+            width: 100%;
+            touch-action: pan-y;
+
+            .sectionTitle {
+                font-size: 1.4rem;
+                font-weight: bold;
+                --paddingBot: calc(var(--gap) * 0.5);
+                margin-top: var(--sortHeight);
+                padding: var(--paddingBot) var(--gap);
+                position: sticky;
+                top: 0;
+                background-color: var(--backgroundDark);
+                z-index: 1;
+                color: var(--purple);
+                touch-action: pan-y;
+
+                &.first {
+                    margin-top: 0;
+
+                    @include for-desktop {
+                        margin-top: var(--sortHeight);
+                    }
+                }
+
+                @include light {
+                    background-color: var(--backgroundLight);
+                }
+
+                @include dark {
+                    background-color: var(--backgroundDark);
+                }
+
+                .star {
+                    height: 1.3rem;
+                    width: 1.3rem;
+                    color: var(--purple);
+                    opacity: 0;
+                    margin-right: 0.25rem;
+
+                    &.active {
+                        opacity: 1;
+                    }
+                }
+            }
+
+            .books {
+                position: relative;
+                width: 100%;
+                display: grid;
+                gap: var(--gap);
+                touch-action: pan-y;
+                grid-template-columns: repeat(auto-fill, minmax(min(15rem, 40vw), 1fr));
+                overflow: visible;
+                padding: 0 var(--gap);
+
+                @include for-mouse {
+                    margin: 1rem 0;
+                }
+            }
+        }
     }
 }

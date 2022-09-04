@@ -1,4 +1,4 @@
-import FinishedBook from "@components/FinishedBook";
+import BookCover from "@components/BookCover";
 import Loading from "@components/Loading";
 import Navigation from "@components/Navigation";
 import { RoutePaths } from "@constants/routes";
@@ -262,7 +262,7 @@ const Finished: NextPage = () => {
                                     {section.title}
                                     <div className={s.books}>
                                         {section.books.map((book) => (
-                                            <FinishedBook key={book.goodReadsId} book={book} />
+                                            <BookCover key={book.goodReadsId} book={book} />
                                         ))}
                                     </div>
                                 </div>
