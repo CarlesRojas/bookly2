@@ -1,4 +1,4 @@
-import BookCover from "@components/BookCover";
+import BooksSection from "@components/BooksSection";
 import Loading from "@components/Loading";
 import Navigation from "@components/Navigation";
 import { RoutePaths } from "@constants/routes";
@@ -10,7 +10,7 @@ import type { GetServerSideProps, NextPage } from "next";
 import { unstable_getServerSession } from "next-auth";
 import Head from "next/head";
 import { useCallback, useEffect, useState } from "react";
-import { RiArrowDownSLine, RiGridFill, RiMenuLine, RiStarFill } from "react-icons/ri";
+import { RiArrowDownSLine, RiGridFill, RiMenuLine } from "react-icons/ri";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const session = await unstable_getServerSession(context.req, context.res, authOptions);
@@ -30,8 +30,10 @@ enum SortBy {
 }
 
 interface Section {
-    title: JSX.Element;
+    title: string | number | null;
     books: FinishedBook[];
+    first?: boolean;
+    isRating?: boolean;
 }
 
 const normalizeString = (value: string) => {
@@ -77,7 +79,7 @@ const Finished: NextPage = () => {
             if (!desc) sorted.reverse();
 
             if (!viewGrouped) {
-                const result: Section[] = [{ title: <></>, books: sorted }];
+                const result: Section[] = [{ title: null, books: sorted, first: true }];
                 setSortedData(result);
                 return;
             }
@@ -100,8 +102,9 @@ const Finished: NextPage = () => {
             alphabet.forEach((letter) => {
                 if (grouped[letter] && grouped[letter]?.length)
                     result.push({
-                        title: <p className={s.sectionTitle}>{letter.toUpperCase()}</p>,
+                        title: letter.toUpperCase(),
                         books: grouped[letter] ?? [],
+                        first: result.length <= 0,
                     });
             });
 
@@ -138,7 +141,7 @@ const Finished: NextPage = () => {
                     sortedBooks = [...sortedBooks, ...(grouped[year] ?? [])];
                 });
 
-                const result: Section[] = [{ title: <></>, books: sortedBooks }];
+                const result: Section[] = [{ title: null, books: sortedBooks, first: true }];
                 setSortedData(result);
                 return;
             }
@@ -147,8 +150,9 @@ const Finished: NextPage = () => {
             years.forEach((year) => {
                 if (grouped[year] && grouped[year]?.length)
                     result.push({
-                        title: <p className={s.sectionTitle}>{year.toString()}</p>,
+                        title: year.toString(),
                         books: grouped[year] ?? [],
+                        first: result.length <= 0,
                     });
             });
 
@@ -181,7 +185,7 @@ const Finished: NextPage = () => {
                     sortedBooks = [...sortedBooks, ...(grouped[rating] ?? [])];
                 });
 
-                const result: Section[] = [{ title: <></>, books: sortedBooks }];
+                const result: Section[] = [{ title: null, books: sortedBooks, first: true }];
                 setSortedData(result);
                 return;
             }
@@ -190,17 +194,10 @@ const Finished: NextPage = () => {
             ratings.forEach((rating) => {
                 if (grouped[rating] && grouped[rating]?.length)
                     result.push({
-                        title:
-                            rating === 0 ? (
-                                <p className={s.sectionTitle}>unrated</p>
-                            ) : (
-                                <div className={s.sectionTitle}>
-                                    {[1, 2, 3, 4, 5].map((i) => (
-                                        <RiStarFill key={i} className={`${s.star} ${i <= rating ? s.active : ""}`} />
-                                    ))}
-                                </div>
-                            ),
+                        title: rating,
                         books: grouped[rating] ?? [],
+                        first: result.length <= 0,
+                        isRating: true,
                     });
             });
 
@@ -258,14 +255,7 @@ const Finished: NextPage = () => {
 
                         <div className={s.content}>
                             {sortedData.map((section, i) => (
-                                <div key={i} className={s.section}>
-                                    {section.title}
-                                    <div className={s.books}>
-                                        {section.books.map((book) => (
-                                            <BookCover key={book.goodReadsId} book={book} />
-                                        ))}
-                                    </div>
-                                </div>
+                                <BooksSection key={i} {...section} />
                             ))}
                         </div>
                     </>
