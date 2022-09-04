@@ -147,13 +147,13 @@ const Stats: NextPage = () => {
                             </div>
 
                             <div className={s.stat}>
-                                <p className={s.value}>{averagePagesPerYear}</p>
-                                <p className={s.title}>average pages read per year</p>
+                                <p className={s.value}>{parseFloat(averageBooksPerYear.toFixed(2))}</p>
+                                <p className={s.title}>average books read per year</p>
                             </div>
 
                             <div className={s.stat}>
-                                <p className={s.value}>{parseFloat(averageBooksPerYear.toFixed(2))}</p>
-                                <p className={s.title}>average books read per year</p>
+                                <p className={s.value}>{averagePagesPerYear}</p>
+                                <p className={s.title}>average pages read per year</p>
                             </div>
                         </div>
 
