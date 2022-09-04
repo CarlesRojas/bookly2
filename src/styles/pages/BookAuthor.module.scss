@@ -15,7 +15,6 @@
     justify-content: flex-start;
     overflow-x: hidden;
     overflow-y: auto;
-    padding: 1rem;
     touch-action: pan-y;
 
     @include for-desktop {
@@ -38,19 +37,19 @@
             margin-bottom: 1rem;
             font-weight: 600;
         }
-    }
 
-    .button {
-        @include button-text-low;
+        .button {
+            @include button-text-low;
 
-        svg {
-            height: 2rem;
-            width: 2rem;
-        }
+            svg {
+                height: 2rem;
+                width: 2rem;
+            }
 
-        p {
-            margin-left: 0.3rem;
-            font-weight: 600;
+            p {
+                margin-left: 0.3rem;
+                font-weight: 600;
+            }
         }
     }
 
@@ -59,6 +58,7 @@
         width: 80%;
         margin-bottom: calc(var(--marginBot) * 0.5);
         max-width: 20rem;
+        margin-top: 1rem;
     }
 
     .details {
@@ -70,6 +70,7 @@
         opacity: 0.5;
         font-size: 0.85rem;
         text-align: center;
+        padding: 0 1rem;
         touch-action: pan-y;
 
         p {
@@ -97,6 +98,7 @@
         font-weight: 600;
         text-align: center;
         pointer-events: none;
+        padding: 0 1rem;
     }
 
     .subtitle {
@@ -106,6 +108,7 @@
         margin-bottom: var(--marginBot);
         touch-action: pan-y;
         text-align: center;
+        padding: 0 1rem;
 
         @include for-mouse {
             opacity: 0.5;
@@ -151,6 +154,7 @@
         font-weight: 500;
         line-height: 1.3rem;
         pointer-events: none;
+        padding: 0 1rem;
 
         p {
             margin-bottom: calc(var(--marginBot) * 0.5);
@@ -161,9 +165,26 @@
         }
     }
 
+    .goodReadsButton {
+        @include button-text-low;
+        opacity: 0.3;
+        touch-action: pan-y;
+        margin-bottom: calc(var(--marginBot) * 2);
+
+        svg {
+            height: 2rem;
+            width: 2rem;
+        }
+
+        p {
+            margin-left: 0.3rem;
+            font-weight: 600;
+        }
+    }
+
     .authorPreview {
         width: fit-content;
-        margin: calc(var(--marginBot) * 2) 0;
+        margin-bottom: calc(var(--marginBot) * 2);
 
         @include for-mouse {
             transform: scale(1);
@@ -209,11 +230,6 @@
         align-items: center;
         justify-content: center;
         margin-bottom: var(--marginBot);
-    }
-
-    .button {
-        opacity: 0.3;
-        touch-action: pan-y;
     }
 }
 

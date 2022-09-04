@@ -55,12 +55,12 @@ const Book: NextPage = () => {
     };
 
     let content = null;
-    if (!data) {
+    if (!data || error || isLoading) {
         content = (
             <>
                 {isLoading && <Loading />}
 
-                {error && (
+                {!isLoading && (!data || error) && (
                     <div className={s.error}>
                         <p className={s.message}>there was an error fetching the book</p>
 
@@ -155,7 +155,7 @@ const Book: NextPage = () => {
                 )}
 
                 <a
-                    className={s.button}
+                    className={s.goodReadsButton}
                     target="_blank"
                     href={`https://www.goodreads.com/book/show/${goodReadsId}`}
                     rel="noopener noreferrer"

@@ -24,12 +24,12 @@ const Author: NextPage = () => {
     const { data, isLoading, error } = trpc.useQuery(["author-get", { authorId }]);
 
     let content = null;
-    if (!data) {
+    if (!data || error || isLoading) {
         content = (
             <>
                 {isLoading && <Loading />}
 
-                {error && (
+                {!isLoading && (!data || error) && (
                     <div className={s.error}>
                         <p className={s.message}>there was an error fetching the book</p>
 
@@ -63,7 +63,7 @@ const Author: NextPage = () => {
                 )}
 
                 <a
-                    className={s.button}
+                    className={s.goodReadsButton}
                     target="_blank"
                     href={`https://www.goodreads.com/author/show/${goodReadsId}`}
                     rel="noopener noreferrer"
