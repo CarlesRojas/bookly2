@@ -1,4 +1,4 @@
-import BookCover from "@components/BookCover";
+import BooksSection from "@components/BooksSection";
 import Loading from "@components/Loading";
 import Navigation from "@components/Navigation";
 import { RoutePaths } from "@constants/routes";
@@ -20,7 +20,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 export type BookWithAuthor = Book & { author: Author };
 
 interface Section {
-    title: JSX.Element;
+    title: string;
     books: BookWithAuthor[];
 }
 
@@ -33,14 +33,8 @@ const Home: NextPage = () => {
 
     useEffect(() => {
         const newSections: Section[] = [
-            {
-                title: <p className={`${s.sectionTitle} ${s.first}`}>reading</p>,
-                books: readingData ?? [],
-            },
-            {
-                title: <p className={s.sectionTitle}>want to read</p>,
-                books: wantToReadData ?? [],
-            },
+            { title: "reading", books: readingData ?? [] },
+            { title: "want to read", books: wantToReadData ?? [] },
         ];
 
         setBooksBySection(newSections);
@@ -59,14 +53,7 @@ const Home: NextPage = () => {
                 {!isWaiting && (
                     <div className={s.content}>
                         {booksBySection.map((section, i) => (
-                            <div key={i} className={s.section}>
-                                {section.title}
-                                <div className={s.books}>
-                                    {section.books.map((book) => (
-                                        <BookCover key={book.goodReadsId} book={book} />
-                                    ))}
-                                </div>
-                            </div>
+                            <BooksSection key={i} {...section} />
                         ))}
                     </div>
                 )}
