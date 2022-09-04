@@ -66,8 +66,8 @@ const Finished: NextPage = () => {
 
     const [sortedData, setSortedData] = useState<Section[]>([]);
     const [sortedBy, setSortedBy] = useState(SortBy.YEAR); // TODO save in state context
-    const [descending, setDescending] = useState(true);
-    const [viewGrouped, setViewGrouped] = useState(true);
+    const [descending, setDescending] = useState(true); // TODO save in state context
+    const [viewGrouped, setViewGrouped] = useState(true); // TODO save in state context
 
     const getBooksAlphabetically = useCallback(
         (desc: boolean, viewGrouped: boolean, field: "title" | "author") => {

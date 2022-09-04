@@ -1,11 +1,10 @@
-import Authorshelf from "@components/Authorshelf";
-import Bookshelf from "@components/Bookshelf";
+import BooksSection from "@components/BooksSection";
 import Loading from "@components/Loading";
 import Navigation from "@components/Navigation";
 import { RoutePaths } from "@constants/routes";
 import useAutoResetState from "@hooks/useAutoResetState";
-import useResize from "@hooks/useResize";
 import { authOptions } from "@pages/api/auth/[...nextauth]";
+import { BookWithAuthor } from "@pages/index";
 import s from "@styles/pages/Search.module.scss";
 import { trpc } from "@utils/trpc";
 import type { GetServerSideProps, NextPage } from "next";
@@ -23,9 +22,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 export const QUERY_COOKIE_NAME = "bookly2-query";
 
+enum ResultsType {
+    BOOK = "books",
+    AUTHOR = "authors",
+}
+
 const Search: NextPage = () => {
     const router = useRouter();
     const [query, setQuery] = useState(""); // TODO save in state context
+    const [resultsType, setResultsType] = useState(ResultsType.BOOK); // TODO save in state context
 
     const {
         data: booksData,
@@ -41,6 +46,7 @@ const Search: NextPage = () => {
     const [inputValue, setInputValue] = useState(query);
     const [error, setError] = useState("-");
     const [showError, setShowError] = useAutoResetState(false, 3000);
+    const [hideResults, setHideResults] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
 
     const onSubmit = (event: FormEvent) => {
@@ -53,25 +59,12 @@ const Search: NextPage = () => {
         setQuery(inputValue);
     };
 
-    const [hideResults, setHideResults] = useState(false);
-
     useEffect(() => {
         if (booksError) setError(booksError?.message);
         if (authorsError) setError(authorsError?.message);
 
         if (booksError || authorsError) setShowError(true);
     }, [booksError, authorsError, setShowError]);
-
-    const containerRef = useRef<HTMLDivElement>(null);
-    const searchRef = useRef<HTMLDivElement>(null);
-    const [rowHeight, setRowHeight] = useState(0);
-    useResize(() => {
-        if (!containerRef.current || !searchRef.current) return;
-
-        const containerBox = containerRef.current.getBoundingClientRect();
-        const searchBox = searchRef.current.getBoundingClientRect();
-        setRowHeight((containerBox.height - searchBox.height) / 2);
-    }, true);
 
     const isWaiting = booksAreLoading || authorsAreLoading;
 
@@ -91,14 +84,43 @@ const Search: NextPage = () => {
                 <meta name="description" content="Search for a book or author" />
             </Head>
 
-            <div className={s.search} ref={containerRef}>
-                {!query && (
-                    <div className={s.noResults}>
-                        <p>search a book or an author...</p>
+            <div className={s.search}>
+                <div className={s.resultsTypeContainer}>
+                    <div className={`${s.resultTypeGrid} ${s.absolute}`}>
+                        <div className={s.border} />
                     </div>
-                )}
-                {query && isWaiting && <Loading />}
 
+                    <div className={s.resultTypeGrid}>
+                        {[ResultsType.BOOK, ResultsType.AUTHOR].map((type) => (
+                            <div
+                                key={type}
+                                className={`${s.resultType} ${resultsType === type ? s.current : ""}`}
+                                onClick={() => setResultsType(type)}
+                            >
+                                {type}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div className={`${s.results} ${hideResults ? s.hide : ""}`}>
+                    {!query && (
+                        <div className={s.noResults}>
+                            <p>search a book or an author...</p>
+                        </div>
+                    )}
+                    {query && isWaiting && <Loading />}
+
+                    {query && !isWaiting && resultsType === ResultsType.BOOK && (
+                        <BooksSection
+                            title={null}
+                            books={booksData as BookWithAuthor[]}
+                            emptyMessage="no books match your query"
+                        />
+                    )}
+                </div>
+
+                {/* 
                 {query && !isWaiting && (
                     <div className={`${s.results} ${hideResults ? s.hide : ""}`}>
                         <div className={s.rowContainer} style={{ height: `${rowHeight}px` }}>
@@ -111,21 +133,10 @@ const Search: NextPage = () => {
                                 />
                             )}
                         </div>
-
-                        <div className={s.rowContainer} style={{ height: `${rowHeight}px` }}>
-                            {booksData && (
-                                <Bookshelf
-                                    shelfName="books"
-                                    books={booksData}
-                                    rowHeight={rowHeight}
-                                    emptyMessage="no books match your query"
-                                />
-                            )}
-                        </div>
                     </div>
-                )}
+                )} */}
 
-                <div className={s.rowContainer} ref={searchRef}>
+                <div className={s.rowContainer}>
                     <div className={s.add} onClick={() => router.push(RoutePaths.NEW)}>
                         <RiAddLine />
                         <p>add book</p>

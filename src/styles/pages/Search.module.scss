@@ -16,22 +16,72 @@
         bottom: 0;
     }
 
-    .noResults {
+    .resultsTypeContainer {
         position: relative;
+        height: var(--sortHeight);
         width: 100%;
-        max-width: 100%;
-        flex-grow: 1;
         display: flex;
-        flex-direction: column;
         align-items: center;
         justify-content: center;
-        opacity: 0.4;
-        pointer-events: none;
+
+        .resultTypeGrid {
+            position: relative;
+            height: var(--sortHeight);
+            width: 100%;
+            max-width: 15rem;
+            display: grid;
+            gap: 0.5rem;
+            justify-content: center;
+            grid-template-columns: 1fr 1fr;
+            padding: 0.5rem;
+
+            &.absolute {
+                position: absolute;
+                top: 0;
+
+                .border {
+                    border: 1px solid var(--purple);
+                    border-radius: 0.5rem;
+                    grid-column-start: 1;
+                    grid-column-end: 3;
+                    grid-row-start: 1;
+                    grid-row-end: 1;
+                }
+            }
+
+            .resultType {
+                width: 100%;
+                height: 100%;
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 600;
+                font-size: 0.9rem;
+                opacity: 0.4;
+
+                &.current {
+                    color: var(--purple);
+                    opacity: 1 !important;
+                }
+
+                @include for-mouse {
+                    cursor: pointer;
+
+                    &:hover {
+                        opacity: 1;
+                    }
+                }
+            }
+        }
     }
 
     .results {
         transition: opacity 0.2s ease-in-out;
         opacity: 1;
+        flex-grow: 1;
+        overflow-y: auto;
+        position: relative;
 
         @include for-desktop {
             transition: unset;
@@ -44,6 +94,20 @@
                 opacity: 1;
             }
         }
+
+        .noResults {
+            position: relative;
+            width: 100%;
+            max-width: 100%;
+            height: 100%;
+            max-height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.4;
+            pointer-events: none;
+        }
     }
 
     .rowContainer {
@@ -54,80 +118,80 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-    }
-
-    svg {
-        height: 2rem;
-        width: 2rem;
-    }
-
-    p {
-        margin-left: 0.3rem;
-        font-weight: 600;
-    }
-
-    .add {
-        width: fit-content;
-        @include button-text-low;
-    }
-
-    form {
-        width: 90%;
-        max-width: var(--max-form-width);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-top: 0.5rem;
-
-        @include for-desktop {
-            margin-top: 1rem;
-        }
-
-        input {
-            @include input;
-            border-top-right-radius: 0 !important;
-            border-bottom-right-radius: 0 !important;
-        }
 
         svg {
-            height: 1.5rem;
-            width: 1.5rem;
+            height: 2rem;
+            width: 2rem;
         }
 
-        .button {
-            @include button;
-            border-top-left-radius: 0 !important;
-            border-bottom-left-radius: 0 !important;
-            width: fit-content !important;
-            padding: 0 1.1rem 0 0.9rem;
+        p {
+            margin-left: 0.3rem;
+            font-weight: 600;
+        }
 
-            &.loading {
-                pointer-events: none;
+        .add {
+            width: fit-content;
+            @include button-text-low;
+        }
 
-                svg {
-                    height: 1.5rem;
-                    width: 1.5rem;
+        form {
+            width: 90%;
+            max-width: var(--max-form-width);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.5rem;
+
+            @include for-desktop {
+                margin-top: 1rem;
+            }
+
+            input {
+                @include input;
+                border-top-right-radius: 0 !important;
+                border-bottom-right-radius: 0 !important;
+            }
+
+            svg {
+                height: 1.5rem;
+                width: 1.5rem;
+            }
+
+            .button {
+                @include button;
+                border-top-left-radius: 0 !important;
+                border-bottom-left-radius: 0 !important;
+                width: fit-content !important;
+                padding: 0 1.1rem 0 0.9rem;
+
+                &.loading {
+                    pointer-events: none;
+
+                    svg {
+                        height: 1.5rem;
+                        width: 1.5rem;
+                    }
+                }
+
+                .load {
+                    @include spin;
                 }
             }
+        }
 
-            .load {
-                @include spin;
+        .error {
+            transition: opacity 0.2s ease-in-out;
+            color: var(--red);
+            opacity: 0;
+            margin: 0.5rem 0;
+
+            @include for-desktop {
+                margin: 1rem 0;
             }
-        }
-    }
 
-    .error {
-        transition: opacity 0.2s ease-in-out;
-        color: var(--red);
-        opacity: 0;
-        margin: 0.5rem 0;
-
-        @include for-desktop {
-            margin: 1rem 0;
-        }
-
-        &.visible {
-            opacity: 1;
+            &.visible {
+                opacity: 1;
+            }
         }
     }
 }
