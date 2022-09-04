@@ -25,7 +25,7 @@
         grid-template-columns: 1fr 1fr;
         width: calc(100% - calc(var(--statsMargin) * 2));
         max-width: 25rem;
-        margin-bottom: var(--marginBot);
+        margin-bottom: calc(var(--marginBot) * 2);
 
         .stat {
             display: flex;
@@ -139,12 +139,11 @@
             font-size: 0.9rem;
             font-weight: 600;
             text-align: center;
-            border: 1px solid var(--purple);
+            border: 1px solid transparent;
             border-radius: 0.5rem;
 
             &.active {
-                background-color: var(--purple);
-                color: white;
+                border: 1px solid var(--purple);
             }
 
             @include for-mouse {
