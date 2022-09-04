@@ -22,7 +22,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return { props: {} };
 };
 
-// TODO when redirecting to this page -> show loading
 const Book: NextPage = () => {
     const router = useRouter();
     const { emit } = useEvents();

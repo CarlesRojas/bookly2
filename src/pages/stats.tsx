@@ -1,6 +1,7 @@
 import Loading from "@components/Loading";
 import Navigation from "@components/Navigation";
 import { RoutePaths } from "@constants/routes";
+import useRedirectLoading from "@hooks/useRedirectLoading";
 import { authOptions } from "@pages/api/auth/[...nextauth]";
 import { Book, Read } from "@prisma/client";
 import s from "@styles/pages/Stats.module.scss";
@@ -51,6 +52,8 @@ const Stats: NextPage = () => {
     const [, setRecalculated] = useState(0);
 
     const [booksSelected, setBooksSelected] = useState(false);
+
+    const isRedirecting = useRedirectLoading();
 
     useEffect(() => {
         if (isLoading || error || !data) return;
@@ -123,6 +126,8 @@ const Stats: NextPage = () => {
         };
     }, [calculated]);
 
+    const isWaiting = !calculated || isRedirecting;
+
     return (
         <>
             <Head>
@@ -131,9 +136,9 @@ const Stats: NextPage = () => {
             </Head>
 
             <div className={s.stats}>
-                {!calculated && <Loading />}
+                {isWaiting && <Loading />}
 
-                {calculated && (
+                {!isWaiting && (
                     <>
                         <div className={s.grid}>
                             <div className={s.stat}>

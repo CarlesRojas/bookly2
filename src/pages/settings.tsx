@@ -1,6 +1,8 @@
+import Loading from "@components/Loading";
 import Navigation from "@components/Navigation";
 import { RoutePaths } from "@constants/routes";
 import { Event, useEvents } from "@context/events";
+import useRedirectLoading from "@hooks/useRedirectLoading";
 import { authOptions } from "@pages/api/auth/[...nextauth]";
 import s from "@styles/pages/Settings.module.scss";
 import { trpc } from "@utils/trpc";
@@ -22,6 +24,8 @@ const Settings: NextPage = () => {
     const router = useRouter();
     const session = useSession();
     const { emit } = useEvents();
+
+    const isRedirecting = useRedirectLoading();
 
     const { mutate: deleteAccount, isLoading: deletingAccount } = trpc.useMutation("user-delete-account", {
         onSuccess: () => signOut(),
@@ -148,41 +152,46 @@ const Settings: NextPage = () => {
             </Head>
 
             <div className={`${s.settings} ${deletingAccount || loggingOut ? s.disable : ""}`}>
-                {user}
+                {isRedirecting && <Loading />}
+                {!isRedirecting && (
+                    <>
+                        {user}
 
-                <div
-                    className={s.button}
-                    onMouseDown={onLogoutDown}
-                    onMouseUp={onLogoutUp}
-                    onTouchStart={onLogoutDown}
-                    onTouchEnd={onLogoutUp}
-                    onContextMenu={onContextMenu}
-                >
-                    <div className={s.background} style={{ width: `${logoutBackgroundWidth}%` }}></div>
-                    <p>{loggingOut ? "logging out" : "log out"}</p>
-                </div>
+                        <div
+                            className={s.button}
+                            onMouseDown={onLogoutDown}
+                            onMouseUp={onLogoutUp}
+                            onTouchStart={onLogoutDown}
+                            onTouchEnd={onLogoutUp}
+                            onContextMenu={onContextMenu}
+                        >
+                            <div className={s.background} style={{ width: `${logoutBackgroundWidth}%` }}></div>
+                            <p>{loggingOut ? "logging out" : "log out"}</p>
+                        </div>
 
-                <div
-                    className={s.button}
-                    onMouseDown={onDeleteDown}
-                    onMouseUp={onDeleteUp}
-                    onTouchStart={onDeleteDown}
-                    onTouchEnd={onDeleteUp}
-                    onContextMenu={onContextMenu}
-                >
-                    <div className={s.background} style={{ width: `${deleteBackgroundWidth}%` }}></div>
-                    <p>{deletingAccount ? "deleting account" : "delete account"}</p>
-                </div>
+                        <div
+                            className={s.button}
+                            onMouseDown={onDeleteDown}
+                            onMouseUp={onDeleteUp}
+                            onTouchStart={onDeleteDown}
+                            onTouchEnd={onDeleteUp}
+                            onContextMenu={onContextMenu}
+                        >
+                            <div className={s.background} style={{ width: `${deleteBackgroundWidth}%` }}></div>
+                            <p>{deletingAccount ? "deleting account" : "delete account"}</p>
+                        </div>
 
-                <p className={s.subtitle}>by deleting your account, you will lose all your data</p>
-                <p className={s.subtitle}>hold the button to confirm</p>
+                        <p className={s.subtitle}>by deleting your account, you will lose all your data</p>
+                        <p className={s.subtitle}>hold the button to confirm</p>
 
-                <div className={s.addBook} onClick={onAddBookClick}>
-                    <RiAddLine />
-                    <p>add book to bookly</p>
-                </div>
+                        <div className={s.addBook} onClick={onAddBookClick}>
+                            <RiAddLine />
+                            <p>add book to bookly</p>
+                        </div>
 
-                <p className={s.subtitle}>{"use only if you can't find the book in the search"}</p>
+                        <p className={s.subtitle}>{"use only if you can't find the book in the search"}</p>
+                    </>
+                )}
             </div>
 
             <Navigation />

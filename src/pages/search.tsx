@@ -25,6 +25,7 @@ export const QUERY_COOKIE_NAME = "bookly2-query";
 
 const Search: NextPage = () => {
     const { query, setQuery, resultsType, setResultsType } = useSearch();
+
     const isRedirecting = useRedirectLoading();
 
     const {
@@ -59,7 +60,7 @@ const Search: NextPage = () => {
         if (booksError || authorsError) setShowError(true);
     }, [booksError, authorsError, setShowError]);
 
-    const isWaiting = booksAreLoading || authorsAreLoading || isRedirecting;
+    const isWaiting = booksAreLoading || authorsAreLoading;
 
     return (
         <>
@@ -69,93 +70,99 @@ const Search: NextPage = () => {
             </Head>
 
             <div className={s.search}>
-                <div className={s.resultsTypeContainer}>
-                    <div className={`${s.resultTypeGrid} ${s.absolute}`}>
-                        <div className={s.border} />
-                    </div>
+                {isRedirecting && <Loading />}
 
-                    <div className={s.resultTypeGrid}>
-                        {[ResultsType.BOOK, ResultsType.AUTHOR].map((type) => (
-                            <div
-                                key={type}
-                                className={`${s.resultType} ${resultsType === type ? s.current : ""}`}
-                                onClick={() => setResultsType(type)}
-                            >
-                                {type}
+                {!isRedirecting && (
+                    <>
+                        <div className={s.resultsTypeContainer}>
+                            <div className={`${s.resultTypeGrid} ${s.absolute}`}>
+                                <div className={s.border} />
                             </div>
-                        ))}
-                    </div>
-                </div>
 
-                {resultsType === ResultsType.BOOK && (
-                    <div className={s.results}>
-                        <div className={`${s.resultsContent} ${hideResults ? s.hide : ""}`}>
-                            {!query && (
-                                <div className={s.noResults}>
-                                    <p>search a book or an author...</p>
-                                </div>
-                            )}
-
-                            {query && isWaiting && <Loading />}
-
-                            {query && !isWaiting && booksData && booksData.length <= 0 && (
-                                <div className={s.noResults}>
-                                    <p>no books match your query</p>
-                                </div>
-                            )}
-
-                            {query && !isWaiting && booksData && booksData.length > 0 && (
-                                <BooksSection title={null} books={booksData} emptyMessage="" />
-                            )}
+                            <div className={s.resultTypeGrid}>
+                                {[ResultsType.BOOK, ResultsType.AUTHOR].map((type) => (
+                                    <div
+                                        key={type}
+                                        className={`${s.resultType} ${resultsType === type ? s.current : ""}`}
+                                        onClick={() => setResultsType(type)}
+                                    >
+                                        {type}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                )}
 
-                {resultsType === ResultsType.AUTHOR && (
-                    <div className={s.results}>
-                        <div className={`${s.resultsContent} ${hideResults ? s.hide : ""}`}>
-                            {!query && (
-                                <div className={s.noResults}>
-                                    <p>search a book or an author...</p>
+                        {resultsType === ResultsType.BOOK && (
+                            <div className={s.results}>
+                                <div className={`${s.resultsContent} ${hideResults ? s.hide : ""}`}>
+                                    {isWaiting && <Loading />}
+
+                                    {!query && !isWaiting && (
+                                        <div className={s.noResults}>
+                                            <p>search a book or an author...</p>
+                                        </div>
+                                    )}
+
+                                    {query && !isWaiting && booksData && booksData.length <= 0 && (
+                                        <div className={s.noResults}>
+                                            <p>no books match your query</p>
+                                        </div>
+                                    )}
+
+                                    {query && !isWaiting && booksData && booksData.length > 0 && (
+                                        <BooksSection title={null} books={booksData} emptyMessage="" />
+                                    )}
                                 </div>
-                            )}
+                            </div>
+                        )}
 
-                            {query && isWaiting && <Loading />}
+                        {resultsType === ResultsType.AUTHOR && (
+                            <div className={s.results}>
+                                <div className={`${s.resultsContent} ${hideResults ? s.hide : ""}`}>
+                                    {isWaiting && <Loading />}
 
-                            {query && !isWaiting && authorsData && authorsData.length <= 0 && (
-                                <div className={s.noResults}>
-                                    <p>no authors match your query</p>
+                                    {!query && !isWaiting && (
+                                        <div className={s.noResults}>
+                                            <p>search a book or an author...</p>
+                                        </div>
+                                    )}
+
+                                    {query && !isWaiting && authorsData && authorsData.length <= 0 && (
+                                        <div className={s.noResults}>
+                                            <p>no authors match your query</p>
+                                        </div>
+                                    )}
+
+                                    {query && !isWaiting && authorsData && authorsData.length > 0 && (
+                                        <AuthorsSection title={null} authors={authorsData} emptyMessage="" />
+                                    )}
                                 </div>
-                            )}
+                            </div>
+                        )}
 
-                            {query && !isWaiting && authorsData && authorsData.length > 0 && (
-                                <AuthorsSection title={null} authors={authorsData} emptyMessage="" />
-                            )}
+                        <div className={s.searchBarContainer}>
+                            <form onSubmit={onSubmit}>
+                                <input
+                                    value={inputValue}
+                                    onChange={(event) => setInputValue(event.target.value)}
+                                    type="text"
+                                    autoComplete="new-password"
+                                    placeholder="book or author..."
+                                    onFocus={() => setHideResults(true)}
+                                    onBlur={() => setHideResults(false)}
+                                    ref={inputRef}
+                                />
+
+                                <button className={`${s.button} ${isWaiting ? s.loading : ""}`}>
+                                    {isWaiting && <RiLoader4Fill className={s.load} />}
+                                    {!isWaiting && <RiSearchLine />}
+                                </button>
+                            </form>
+
+                            <p className={`${s.error} ${showError ? s.visible : ""}`}>{error}</p>
                         </div>
-                    </div>
+                    </>
                 )}
-
-                <div className={s.searchBarContainer}>
-                    <form onSubmit={onSubmit}>
-                        <input
-                            value={inputValue}
-                            onChange={(event) => setInputValue(event.target.value)}
-                            type="text"
-                            autoComplete="new-password"
-                            placeholder="book or author..."
-                            onFocus={() => setHideResults(true)}
-                            onBlur={() => setHideResults(false)}
-                            ref={inputRef}
-                        />
-
-                        <button className={`${s.button} ${isWaiting ? s.loading : ""}`}>
-                            {isWaiting && <RiLoader4Fill className={s.load} />}
-                            {!isWaiting && <RiSearchLine />}
-                        </button>
-                    </form>
-
-                    <p className={`${s.error} ${showError ? s.visible : ""}`}>{error}</p>
-                </div>
             </div>
 
             <Navigation />

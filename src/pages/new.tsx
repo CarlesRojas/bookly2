@@ -1,6 +1,8 @@
+import Loading from "@components/Loading";
 import { RoutePaths } from "@constants/routes";
 import { Event, useEvents } from "@context/events";
 import useAutoResetState from "@hooks/useAutoResetState";
+import useRedirectLoading from "@hooks/useRedirectLoading";
 import { authOptions } from "@pages/api/auth/[...nextauth]";
 import s from "@styles/pages/New.module.scss";
 import { trpc } from "@utils/trpc";
@@ -20,6 +22,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 const New: NextPage = () => {
     const router = useRouter();
     const { emit } = useEvents();
+
+    const isRedirecting = useRedirectLoading();
 
     const { mutate: addBook, isLoading, isSuccess, error: mutateError } = trpc.useMutation("book-add");
 
@@ -67,48 +71,53 @@ const New: NextPage = () => {
             </Head>
 
             <div className={s.new}>
-                <p className={s.text}>to add a book, search it here</p>
+                {isRedirecting && <Loading />}
+                {!isRedirecting && (
+                    <>
+                        <p className={s.text}>to add a book, search it here</p>
 
-                <a
-                    className={s.buttonText}
-                    target="_blank"
-                    href="https://www.goodreads.com/search/"
-                    rel="noopener noreferrer"
-                >
-                    <RiExternalLinkLine />
-                    <p>goodreads</p>
-                </a>
+                        <a
+                            className={s.buttonText}
+                            target="_blank"
+                            href="https://www.goodreads.com/search/"
+                            rel="noopener noreferrer"
+                        >
+                            <RiExternalLinkLine />
+                            <p>goodreads</p>
+                        </a>
 
-                <p className={s.text}>and paste the URL here</p>
+                        <p className={s.text}>and paste the URL here</p>
 
-                <form onSubmit={onSubmit}>
-                    <input
-                        value={inputValue}
-                        onChange={(event) => setInputValue(event.target.value)}
-                        type="text"
-                        autoComplete="new-password"
-                        placeholder="https://www.goodreads.com/book/show/..."
-                    />
+                        <form onSubmit={onSubmit}>
+                            <input
+                                value={inputValue}
+                                onChange={(event) => setInputValue(event.target.value)}
+                                type="text"
+                                autoComplete="new-password"
+                                placeholder="https://www.goodreads.com/book/show/..."
+                            />
 
-                    <button className={`${s.button} ${isLoading ? s.loading : ""}`}>
-                        {isLoading && <RiLoader4Fill className={s.load} />}
+                            <button className={`${s.button} ${isLoading ? s.loading : ""}`}>
+                                {isLoading && <RiLoader4Fill className={s.load} />}
 
-                        {!isLoading && (
-                            <>
-                                <RiAddLine />
-                                <p>add book</p>
-                            </>
-                        )}
-                    </button>
-                </form>
+                                {!isLoading && (
+                                    <>
+                                        <RiAddLine />
+                                        <p>add book</p>
+                                    </>
+                                )}
+                            </button>
+                        </form>
 
-                <p className={`${s.error} ${showError ? s.visible : ""}`}>{error}</p>
-                <p className={`${s.success} ${showSuccess ? s.visible : ""}`}>book added correctly</p>
+                        <p className={`${s.error} ${showError ? s.visible : ""}`}>{error}</p>
+                        <p className={`${s.success} ${showSuccess ? s.visible : ""}`}>book added correctly</p>
 
-                <div className={s.back} onClick={onBackClick}>
-                    <RiArrowLeftLine />
-                    <p>back</p>
-                </div>
+                        <div className={s.back} onClick={onBackClick}>
+                            <RiArrowLeftLine />
+                            <p>back</p>
+                        </div>
+                    </>
+                )}
             </div>
         </>
     );
