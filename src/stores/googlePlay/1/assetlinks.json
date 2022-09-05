@@ -1,0 +1,6 @@
+[{
+        "relation": ["delegate_permission/common.handle_all_urls"],
+        "target" : { "namespace": "android_app", "package_name": "app.vercel.bookly2",
+                     "sha256_cert_fingerprints": ["6B:80:E1:6F:52:66:FB:0E:6A:1F:8F:1B:EC:D2:1F:7A:B9:BD:F5:77:FE:D1:92:48:90:77:9F:76:07:AD:63:C6"] }
+      }
+]
