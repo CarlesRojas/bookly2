@@ -1,0 +1,12 @@
+name: weekly-cron
+on:
+    schedule:
+        - cron: "0 0 1,7,14,21 * *"
+jobs:
+    cron:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Get new books
+              run: |
+                  curl --request POST \
+                  --url 'https://bookly2.vercel.app/api/trpc/cron-get-all'
