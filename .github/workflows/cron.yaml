@@ -8,5 +8,5 @@ jobs:
         steps:
             - name: Get new books
               run: |
-                  curl --request POST \
+                  curl --request GET \
                   --url 'https://bookly2.vercel.app/api/trpc/cron-get-all'
