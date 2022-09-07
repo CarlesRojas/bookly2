@@ -108,18 +108,21 @@ export const bookRouter = createProtectedRouter()
             const bookAuthorInfo = await getBookAndAuthorInfo(goodReadsUrl);
 
             const { book, author } = bookAuthorInfo;
+            const authorId = author && typeof author !== "number" ? author.goodReadsId : author;
 
-            await prisma.author.upsert({
-                where: { goodReadsId: author.goodReadsId },
-                update: { ...author },
-                create: { ...author },
-            });
+            if (author && typeof author !== "number")
+                await prisma.author.upsert({
+                    where: { goodReadsId: author.goodReadsId },
+                    update: { ...author },
+                    create: { ...author },
+                });
 
-            await prisma.book.upsert({
-                where: { goodReadsId: book.goodReadsId },
-                update: { ...book, author: { connect: { goodReadsId: author.goodReadsId } } },
-                create: { ...book, author: { connect: { goodReadsId: author.goodReadsId } } },
-            });
+            if (book && authorId)
+                await prisma.book.upsert({
+                    where: { goodReadsId: book.goodReadsId },
+                    update: { ...book, author: { connect: { goodReadsId: authorId } } },
+                    create: { ...book, author: { connect: { goodReadsId: authorId } } },
+                });
         },
     })
     .mutation("add-reread", {

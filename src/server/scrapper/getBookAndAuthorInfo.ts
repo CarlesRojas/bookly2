@@ -1,3 +1,4 @@
+import { prisma } from "@server/db/client";
 import * as trpc from "@trpc/server";
 import axios from "axios";
 import { load } from "cheerio";
@@ -28,13 +29,16 @@ export interface BookAuthorInfo {
         publishedAt: string;
         numPages: number;
         coverSrc: string;
-    };
-    author: {
-        goodReadsId: number;
-        name: string;
-        description: string;
-        photoSrc: string;
-    };
+    } | null;
+    author:
+        | number
+        | null
+        | {
+              goodReadsId: number;
+              name: string;
+              description: string;
+              photoSrc: string;
+          };
 }
 
 const getBookAndAuthorInfo = async (goodReadsUrl: string) => {
@@ -49,6 +53,9 @@ const getBookAndAuthorInfo = async (goodReadsUrl: string) => {
 
     const goodReadsId = parseInt($("input#book_id").first().attr("value") || "");
     if (isNaN(goodReadsId)) throw new trpc.TRPCError({ code: "NOT_FOUND", message: "book ID not found" });
+
+    const bookExists = await prisma.book.findUnique({ where: { goodReadsId } });
+    if (bookExists) return { book: null, author: null } as BookAuthorInfo;
 
     const title = allTrim($("#bookTitle").contents().first().text());
 
@@ -91,6 +98,12 @@ const getBookAndAuthorInfo = async (goodReadsUrl: string) => {
         throw new trpc.TRPCError({ code: "NOT_FOUND", message: "author ID not found" });
 
     const goodReadsAuthorId = parseInt(authorId[0]);
+    const authorExists = await prisma.author.findUnique({ where: { goodReadsId: goodReadsAuthorId } });
+    if (authorExists)
+        return {
+            book: { goodReadsId, title, description, publishedAt, numPages, coverSrc },
+            author: goodReadsAuthorId,
+        } as BookAuthorInfo;
 
     let authorData = null;
     try {
@@ -119,20 +132,8 @@ const getBookAndAuthorInfo = async (goodReadsUrl: string) => {
     const photoSrc = $("img[itemprop=image]").attr("src") || "";
 
     const bookAuthorInfo: BookAuthorInfo = {
-        book: {
-            goodReadsId,
-            title,
-            description,
-            publishedAt,
-            numPages,
-            coverSrc,
-        },
-        author: {
-            goodReadsId: goodReadsAuthorId,
-            name,
-            description: authorDescription,
-            photoSrc,
-        },
+        book: { goodReadsId, title, description, publishedAt, numPages, coverSrc },
+        author: { goodReadsId: goodReadsAuthorId, name, description: authorDescription, photoSrc },
     };
 
     return bookAuthorInfo;
