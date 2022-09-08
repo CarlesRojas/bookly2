@@ -8,7 +8,7 @@ const allTrim = (value: string) => value.replace(/\s+/g, " ").replace(/^\s+|\s+$
 const getText = (elem: any) => {
     if (elem.type === "text") return [elem.data.replace("\n", "")];
     if (elem.type === "tag") {
-        if (elem.name === "a" || elem.name === "i") {
+        if (elem.name === "a" || elem.name === "i" || elem.name === "div") {
             return (elem.children as []).reduce(
                 (prev, child): string[] => [...prev, ...getText(child as any)],
                 [] as string[]
@@ -80,13 +80,14 @@ const getBookAndAuthorInfo = async (goodReadsUrl: string) => {
     );
     publishedAt = allTrim(publishedAt.split(" by ")[0] ?? publishedAt);
 
-    const numPages = parseInt(
+    let numPages = parseInt(
         $("#details > div > span[itemprop=numberOfPages]")
             .contents()
             .first()
             .text()
             .replace(/[^0-9]/g, "")
     );
+    if (isNaN(numPages)) numPages = 0;
 
     const coverSrc = $("#coverImage").attr("src") || "";
 

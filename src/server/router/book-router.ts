@@ -176,3 +176,12 @@ export const bookRouter = createProtectedRouter()
             });
         },
     });
+// .query("clear-all", {
+//     async resolve() {
+//         // http://localhost:3000/api/trpc/book-clear-all
+//         await prisma.author.deleteMany();
+//         await prisma.book.deleteMany();
+//         await prisma.read.deleteMany();
+//         await prisma.status.deleteMany();
+//     },
+// });
