@@ -77,10 +77,6 @@ export const bookRouter = createProtectedRouter()
             return await prisma.book.findUnique({
                 where: { goodReadsId: bookId },
                 include: {
-                    reads: {
-                        where: { userId: ctx.session.user.id },
-                        orderBy: [{ year: "asc" }, { month: "asc" }],
-                    },
                     statuses: { where: { userId: ctx.session.user.id } },
                     author: true,
                 },
@@ -123,6 +119,17 @@ export const bookRouter = createProtectedRouter()
                     update: { ...book, author: { connect: { goodReadsId: authorId } } },
                     create: { ...book, author: { connect: { goodReadsId: authorId } } },
                 });
+        },
+    })
+    .query("get-rereads", {
+        input: z.object({ bookId: z.number() }),
+        async resolve({ ctx, input }) {
+            const { bookId } = input;
+
+            return await prisma.read.findMany({
+                where: { bookId, userId: ctx.session.user.id },
+                orderBy: [{ year: "asc" }, { month: "asc" }],
+            });
         },
     })
     .mutation("add-reread", {

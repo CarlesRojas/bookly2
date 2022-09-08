@@ -31,12 +31,22 @@ const Book: NextPage = () => {
     const trpcContext = trpc.useContext();
 
     const bookId = parseInt(router.query.bookId as string);
-    const { data, isLoading, error } = trpc.useQuery(["book-get", { bookId }]);
+    const { data: bookData, isLoading: isBookLoading, error: bookError } = trpc.useQuery(["book-get", { bookId }]);
+    const {
+        data: readsData,
+        isLoading: isReadsLoading,
+        error: readError,
+    } = trpc.useQuery(["book-get-rereads", { bookId }]);
 
     const onMutationSuccess = () => trpcContext.invalidateQueries(["book-get"]);
 
     const { mutate: addReread, isLoading: addRereadLoading } = trpc.useMutation(["book-add-reread"], {
-        onSuccess: onMutationSuccess,
+        onMutate: async (vars) => {
+            await trpcContext.cancelQuery(["book-get-rereads"]);
+            const newRead: ReadType = { ...vars, id: "", userId: "", createdAt: new Date(), updatedAt: new Date() };
+            trpcContext.setQueryData(["book-get-rereads"], () => (readsData ? [...readsData, newRead] : [newRead]));
+            return { prevReads: readsData };
+        },
     });
     const { mutate: setFinished, isLoading: setFinishedLoading } = trpc.useMutation("book-set-finished", {
         onSuccess: onMutationSuccess,
@@ -69,15 +79,15 @@ const Book: NextPage = () => {
         router.push(RoutePaths.HOME);
     };
 
-    const isWaiting = isLoading || isRedirecting;
+    const isWaiting = isBookLoading || isReadsLoading || isRedirecting;
 
     let content = null;
-    if (!data || error || isWaiting) {
+    if (!bookData || !readsData || bookError || readError || isWaiting) {
         content = (
             <>
                 {isWaiting && <Loading />}
 
-                {!isWaiting && (!data || error) && (
+                {!isWaiting && (!bookData || bookError || readError) && (
                     <div className={s.error}>
                         <p className={s.message}>there was an error fetching the book</p>
 
@@ -90,7 +100,7 @@ const Book: NextPage = () => {
             </>
         );
     } else {
-        const { title, author, publishedAt, numPages, description, goodReadsId, statuses, reads } = data;
+        const { title, author, publishedAt, numPages, description, goodReadsId, statuses } = bookData;
         const { name, goodReadsId: authorGoodReadsId, photoSrc } = author;
 
         const onAuthorClick = () => {
@@ -118,7 +128,7 @@ const Book: NextPage = () => {
         content = (
             <>
                 <div className={s.coverContainer}>
-                    <BookCover book={data} />
+                    <BookCover book={bookData} />
                 </div>
 
                 <div className={s.details}>
@@ -151,7 +161,7 @@ const Book: NextPage = () => {
                     <>
                         {setFinishedLoading && <Read read={defaultRead} first={true} disabled />}
 
-                        {reads.map((read, i) => (
+                        {readsData.map((read, i) => (
                             <Read key={read.id} read={read} first={i === 0} />
                         ))}
 
