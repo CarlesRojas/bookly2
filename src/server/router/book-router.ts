@@ -175,4 +175,13 @@ export const bookRouter = createProtectedRouter()
                 create: { rating, status: BookStatus.FINISHED, bookId, userId: ctx.session.user.id },
             });
         },
+    })
+    .query("clear-all", {
+        async resolve() {
+            // http://localhost:3000/api/trpc/book-clear-all
+            await prisma.author.deleteMany();
+            await prisma.book.deleteMany();
+            await prisma.read.deleteMany();
+            await prisma.status.deleteMany();
+        },
     });
