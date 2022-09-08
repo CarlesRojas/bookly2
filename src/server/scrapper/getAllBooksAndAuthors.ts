@@ -5,6 +5,8 @@ const BOOK_URL = "https://www.goodreads.com/book/show/";
 
 let consecutivePageFailures = 0;
 
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 const getAllBooksAndAuthors = async (goodReadsId = 1) => {
     console.log(goodReadsId);
     const bookExists = await prisma.book.findUnique({ where: { goodReadsId } });
@@ -13,8 +15,10 @@ const getAllBooksAndAuthors = async (goodReadsId = 1) => {
         return;
     }
 
+    await sleep(1000);
+
     try {
-        const result = await getBookAndAuthorInfo(`${BOOK_URL}${goodReadsId}`);
+        const result = await getBookAndAuthorInfo(`${BOOK_URL}${goodReadsId}`, false);
 
         const { book, author } = result;
         const authorId = author && typeof author !== "number" ? author.goodReadsId : author;

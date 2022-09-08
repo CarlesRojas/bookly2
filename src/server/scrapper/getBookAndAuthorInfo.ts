@@ -41,7 +41,7 @@ export interface BookAuthorInfo {
           };
 }
 
-const getBookAndAuthorInfo = async (goodReadsUrl: string) => {
+const getBookAndAuthorInfo = async (goodReadsUrl: string, update = true) => {
     let bookData = null;
     try {
         const { data } = await axios.get(goodReadsUrl);
@@ -55,7 +55,7 @@ const getBookAndAuthorInfo = async (goodReadsUrl: string) => {
     if (isNaN(goodReadsId)) throw new trpc.TRPCError({ code: "NOT_FOUND", message: "book ID not found" });
 
     const bookExists = await prisma.book.findUnique({ where: { goodReadsId } });
-    if (bookExists) return { book: null, author: null } as BookAuthorInfo;
+    if (bookExists && !update) return { book: null, author: null } as BookAuthorInfo;
 
     const title = allTrim($("#bookTitle").contents().first().text());
 
@@ -100,7 +100,7 @@ const getBookAndAuthorInfo = async (goodReadsUrl: string) => {
 
     const goodReadsAuthorId = parseInt(authorId[0]);
     const authorExists = await prisma.author.findUnique({ where: { goodReadsId: goodReadsAuthorId } });
-    if (authorExists)
+    if (authorExists && !update)
         return {
             book: { goodReadsId, title, description, publishedAt, numPages, coverSrc },
             author: goodReadsAuthorId,
