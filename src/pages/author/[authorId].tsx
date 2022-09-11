@@ -11,6 +11,7 @@ import type { GetServerSideProps, NextPage } from "next";
 import { unstable_getServerSession } from "next-auth";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { RiArrowLeftLine, RiExternalLinkLine, RiHome5Line } from "react-icons/ri";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -24,6 +25,7 @@ const Author: NextPage = () => {
     const { emit } = useEvents();
 
     const isRedirecting = useRedirectLoading();
+    const [viewMore, setViewMore] = useState(false);
 
     const authorId = parseInt(router.query.authorId as string);
     const { data, isLoading, error } = trpc.useQuery(["author-get", { authorId }]);
@@ -72,11 +74,19 @@ const Author: NextPage = () => {
                 <p className={s.subtitle}></p>
 
                 {description && (
-                    <div className={s.description}>
-                        {description.split("%%%").map((paragraph, i) => (
-                            <p key={i}>{paragraph}</p>
-                        ))}
-                    </div>
+                    <>
+                        <div className={`${s.description} ${viewMore ? s.expanded : ""}`}>
+                            {description.split("%%%").map((paragraph, i) => (
+                                <p key={i}>{paragraph}</p>
+                            ))}
+                        </div>
+
+                        <div className={s.viewMoreContainer}>
+                            <p className={s.viewMore} onClick={() => setViewMore((prev) => !prev)}>
+                                {viewMore ? "view less" : "view more"}
+                            </p>
+                        </div>
+                    </>
                 )}
 
                 <a
