@@ -142,12 +142,12 @@ const Stats: NextPage = () => {
                     <>
                         <div className={s.grid}>
                             <div className={s.stat}>
-                                <p className={s.value}>{totalNumBooksFinished}</p>
+                                <p className={s.value}>{totalNumBooksFinished.toLocaleString("es-ES")}</p>
                                 <p className={s.title}>total number of books read</p>
                             </div>
 
                             <div className={s.stat}>
-                                <p className={s.value}>{totalPagesRead}</p>
+                                <p className={s.value}>{totalPagesRead.toLocaleString("es-ES")}</p>
                                 <p className={s.title}>total number of pages read</p>
                             </div>
 
@@ -157,7 +157,7 @@ const Stats: NextPage = () => {
                             </div>
 
                             <div className={s.stat}>
-                                <p className={s.value}>{averagePagesPerYear}</p>
+                                <p className={s.value}>{averagePagesPerYear.toLocaleString("es-ES")}</p>
                                 <p className={s.title}>average pages read per year</p>
                             </div>
                         </div>
