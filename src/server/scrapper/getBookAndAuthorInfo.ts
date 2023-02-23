@@ -51,54 +51,54 @@ const getBookAndAuthorInfo = async (goodReadsUrl: string, update = true) => {
     }
     let $ = load(bookData);
 
-    const goodReadsId = parseInt($("input#book_id").first().attr("value") || "");
-    if (isNaN(goodReadsId)) throw new trpc.TRPCError({ code: "NOT_FOUND", message: "book ID not found" });
+    let goodReadsId = parseInt($("input#book_id").first().attr("value") || "");
+    if (isNaN(goodReadsId)) {
+        const urlParts = goodReadsUrl.split("/");
+        const fullId = urlParts[urlParts.length - 1] ?? "";
+        const idParts = fullId.split(".");
+        goodReadsId = parseInt(idParts[0] ?? "");
+        if (isNaN(goodReadsId)) throw new trpc.TRPCError({ code: "NOT_FOUND", message: "book ID not found" });
+    }
+
+    console.log(goodReadsId);
 
     const bookExists = await prisma.book.findUnique({ where: { goodReadsId } });
     if (bookExists && !update) return { book: null, author: null } as BookAuthorInfo;
 
-    const title = allTrim($("#bookTitle").contents().first().text());
+    const title = allTrim($("[data-testid='bookTitle']").contents().first().text());
 
-    let descriptionArray = $("#description > span")
-        .get(1)
+    console.log(title);
+    const descriptionArray = $("[data-testid='description'] .Formatted")
+        .get(0)
         ?.children.reduce((prev, child) => [...prev, ...getText(child as any)], [] as string[]);
 
-    if (!descriptionArray || descriptionArray.length <= 0)
-        descriptionArray = $("#description > span")
-            .get(0)
-            ?.children.reduce((prev, child) => [...prev, ...getText(child as any)], [] as string[]);
+    let description = descriptionArray ? descriptionArray.join("").replaceAll("¿¿¿¿", "%%%").replaceAll("¿¿", "") : "";
+    if (description.startsWith("%%%")) description = description.substring(3);
 
-    const description = descriptionArray
-        ? descriptionArray.join("").replaceAll("¿¿¿¿", "%%%").replaceAll("¿¿", "")
-        : "";
-
-    let publishedAt = allTrim(
-        $("#details > div")
-            .get(1)
-            ?.children.map((child) => child.type === "text" && child.data)
-            .join(" ") as string
+    console.log(description);
+    const publishedAt = allTrim(
+        $("[data-testid='publicationInfo']").contents().first().text().replace("First published ", "")
     );
-    publishedAt = allTrim(publishedAt.split(" by ")[0] ?? publishedAt);
 
-    let numPages = parseInt(
-        $("#details > div > span[itemprop=numberOfPages]")
-            .contents()
-            .first()
-            .text()
-            .replace(/[^0-9]/g, "")
-    );
+    console.log(publishedAt);
+    const numPagesString = $("[data-testid='pagesFormat']").contents().first().text().split(" ")[0];
+    let numPages = numPagesString ? parseInt(numPagesString.replace(/[^0-9]/g, "")) : 0;
     if (isNaN(numPages)) numPages = 0;
 
-    const coverSrc = $("#coverImage").attr("src") || "";
+    console.log(numPages);
+    const coverSrc = $(".BookCover__image img").first().attr("src") ?? "";
 
-    const authorUrl = $("#bookAuthors > span[itemprop=author] > div > a").attr("href");
+    console.log(coverSrc);
+    const authorUrl = $(".ContributorLink").first().attr("href");
     if (!authorUrl) throw new trpc.TRPCError({ code: "NOT_FOUND", message: "author not found" });
 
+    console.log(authorUrl);
     const authorId = authorUrl.replace("https://www.goodreads.com/author/show/", "").match(/.+?(?=[^0-9])/g);
     if (!authorId || !authorId.length || !authorId[0] || isNaN(parseInt(authorId[0])))
         throw new trpc.TRPCError({ code: "NOT_FOUND", message: "author ID not found" });
-
     const goodReadsAuthorId = parseInt(authorId[0]);
+
+    console.log(goodReadsAuthorId);
     const authorExists = await prisma.author.findUnique({ where: { goodReadsId: goodReadsAuthorId } });
     if (authorExists && !update)
         return {
@@ -116,6 +116,7 @@ const getBookAndAuthorInfo = async (goodReadsUrl: string, update = true) => {
     $ = load(authorData);
 
     const name = allTrim($("h1.authorName > span[itemprop=name]").contents().first().text());
+    console.log(name);
 
     let authorDescriptionArray = $("div.aboutAuthorInfo > span")
         .get(1)
@@ -129,8 +130,10 @@ const getBookAndAuthorInfo = async (goodReadsUrl: string, update = true) => {
     const authorDescription = authorDescriptionArray
         ? authorDescriptionArray.join("").replaceAll("¿¿¿¿", "%%%").replaceAll("¿¿", "")
         : "";
+    console.log(authorDescription);
 
     const photoSrc = $("img[itemprop=image]").attr("src") || "";
+    console.log(photoSrc);
 
     const bookAuthorInfo: BookAuthorInfo = {
         book: { goodReadsId, title, description, publishedAt, numPages, coverSrc },
